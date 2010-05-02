@@ -25,9 +25,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "cell.h"
 
 /**
- * Items container. Simulates items stacked on the ground and also 
- * unit equipment held in different places and body parts (hands, belt, 
- * backpack, etc.) 
+ * Items container. Simulates items stacked on the ground and also
+ * unit equipment held in different places and body parts (hands, belt,
+ * backpack, etc.)
  *
  * @ingroup planner
  * @ingroup battlescape
@@ -44,12 +44,12 @@ private:
     int viscol;
 
     Item *m_item;	/**< List of items stored in this place */
-    Cell* m_cell;	/**< Map cell this place belongs to, or NULL */
+    Cell *m_cell;	/**< Map cell this place belongs to, or NULL */
 
     void set(int x, int y, int w, int h);
 
 public:
-    Place(int x, int y, int w, int h, Cell* cell = NULL);
+    Place(int x, int y, int w, int h, Cell *cell = NULL);
     virtual ~Place();
 
     void draw(int gx, int gy);

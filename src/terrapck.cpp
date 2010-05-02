@@ -28,8 +28,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "pck.h"
 
-//! Global table which contains all the possible unique 
-//! cell shapes, which can be used with current map, 
+//! Global table which contains all the possible unique
+//! cell shapes, which can be used with current map,
 //! MCD::ShapeIndex is a reference in this table
 static std::vector<ShapeInfo> shapes;
 
@@ -52,9 +52,9 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
 {
     char m_fname[512];
     int fh;
-    
+
     // read information about displaying this tile on minimap
-    if (tftd_flag) 
+    if (tftd_flag)
         fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
     else
         fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
@@ -75,7 +75,7 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
             scang_rgb_data[i * 3 + 2] = getb(xcom_color(scang_data[i]));
         }
     }
-        
+
     // Read x-com terrains shape information
     fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
@@ -85,17 +85,17 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
     read(fh, loftemps_data, loftemps_size);
     close(fh);
     for (int i = 0; i < loftemps_size; i += 2)
-        *(uint16 *)(loftemps_data + i) = intel_uint16(*(uint16 *)(loftemps_data + i));
-    
+        * (uint16 *)(loftemps_data + i) = intel_uint16(*(uint16 *)(loftemps_data + i));
+
     // get pck name
     strcpy(m_fname, mcd_name);
     strcpy(strrchr(m_fname, '.') + 1, "pck");
     std::string pck_name = m_fname;
 
-    // load mcd file itself    
+    // load mcd file itself
     strcpy(m_fname, mcd_name);
     strcpy(strrchr(m_fname, '.') + 1, "mcd");
-    
+
     if (FLAGS & F_CONVERT_XCOM_DATA) {
         std::string filename;
         char *p = get_filename(mcd_name);
@@ -121,7 +121,7 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         fclose(f);
         lua_pop(L, 1);
     }
-    
+
     fh = open(F(m_fname), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     long fsize = filelength(fh);
@@ -136,12 +136,12 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         m_mcd[oldcount + i].ScanG = intel_int16(m_mcd[oldcount + i].ScanG);
         if (m_mcd[oldcount + i].Alt_MCD)
             m_mcd[oldcount + i].Alt_MCD += oldcount;
-		
+
         if (m_mcd[oldcount + i].Die_MCD)
             m_mcd[oldcount + i].Die_MCD += oldcount;
-			
-		m_mcd[oldcount + i].Alt_tile = int(m_mcd[oldcount + i].Alt_MCD);	
-		m_mcd[oldcount + i].Die_tile = int(m_mcd[oldcount + i].Die_MCD);
+
+        m_mcd[oldcount + i].Alt_tile = int(m_mcd[oldcount + i].Alt_MCD);
+        m_mcd[oldcount + i].Die_tile = int(m_mcd[oldcount + i].Die_MCD);
 
         ShapeInfo s;
         for (int j = 0; j < 12; j++)
@@ -157,10 +157,10 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         int mt = m_mcd[oldcount + i].ScanG + 35;
         ASSERT(scang_size >= mt * 16 + 16);
         for (int k = 0; k < 16; k++) {
-            putpixel(m_mcd[oldcount + i].ScangBitmap, 3 - k / 4, k % 4, 
-                tftd_flag ? 
-                tftd_color(scang_data[mt * 16 + k]) :
-                xcom_color(scang_data[mt * 16 + k]));
+            putpixel(m_mcd[oldcount + i].ScangBitmap, 3 - k / 4, k % 4,
+                     tftd_flag ?
+                     tftd_color(scang_data[mt * 16 + k]) :
+                     xcom_color(scang_data[mt * 16 + k]));
         }
     }
     close(fh);
@@ -225,7 +225,7 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
     // Enter 'TilesetsTable' table
     lua_pushstring(L, "TilesetsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [tileset_name] table
     lua_pushstring(L, tileset_name);
     lua_gettable(L, -2);
@@ -265,7 +265,7 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         ASSERT(lua_isstring(L, -1));
         const uint8 *shape_data = (const uint8 *)lua_tostring(L, -1);
         for (int j = 0; j < 384; j += 2)
-            *(uint16 *)(shape_data + j) = intel_uint16(*(uint16 *)(shape_data + j));
+            * (uint16 *)(shape_data + j) = intel_uint16(*(uint16 *)(shape_data + j));
 
         ShapeInfo s;
         memcpy(&s, shape_data, sizeof(s));
@@ -304,10 +304,10 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
 
         for (int k = 0; k < 16; k++) {
             putpixel(m_mcd[oldcount + i].ScangBitmap, k % 4, k / 4,
-                makecol(scang_data[k * 3 + 0], scang_data[k * 3 + 1], scang_data[k * 3 + 2]));
+                     makecol(scang_data[k * 3 + 0], scang_data[k * 3 + 1], scang_data[k * 3 + 2]));
         }
 
-        #define GET_LUA_TILESET_PROP(propname, defval) \
+#define GET_LUA_TILESET_PROP(propname, defval) \
             m_mcd[oldcount + i].propname = tileset_get_int(i + 1, tileset_name, #propname, defval)
 
         GET_LUA_TILESET_PROP(UFO_Door, 0);
@@ -338,13 +338,13 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         GET_LUA_TILESET_PROP(Tile_Type, 0);
 
 //! For tilesets over 255 tiles
-		m_mcd[oldcount + i].Alt_tile = tileset_get_int(i + 1, tileset_name, "Alt_MCD", 0);
-		m_mcd[oldcount + i].Die_tile = tileset_get_int(i + 1, tileset_name, "Die_MCD", 0);
-		
+        m_mcd[oldcount + i].Alt_tile = tileset_get_int(i + 1, tileset_name, "Alt_MCD", 0);
+        m_mcd[oldcount + i].Die_tile = tileset_get_int(i + 1, tileset_name, "Die_MCD", 0);
+
         if (m_mcd[oldcount + i].Alt_tile)
             m_mcd[oldcount + i].Alt_tile += oldcount - 1;
-				
-        if (m_mcd[oldcount + i].Die_tile) 
+
+        if (m_mcd[oldcount + i].Die_tile)
             m_mcd[oldcount + i].Die_tile += oldcount - 1;
 
         lua_pop(L, 2);

@@ -28,22 +28,22 @@ IMPLEMENT_PERSISTENCE(StatEntry, "StatEntry");
 
 bool StatEntry::Write(persist::Engine &archive) const
 {
-	PersistWriteBinary(archive, *this);
+    PersistWriteBinary(archive, *this);
 
-	PersistWriteObject(archive, next);
-	PersistWriteObject(archive, prev);
+    PersistWriteObject(archive, next);
+    PersistWriteObject(archive, prev);
 
-	return true;
+    return true;
 }
 
 bool StatEntry::Read(persist::Engine &archive)
 {
-	PersistReadBinary(archive, *this);
+    PersistReadBinary(archive, *this);
 
-	PersistReadObject(archive, next);
-	PersistReadObject(archive, prev);
+    PersistReadObject(archive, next);
+    PersistReadObject(archive, prev);
 
-	return true;
+    return true;
 }
 
 IMPLEMENT_PERSISTENCE(Statistics, "Statistics");
@@ -51,166 +51,156 @@ IMPLEMENT_PERSISTENCE(Statistics, "Statistics");
 // Create as many StatEntry as we need.
 Statistics::Statistics(int size)
 {
-	platoon_size = size;
-	StatEntry *newentry = new StatEntry();
-	last = first = newentry;
-	for (int i = 1; i < size; i++)
-	{
-		newentry = new StatEntry();
-		last->set_next(newentry);
-		newentry->set_prev(last);
-		last = newentry;
-	}
-	first->set_prev(NULL);
-	last->set_next(NULL);
+    platoon_size = size;
+    StatEntry *newentry = new StatEntry();
+    last = first = newentry;
+    for (int i = 1; i < size; i++) {
+        newentry = new StatEntry();
+        last->set_next(newentry);
+        newentry->set_prev(last);
+        last = newentry;
+    }
+    first->set_prev(NULL);
+    last->set_next(NULL);
 }
 
 // Remove all the StatEntry.
 Statistics::~Statistics()
 {
-	StatEntry *temp;
-	for (StatEntry *current = first; current;)
-	{
-		temp = current->getnext();
-		delete current;
-		current = temp;
-	}
+    StatEntry *temp;
+    for (StatEntry *current = first; current;) {
+        temp = current->getnext();
+        delete current;
+        current = temp;
+    }
 }
 
 // Find the matching StatEntry.
 StatEntry *Statistics::get_stat_for_SID(int SID)
 {
-	for (StatEntry *current = first; current != last->getnext(); current = current->getnext())
-		if (current->get_SID() == SID)
-			return current;
+    for (StatEntry *current = first; current != last->getnext(); current = current->getnext())
+        if (current->get_SID() == SID)
+            return current;
 
-	return NULL;
+    return NULL;
 }
 
 // Find the StatEntry with the highest kill total.
 StatEntry *Statistics::get_most_kills()
 {
-	int total = -999;
-	StatEntry *best = NULL;
-	for (StatEntry *current = first; current; current = current->getnext())
-	{
-		if (current->get_kills() > total)
-		{
-			total = current->get_kills();
-			best = current;
-		}
-	}
+    int total = -999;
+    StatEntry *best = NULL;
+    for (StatEntry *current = first; current; current = current->getnext()) {
+        if (current->get_kills() > total) {
+            total = current->get_kills();
+            best = current;
+        }
+    }
 
-	return best;
+    return best;
 }
 
 // Find the StatEntry with the highest damage dealt.
 StatEntry *Statistics::get_most_inflicted()
 {
-	int total = -999;
-	StatEntry *best = NULL;
-	for (StatEntry *current = first; current; current = current->getnext())
-	{
-		if (current->get_inflicted() > total)
-		{
-			total = current->get_inflicted();
-			best = current;
-		}
-	}
+    int total = -999;
+    StatEntry *best = NULL;
+    for (StatEntry *current = first; current; current = current->getnext()) {
+        if (current->get_inflicted() > total) {
+            total = current->get_inflicted();
+            best = current;
+        }
+    }
 
-	return best;
+    return best;
 }
 
 // Find the StatEntry with the lowest damage dealt.
 StatEntry *Statistics::get_least_inflicted()
 {
-	int total = 9999;
-	StatEntry *best = NULL;
-	for (StatEntry *current = first; current; current = current->getnext())
-	{
-		if (current->get_inflicted() < total)
-		{
-			total = current->get_inflicted();
-			best = current;
-		}
-	}
+    int total = 9999;
+    StatEntry *best = NULL;
+    for (StatEntry *current = first; current; current = current->getnext()) {
+        if (current->get_inflicted() < total) {
+            total = current->get_inflicted();
+            best = current;
+        }
+    }
 
-	return best;
+    return best;
 }
 
 // Find the StatEntry with the highest damage taken.
 StatEntry *Statistics::get_most_taken()
 {
-	int total = -999;
-	StatEntry *best = NULL;
-	for (StatEntry *current = first; current; current = current->getnext())
-	{
-		if (current->get_taken() > total)
-		{
-			total = current->get_taken();
-			best = current;
-		}
-	}
+    int total = -999;
+    StatEntry *best = NULL;
+    for (StatEntry *current = first; current; current = current->getnext()) {
+        if (current->get_taken() > total) {
+            total = current->get_taken();
+            best = current;
+        }
+    }
 
-	return best;
+    return best;
 }
 
 // Sums up the kill count of all StatEntry.
 int Statistics::total_kills()
 {
-	int total = 0;
-	for (StatEntry *current = first; current; current = current->getnext())
-		total += current->get_kills();
+    int total = 0;
+    for (StatEntry *current = first; current; current = current->getnext())
+        total += current->get_kills();
 
-	return total;
+    return total;
 }
 
 // Finds out how many casualties were taken.
 int Statistics::total_dead()
 {
-	int total = 0;
-	for (StatEntry *current = first; current; current = current->getnext())
-		total += current->is_dead();
+    int total = 0;
+    for (StatEntry *current = first; current; current = current->getnext())
+        total += current->is_dead();
 
-	return total;
+    return total;
 }
 
 // Sums up the total amount of damage inflicted.
 int Statistics::total_damage_inflicted()
 {
-	int total = 0;
-	for (StatEntry *current = first; current; current = current->getnext())
-		total += current->get_inflicted();
+    int total = 0;
+    for (StatEntry *current = first; current; current = current->getnext())
+        total += current->get_inflicted();
 
-	return total;
+    return total;
 }
 
 // Sums up the total amount of damage taken.
 int Statistics::total_damage_taken()
 {
-	int total = 0;
-	for (StatEntry *current = first; current; current = current->getnext())
-		total += current->get_taken();
+    int total = 0;
+    for (StatEntry *current = first; current; current = current->getnext())
+        total += current->get_taken();
 
-	return total;
+    return total;
 }
 
 bool Statistics::Write(persist::Engine &archive) const
 {
-	PersistWriteBinary(archive, *this);
+    PersistWriteBinary(archive, *this);
 
-	PersistWriteObject(archive, first);
-	PersistWriteObject(archive, last);
+    PersistWriteObject(archive, first);
+    PersistWriteObject(archive, last);
 
-	return true;
+    return true;
 }
 
 bool Statistics::Read(persist::Engine &archive)
 {
-	PersistReadBinary(archive, *this);
+    PersistReadBinary(archive, *this);
 
-	PersistReadObject(archive, first);
-	PersistReadObject(archive, last);
+    PersistReadObject(archive, first);
+    PersistReadObject(archive, last);
 
-	return true;
+    return true;
 }

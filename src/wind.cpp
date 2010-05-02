@@ -56,7 +56,7 @@ bool ConsoleStatusLine::backspace()
 void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 {
     acquire_bitmap(bmp);
-    BITMAP * temp_bmp = create_bitmap(m_width, m_height);
+    BITMAP *temp_bmp = create_bitmap(m_width, m_height);
     clear_to_color(temp_bmp, COLOR_GRAY11);
     text_mode(-1); textout(temp_bmp, m_font, m_text.c_str(), 0, 0, m_color);
     int len = text_length(m_font, m_text.c_str());
@@ -130,8 +130,8 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
     for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
         text_mode(-1);
         textout(temp_bmp, m_font, m_lines_text[i].c_str(), 0,
-            m_height - m_status_line->get_height() - j * text_height(m_font),
-            m_lines_color[i]);
+                m_height - m_status_line->get_height() - j * text_height(m_font),
+                m_lines_color[i]);
     }
     m_status_line->redraw_full(temp_bmp, 0, m_height - m_status_line->get_height());
     if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
@@ -435,7 +435,7 @@ void Wind::printchr(int c)
         m_txt[m_txtend][m_curx] = 0;
         newline();
     } else {
-        text_mode( -1);
+        text_mode(-1);
         textprintf(screen, m_font, m_x + m_curx * m_charw, m_y + m_cury * m_charh, m_scrcol, "%c", c);
         //writechr(m_screen, m_curx*m_charw, m_cury*m_charh, c);
         //m_dirty->add(m_x+m_curx*m_charw, m_y+m_cury*m_charh, m_charw, m_charh);

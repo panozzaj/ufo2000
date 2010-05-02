@@ -71,28 +71,25 @@ enum ItemDigs {dig_round, dig_count};
 class IconButton
 {
 private:
-	int x1, y1, x2, y2;
+    int x1, y1, x2, y2;
 public:
     const char *name;
 
-	void set_coords(int _x1, int _y1, int _x2, int _y2)
-	{
-		x1 = _x1;
-		y1 = _y1;
-		x2 = _x2;
-		y2 = _y2;
-	};
-	
+    void set_coords(int _x1, int _y1, int _x2, int _y2) {
+        x1 = _x1;
+        y1 = _y1;
+        x2 = _x2;
+        y2 = _y2;
+    };
+
     /**
      * Test if coordinates (of mousepointer) are inside the area of the button.
      */
-    bool is_inside(int x, int y)
-	{
-		return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
-	};
-	
-	void Draw(BITMAP *dest, BITMAP *src)
-	{
+    bool is_inside(int x, int y) {
+        return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
+    };
+
+    void Draw(BITMAP *dest, BITMAP *src) {
         if (src != NULL)
             blit(src, dest, x1, y1, x1, y1, x2 - x1, y2 - y1);
     };
@@ -101,93 +98,86 @@ public:
 class IconItem
 {
 public:
-	IconButton button;
-	int ImageX,  ImageY;
-	int DigitsX, DigitsY;
-	int DigitsRoundsColor, DigitsPrimeColor;
-	
-	const char *name;
-	
+    IconButton button;
+    int ImageX,  ImageY;
+    int DigitsX, DigitsY;
+    int DigitsRoundsColor, DigitsPrimeColor;
+
+    const char *name;
+
     /**
      * Draw item (weapon) inside one of the hand-boxes of the control-panel.
      */
-    void Draw(BITMAP *dest, Item *it)
-	{
-		int dx = (2 - it->obdata_width())  * 16 / 2;
-		int dy = (3 - it->obdata_height()) * 15 / 2;
+    void Draw(BITMAP *dest, Item *it) {
+        int dx = (2 - it->obdata_width())  * 16 / 2;
+        int dy = (3 - it->obdata_height()) * 15 / 2;
 
-		PCK::showpck(dest, it->obdata_pInv(), ImageX + dx,  ImageY + dy);
-	};
-     
-	void Draw(BITMAP *dest, BITMAP *src, Item *it)
-	{
+        PCK::showpck(dest, it->obdata_pInv(), ImageX + dx,  ImageY + dy);
+    };
+
+    void Draw(BITMAP *dest, BITMAP *src, Item *it) {
         button.Draw(dest, src);
         Draw(dest, it);
-	};
-	
-	void DrawDigits(BITMAP *dest, int val, ItemDigs type)
-	{
-		if (type == dig_round)
-			printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsRoundsColor), val);
-		else
-			printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsPrimeColor), val);
-	};	
-	
-	void DrawPrimed(BITMAP *dest)
-	{
-		textout(dest, g_small_font, "*", DigitsX, DigitsY - 3, xcom1_color(DigitsPrimeColor));
-	};
+    };
+
+    void DrawDigits(BITMAP *dest, int val, ItemDigs type) {
+        if (type == dig_round)
+            printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsRoundsColor), val);
+        else
+            printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsPrimeColor), val);
+    };
+
+    void DrawPrimed(BITMAP *dest) {
+        textout(dest, g_small_font, "*", DigitsX, DigitsY - 3, xcom1_color(DigitsPrimeColor));
+    };
 };
 
 class IconAttribute
 {
 public:
-	int BarX, BarY;
-	BarDir BarDirection;
-	int FColor, BColor;
-	int DigitsX, DigitsY;
-	int DigitsColor;    
-	
-	const char *name;
-	
+    int BarX, BarY;
+    BarDir BarDirection;
+    int FColor, BColor;
+    int DigitsX, DigitsY;
+    int DigitsColor;
+
+    const char *name;
+
     /**
      * Draw value and barchart for attributes, e.g. TU, health etc. in the control-panel.
      */
-	void Draw(BITMAP *dest, int val, int valmax)
-	{
-		if (BarDirection == dir_hor) {
-			hline(dest,    BarX,              BarY,     BarX + valmax + 1, xcom1_color(BColor));
-			hline(dest,    BarX,              BarY + 1, BarX + val, xcom1_color(FColor));
-			putpixel(dest, BarX + valmax + 1, BarY + 1, xcom1_color(BColor));
-			hline(dest,    BarX,              BarY + 2, BarX + valmax + 1, xcom1_color(BColor));
-		} else {
-			vline(dest,    BarX,     BarY,              BarY - valmax - 1, xcom1_color(BColor));
-			vline(dest,    BarX + 1, BarY,              BarY - val, xcom1_color(FColor));
-			putpixel(dest, BarX + 1, BarY - valmax - 1, xcom1_color(BColor));
-			vline(dest,    BarX + 2, BarY,              BarY - valmax - 1, xcom1_color(BColor));
-		}
-		printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsColor), val);
-	};
+    void Draw(BITMAP *dest, int val, int valmax) {
+        if (BarDirection == dir_hor) {
+            hline(dest,    BarX,              BarY,     BarX + valmax + 1, xcom1_color(BColor));
+            hline(dest,    BarX,              BarY + 1, BarX + val, xcom1_color(FColor));
+            putpixel(dest, BarX + valmax + 1, BarY + 1, xcom1_color(BColor));
+            hline(dest,    BarX,              BarY + 2, BarX + valmax + 1, xcom1_color(BColor));
+        } else {
+            vline(dest,    BarX,     BarY,              BarY - valmax - 1, xcom1_color(BColor));
+            vline(dest,    BarX + 1, BarY,              BarY - val, xcom1_color(FColor));
+            putpixel(dest, BarX + 1, BarY - valmax - 1, xcom1_color(BColor));
+            vline(dest,    BarX + 2, BarY,              BarY - valmax - 1, xcom1_color(BColor));
+        }
+        printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsColor), val);
+    };
 };
 
 class IconText
 {
 public:
-	int x, y;
-	int color;
-	FONT *font;
-	
-	const char *name;
-	
-	void Draw(BITMAP *dest, char *val)
-	{
-		textout(dest, font, val, x, y, xcom1_color(color));
-	};
-	
-	void Draw(BITMAP *dest, int val, char *format)
-	{
-		textprintf(dest, font, x, y, xcom1_color(color), format, val);
-	};
+    int x, y;
+    int color;
+    FONT *font;
+
+    const char *name;
+
+    void Draw(BITMAP *dest, char *val) {
+        textout(dest, font, val, x, y, xcom1_color(color));
+    };
+
+    void Draw(BITMAP *dest, int val, char *format) {
+        textprintf(dest, font, x, y, xcom1_color(color), format, val);
+    };
 };
 
 /**
@@ -196,20 +186,19 @@ public:
 class IconReserve
 {
 public:
-	IconButton button;
-	int BorderX1, BorderY1, BorderX2, BorderY2;
-	int BorderColor;
-	
-	const char *name;
-	
-	void Draw(BITMAP *dest)
-	{
-		rect(dest, BorderX1, BorderY1, BorderX2, BorderY2, xcom1_color(BorderColor));
-	}
+    IconButton button;
+    int BorderX1, BorderY1, BorderX2, BorderY2;
+    int BorderColor;
+
+    const char *name;
+
+    void Draw(BITMAP *dest) {
+        rect(dest, BorderX1, BorderY1, BorderX2, BorderY2, xcom1_color(BorderColor));
+    }
 };
 
 /**
- * Control panel with buttons used by player to manage his squad in battlescape. 
+ * Control panel with buttons used by player to manage his squad in battlescape.
  * Contains 'quit', 'next soldier', 'inventory', 'sit/stand' and other controls.
  *
  * @ingroup gui
@@ -218,51 +207,50 @@ public:
 class Icon
 {
 private:
-	int    x, y;
+    int    x, y;
 
-	BITMAP *iconsbmp, *highlbmp, *clearbmp;
-	
-	std::string filename, highl_filename;
-	int trans_level;
-	
-	IconItem item[ITEM_NUMBER];
-	IconButton button[BUTTON_NUMBER];
-	IconText text[TEXT_NUMBER];
-	IconAttribute attribute[ATTRIBUTE_NUMBER];
-	IconReserve reserve[RESERVE_NUMBER];
-	
-	int stun_color; 
+    BITMAP *iconsbmp, *highlbmp, *clearbmp;
+
+    std::string filename, highl_filename;
+    int trans_level;
+
+    IconItem item[ITEM_NUMBER];
+    IconButton button[BUTTON_NUMBER];
+    IconText text[TEXT_NUMBER];
+    IconAttribute attribute[ATTRIBUTE_NUMBER];
+    IconReserve reserve[RESERVE_NUMBER];
+
+    int stun_color;
 public:
-	Icon();
-	~Icon();
-	
-	int    width, height;
+    Icon();
+    ~Icon();
 
-	void draw();
-	int inside(int mx, int my);
+    int    width, height;
+
+    void draw();
+    int inside(int mx, int my);
     int identify(int mx, int my);
-	void execute(int mx, int my);
-	void info();
-	void drawbar(int col1, int col2, int x2, int y2, int val, int valmax);
-	void show_eot();
+    void execute(int mx, int my);
+    void info();
+    void drawbar(int col1, int col2, int x2, int y2, int val, int valmax);
+    void show_eot();
 
-	//void firemenu(Item *it);
-	void firemenu(int iplace);
-	int doprime(Item *it);
+    //void firemenu(Item *it);
+    void firemenu(int iplace);
+    int doprime(Item *it);
 
     //! Set position of control-panel on the screen: bottom, centered
-	inline void setxy()
-	{
-		x = (SCREEN2W - width) / 2;
-		y = SCREEN2H - height;
-	}                        
-	
-	void draw_item(int itm, Item *it, int rounds, int prime, bool primed);
-	void draw_text(int txt, char *val);
-	void draw_text(int txt, int val, char *format);
-	void draw_attribute(int attr, int val, int maxval);
-	
-	void draw_stun_bar(int x, int y, int val, int maxval);
-};                      
+    inline void setxy() {
+        x = (SCREEN2W - width) / 2;
+        y = SCREEN2H - height;
+    }
+
+    void draw_item(int itm, Item *it, int rounds, int prime, bool primed);
+    void draw_text(int txt, char *val);
+    void draw_text(int txt, int val, char *format);
+    void draw_attribute(int attr, int val, int maxval);
+
+    void draw_stun_bar(int x, int y, int val, int maxval);
+};
 
 #endif

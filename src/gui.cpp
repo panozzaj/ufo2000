@@ -25,20 +25,20 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /*
  * -- SKIN INTERFACE RELATED --
  */
-SkinInterface::SkinInterface(const char *screen_name) 
+SkinInterface::SkinInterface(const char *screen_name)
 {
     m_screen = screen_name;
     m_background = get_bitmap("Background");
 }
-SkinInterface::~SkinInterface() 
+SkinInterface::~SkinInterface()
 {
     //No usage here yet
 }
 /*
  * Feature(const char *feature_name)
  * @function: Creates a feature sub-class and returns it.
- */ 
-SkinFeature *SkinInterface::Feature(const char *feature_name) 
+ */
+SkinFeature *SkinInterface::Feature(const char *feature_name)
 {
     SkinFeature *tmp_feature;
     tmp_feature = new SkinFeature(feature_name, m_screen);
@@ -47,14 +47,14 @@ SkinFeature *SkinInterface::Feature(const char *feature_name)
 /*
  * skin_get_bitmap(const char *bitmap_name)
  * @function: Extracts an image of the screen's root list.
- */ 
+ */
 ALPHA_SPRITE *SkinInterface::get_bitmap(const char *bitmap_name)
 {
     int stack_top = lua_gettop(L);
     // Enter 'GUITable' table
     lua_pushstring(L, "GuiTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [screen] table
     lua_pushstring(L, m_screen);
     lua_gettable(L, -2);
@@ -79,7 +79,7 @@ ALPHA_SPRITE *SkinInterface::get_bitmap(const char *bitmap_name)
  * @function: Returns the m_background alpha_sprite in the form of a default sized Bitmap
  */
 
-BITMAP *SkinInterface::background() 
+BITMAP *SkinInterface::background()
 {
     BITMAP *tmp_bmp;
     /* Initialised at default background image resolution */
@@ -106,14 +106,14 @@ SkinFeature::~SkinFeature()
  * feat_get_color_int(const char *property_name, int index)
  * @function: Extracts an integer from a specific feature.
  * @param: property_name (Color, Color_active, Bg_color, etc.) index (1,2,3)-RGB
- */ 
+ */
 int SkinFeature::feat_get_color_int(const char *property_name, int index)
 {
-int stack_top = lua_gettop(L);
+    int stack_top = lua_gettop(L);
     // Enter 'GUITable' table
     lua_pushstring(L, "GuiTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [Screen] table
     lua_pushstring(L, m_fscreen);
     lua_gettable(L, -2);
@@ -142,14 +142,14 @@ int stack_top = lua_gettop(L);
  * feat_placement_exists(const char *property_name)
  * @function: Confirms that the selected property is defined.
  * @param: Property name (Top, Left, Right, Bottom, etc.)
- */ 
+ */
 bool SkinFeature::feat_placement_exists(const char *property_name)
 {
     int stack_top = lua_gettop(L);
     // Enter 'GUITable' table
     lua_pushstring(L, "GuiTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [Screen] table
     lua_pushstring(L, m_fscreen);
     lua_gettable(L, -2);
@@ -169,7 +169,7 @@ bool SkinFeature::feat_placement_exists(const char *property_name)
     // Enter [Placement property] table
     lua_pushstring(L, property_name);
     lua_gettable(L, -2);
-    if(lua_istable(L, -1)) {
+    if (lua_istable(L, -1)) {
         lua_settop(L, stack_top);
         return true;
     } else {
@@ -182,14 +182,14 @@ bool SkinFeature::feat_placement_exists(const char *property_name)
  * feat_get_placement_int(const char *property_name, int index)
  * @function: Extracts an integer from a specific feature.
  * @param: Property name (Top, Left, Right, Bottom, etc.) and index (1 is relative value, 2 is absolute value)
- */ 
+ */
 int SkinFeature::feat_get_placement_int(const char *property_name, int index)
 {
-int stack_top = lua_gettop(L);
+    int stack_top = lua_gettop(L);
     // Enter 'GUITable' table
     lua_pushstring(L, "GuiTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [Screen] table
     lua_pushstring(L, m_fscreen);
     lua_gettable(L, -2);
@@ -216,19 +216,19 @@ int stack_top = lua_gettop(L);
     int result = 0;
     if (lua_isnumber(L, -1)) result = (int)lua_tonumber(L, -1);
     lua_settop(L, stack_top);
-    return result; 
+    return result;
 }
 /*
  * feat_get_bitmap(const char *bitmap_name)
  * @function: Extracts an image from a specific feature.
- */ 
+ */
 ALPHA_SPRITE *SkinFeature::feat_get_bitmap(const char *bitmap_name)
 {
     int stack_top = lua_gettop(L);
     // Enter 'GUITable' table
     lua_pushstring(L, "GuiTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [Screen] table
     lua_pushstring(L, m_fscreen);
     lua_gettable(L, -2);
@@ -264,7 +264,7 @@ int SkinInterface::skin_get_array_int(uint32 item_index, const char *property_na
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -294,7 +294,7 @@ std::string SkinInterface::skin_get_string(uint32 item_index, const char *proper
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -313,7 +313,7 @@ std::string SkinInterface::skin_get_string(uint32 item_index, const char *proper
 
 
 
-BITMAP *SkinFeature::bg_norm() 
+BITMAP *SkinFeature::bg_norm()
 {
     BITMAP *tmp_bmp;
     /* Initialised at default background image resolution */
@@ -340,7 +340,7 @@ BITMAP *SkinFeature::bg_over()
     return tmp_bmp;
 }
 
-int SkinFeature::get_x1() 
+int SkinFeature::get_x1()
 {
     int ret_val;
     int relative;
@@ -359,7 +359,7 @@ int SkinFeature::get_x1()
     return ret_val;
 }
 
-int SkinFeature::get_y1() 
+int SkinFeature::get_y1()
 {
     int ret_val;
     int relative;
@@ -378,21 +378,21 @@ int SkinFeature::get_y1()
     return ret_val;
 }
 
-int SkinFeature::get_x2() 
+int SkinFeature::get_x2()
 {
     int ret_val;
     ret_val = get_width() + get_x1();
     return ret_val;
 }
 
-int SkinFeature::get_y2() 
+int SkinFeature::get_y2()
 {
     int ret_val;
     ret_val = get_height() + get_y1();
     return ret_val;
 }
 
-int SkinFeature::get_width() 
+int SkinFeature::get_width()
 {
     int ret_val;
     int relative;
@@ -406,7 +406,7 @@ int SkinFeature::get_width()
     return ret_val;
 }
 
-int SkinFeature::get_height() 
+int SkinFeature::get_height()
 {
     int ret_val;
     int relative;
@@ -420,7 +420,7 @@ int SkinFeature::get_height()
     return ret_val;
 }
 
-int SkinFeature::get_padding() 
+int SkinFeature::get_padding()
 {
     int ret_val;
     int relative;
@@ -434,42 +434,42 @@ int SkinFeature::get_padding()
     return ret_val;
 }
 
-int SkinFeature::get_pd_x1() 
+int SkinFeature::get_pd_x1()
 {
     int ret_val;
     ret_val = get_padding() + get_x1();
     return ret_val;
 }
 
-int SkinFeature::get_pd_y1() 
+int SkinFeature::get_pd_y1()
 {
     int ret_val;
     ret_val = get_padding() + get_y1();
     return ret_val;
 }
 
-int SkinFeature::get_pd_x2() 
+int SkinFeature::get_pd_x2()
 {
     int ret_val;
     ret_val = get_x2() - get_padding();
     return ret_val;
 }
 
-int SkinFeature::get_pd_y2() 
+int SkinFeature::get_pd_y2()
 {
     int ret_val;
     ret_val = get_y2() - get_padding();
     return ret_val;
 }
 
-int SkinFeature::get_pd_width() 
+int SkinFeature::get_pd_width()
 {
     int ret_val;
     ret_val =  get_width() - 2 * get_padding();
     return ret_val;
 }
 
-int SkinFeature::get_pd_height() 
+int SkinFeature::get_pd_height()
 {
     int ret_val;
     ret_val = get_height() - 2 * get_padding();
@@ -484,5 +484,5 @@ int SkinFeature::feat_make_color(const char *property_name)
     r_val = feat_get_color_int(property_name, 1);
     g_val = feat_get_color_int(property_name, 2);
     b_val = feat_get_color_int(property_name, 3);
-    return makecol(r_val,g_val,b_val);
+    return makecol(r_val, g_val, b_val);
 }

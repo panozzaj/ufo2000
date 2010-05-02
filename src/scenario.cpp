@@ -36,7 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Scenario, "Scenario");
 
-Scenario::Scenario (int sc_type)
+Scenario::Scenario(int sc_type)
 {
     type = sc_type; // To prevent unitialized 'type' variable in new_scenario;
     // No need of it when SC_SABOTAGE is enabled again.
@@ -68,7 +68,7 @@ Scenario::Scenario (int sc_type)
     new_scenario(sc_type);
 }
 
-void Scenario::init_deathmatch ()
+void Scenario::init_deathmatch()
 {
     name[SC_DEATHMATCH] = ("Deathmatch");
 
@@ -79,7 +79,7 @@ void Scenario::init_deathmatch ()
     options[SC_DEATHMATCH][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_escape ()
+void Scenario::init_escape()
 {
     name[SC_ESCAPE] = ("Escape");
 
@@ -97,7 +97,7 @@ void Scenario::init_escape ()
     options[SC_ESCAPE][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_sabotage ()
+void Scenario::init_sabotage()
 {
     name[SC_SABOTAGE] = ("Diversion");
 
@@ -115,7 +115,7 @@ void Scenario::init_sabotage ()
     options[SC_SABOTAGE][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_control ()
+void Scenario::init_control()
 {
     name[SC_CONTROL] = ("Control");
 
@@ -130,7 +130,7 @@ void Scenario::init_control ()
     options[SC_CONTROL][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_assassin ()
+void Scenario::init_assassin()
 {
     name[SC_ASSASSIN] = ("Assassination");
 
@@ -147,7 +147,7 @@ void Scenario::init_assassin ()
     options[SC_ASSASSIN][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_hold ()
+void Scenario::init_hold()
 {
     name[SC_HOLD] = ("Hold");
 
@@ -164,7 +164,7 @@ void Scenario::init_hold ()
     options[SC_HOLD][2] = new Option(OPT_HIDDEN, 0);
 }
 
-void Scenario::init_break ()
+void Scenario::init_break()
 {
     name[SC_BREAK] = ("Breakthrough");
 
@@ -183,7 +183,7 @@ void Scenario::init_break ()
     options[SC_BREAK][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_capture ()
+void Scenario::init_capture()
 {
     name[SC_CAPTURE] = ("Capture");
 
@@ -201,7 +201,7 @@ void Scenario::init_capture ()
     options[SC_CAPTURE][2] = new Option(OPT_NONE);
 }
 
-void Scenario::init_search ()
+void Scenario::init_search()
 {
     name[SC_SEARCH] = ("Search and destroy");
 
@@ -211,13 +211,13 @@ void Scenario::init_search ()
     briefing_left[SC_SEARCH][3] = briefing_right[SC_SEARCH][3] = _("depending on the closest map feature.            ");
     briefing_left[SC_SEARCH][4] = briefing_right[SC_SEARCH][4] = _("                                                 ");
     briefing_left[SC_SEARCH][5] = briefing_right[SC_SEARCH][5] = _("Map exploration level 0 (unexplored) recommended.");
-     
+
     options[SC_SEARCH][0] = new Option(OPT_NONE);
     options[SC_SEARCH][1] = new Option(OPT_NONE);
     options[SC_SEARCH][2] = new Option(OPT_NONE);
 }
 
-void Scenario::new_scenario (int sc_type)
+void Scenario::new_scenario(int sc_type)
 {
     //!!!
     //Diversion/Sabotage temporary disabled
@@ -246,7 +246,7 @@ void Scenario::new_scenario (int sc_type)
     update_deploy_type();
 }
 
-bool Scenario::new_scenario (std::string sc_name)
+bool Scenario::new_scenario(std::string sc_name)
 {
     for (int i = 0; i < SCENARIO_NUMBER; i++) {
         if (sc_name == name[i]) {
@@ -258,37 +258,37 @@ bool Scenario::new_scenario (std::string sc_name)
     return false;
 }
 
-void Scenario::start ()
+void Scenario::start()
 {
     int i;
     // Set initial visibility level
     switch (rules[3]) {
         case 0: // No initially visible cells
-        break;
+            break;
 
         case 1: // Deployment areas visible
-        for (i = 0; i < mapdata.z_size; i++) {
-            for (int j = 0; j < 10 * mapdata.x_size; j++) {
-                for (int k = 0; k < 10 * mapdata.y_size; k++) {
-                    if (is_deploy_zone(deploy_type[0], j, k))
-                        p1->set_seen(i, j, k, 1);
-                    if (is_deploy_zone(deploy_type[1], j, k))
-                        p2->set_seen(i, j, k, 1);
+            for (i = 0; i < mapdata.z_size; i++) {
+                for (int j = 0; j < 10 * mapdata.x_size; j++) {
+                    for (int k = 0; k < 10 * mapdata.y_size; k++) {
+                        if (is_deploy_zone(deploy_type[0], j, k))
+                            p1->set_seen(i, j, k, 1);
+                        if (is_deploy_zone(deploy_type[1], j, k))
+                            p2->set_seen(i, j, k, 1);
+                    }
                 }
             }
-        }
-        break;
+            break;
 
         case 2: // Entire map visible
-        for (i = 0; i < mapdata.z_size; i++) {
-            for (int j = 0; j < 10 * mapdata.x_size; j++) {
-                for (int k = 0; k < 10 * mapdata.y_size; k++) {
-                    platoon_local->set_seen(i, j, k, 1);
-                    platoon_remote->set_seen(i, j, k, 1);
+            for (i = 0; i < mapdata.z_size; i++) {
+                for (int j = 0; j < 10 * mapdata.x_size; j++) {
+                    for (int k = 0; k < 10 * mapdata.y_size; k++) {
+                        platoon_local->set_seen(i, j, k, 1);
+                        platoon_remote->set_seen(i, j, k, 1);
+                    }
                 }
             }
-        }
-        break;
+            break;
     }
 
     if (type == SC_CONTROL) {
@@ -297,7 +297,7 @@ void Scenario::start ()
     }
 }
 
-void Scenario::new_coords ()
+void Scenario::new_coords()
 {
     turn_hold[0] = turn_hold[1] = -1;
 
@@ -305,78 +305,78 @@ void Scenario::new_coords ()
 
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        break;
+            break;
 
         case SC_SABOTAGE:
-        x1 = (rand() % ((mapdata.x_size - 2) * 10)) + 20;
-        x2 = (rand() % ((mapdata.x_size - 2) * 10)) + 20;
-        y1 = rand() % (mapdata.y_size * 10);
-        y2 = rand() % (mapdata.y_size * 10);
+            x1 = (rand() % ((mapdata.x_size - 2) * 10)) + 20;
+            x2 = (rand() % ((mapdata.x_size - 2) * 10)) + 20;
+            y1 = rand() % (mapdata.y_size * 10);
+            y2 = rand() % (mapdata.y_size * 10);
 
-        return;
+            return;
 
         case SC_CONTROL:
-        x1 = (mapdata.x_size * 10 - 10) / 2;
-        x2 = x1 + 10;
-        y1 = (mapdata.y_size * 10 - 10) / 2;
-        y2 = y1 + 10;
-        return;
+            x1 = (mapdata.x_size * 10 - 10) / 2;
+            x2 = x1 + 10;
+            y1 = (mapdata.y_size * 10 - 10) / 2;
+            y2 = y1 + 10;
+            return;
 
         case SC_ASSASSIN:
-        break;
+            break;
 
         case SC_HOLD:
-        break;
+            break;
 
         case SC_BREAK:
-        break;
-        
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
 }
 
-int Scenario::check_conditions ()
+int Scenario::check_conditions()
 {
     int n = 0;
 
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        n = conditions_escape();
-        break;
+            n = conditions_escape();
+            break;
 
         case SC_SABOTAGE:
-        n = conditions_sabotage();
-        break;
+            n = conditions_sabotage();
+            break;
 
         case SC_CONTROL:
-        n = conditions_control();
-        break;
+            n = conditions_control();
+            break;
 
         case SC_ASSASSIN:
-        n = conditions_assassin();
-        break;
+            n = conditions_assassin();
+            break;
 
         case SC_HOLD:
-        n = conditions_hold();
-        break;
+            n = conditions_hold();
+            break;
 
         case SC_BREAK:
-        n = conditions_break();
-        break;
+            n = conditions_break();
+            break;
 
         case SC_CAPTURE:
-        n = conditions_capture();
-        break;
-        
+            n = conditions_capture();
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
     if (n != 0) return n;
 
@@ -386,7 +386,7 @@ int Scenario::check_conditions ()
     return 0;
 }
 
-int Scenario::conditions_common ()
+int Scenario::conditions_common()
 {
     int win = 0, loss = 0;
 
@@ -413,7 +413,7 @@ int Scenario::conditions_common ()
     return win + loss;
 }
 
-int Scenario::conditions_escape ()
+int Scenario::conditions_escape()
 {
     int win = 0, loss = 0;
 
@@ -439,7 +439,7 @@ int Scenario::conditions_escape ()
     return win + loss;
 }
 
-int Scenario::conditions_sabotage ()
+int Scenario::conditions_sabotage()
 {
     int win = 0, loss = 0;
 
@@ -478,7 +478,7 @@ int Scenario::conditions_sabotage ()
     return win + loss;
 }
 
-int Scenario::conditions_control ()
+int Scenario::conditions_control()
 {
     int win = 0, loss = 0;
 
@@ -513,7 +513,7 @@ int Scenario::conditions_control ()
     if (temp1 == temp2) {
         turn_hold[0] = -1;
         turn_hold[1] = -1;
-        g_console->printf(COLOR_RED_BROWN02, _("Nobody is controlling the target area.") );
+        g_console->printf(COLOR_RED_BROWN02, _("Nobody is controlling the target area."));
     }
     // The "- 2" in the following lines means that there will be no watch
     // mode in hotseat when one of the players wins - he wins immediately
@@ -530,7 +530,7 @@ int Scenario::conditions_control ()
     return win + loss;
 }
 
-int Scenario::conditions_assassin ()
+int Scenario::conditions_assassin()
 {
     int win = 0, loss = 0;
 
@@ -544,7 +544,7 @@ int Scenario::conditions_assassin ()
     return win + loss;
 }
 
-int Scenario::conditions_hold ()
+int Scenario::conditions_hold()
 {
     int win = 0, loss = 0;
 
@@ -567,7 +567,7 @@ int Scenario::conditions_hold ()
     return win + loss;
 }
 
-int Scenario::conditions_break ()
+int Scenario::conditions_break()
 {
     int win = 0, loss = 0;
 
@@ -600,7 +600,7 @@ int Scenario::conditions_break ()
     return win + loss;
 }
 
-int Scenario::conditions_capture ()
+int Scenario::conditions_capture()
 {
     int win = 0, loss = 0;
 
@@ -626,75 +626,75 @@ int Scenario::conditions_capture ()
     return win + loss;
 }
 
-bool Scenario::is_target_on_minimap (int lev, int col, int row, Map *m_map)
+bool Scenario::is_target_on_minimap(int lev, int col, int row, Map *m_map)
 {
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        return minimap_escape(lev, col, row, m_map);
-        break;
+            return minimap_escape(lev, col, row, m_map);
+            break;
 
         case SC_SABOTAGE:
-        return minimap_sabotage(lev, col, row);
-        break;
+            return minimap_sabotage(lev, col, row);
+            break;
 
         case SC_CONTROL:
-        break;
+            break;
 
         case SC_ASSASSIN:
-        return minimap_assassin(lev, col, row, m_map);
-        break;
+            return minimap_assassin(lev, col, row, m_map);
+            break;
 
         case SC_HOLD:
-        break;
+            break;
 
         case SC_BREAK:
-        break;
+            break;
 
         case SC_CAPTURE:
-        return minimap_capture(lev, col, row, m_map);
-        break;
-        
+            return minimap_capture(lev, col, row, m_map);
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
 
     return false;
 }
 
-void Scenario::draw_minimap_rectangle (BITMAP *bmp, int x, int y)
+void Scenario::draw_minimap_rectangle(BITMAP *bmp, int x, int y)
 {
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        break;
+            break;
 
         case SC_SABOTAGE:
-        break;
+            break;
 
         case SC_CONTROL:
-        minimap_control(bmp, x, y);
-        break;
+            minimap_control(bmp, x, y);
+            break;
 
         case SC_ASSASSIN:
-        break;
+            break;
 
         case SC_HOLD:
-        break;
+            break;
 
         case SC_BREAK:
-        break;
-        
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
 }
 
-bool Scenario::minimap_escape (int lev, int col, int row, Map *m_map)
+bool Scenario::minimap_escape(int lev, int col, int row, Map *m_map)
 {
     if (m_map->man(lev, col, row) != NULL) {
         if (m_map->man(lev, col, row)->get_NID() == 1000 && p1->belong(m_map->man(lev, col, row)) && p1 == platoon_remote)
@@ -706,7 +706,7 @@ bool Scenario::minimap_escape (int lev, int col, int row, Map *m_map)
     return false;
 }
 
-bool Scenario::minimap_sabotage (int lev, int col, int row)
+bool Scenario::minimap_sabotage(int lev, int col, int row)
 {
     if (lev == 0 && col == x1 && row == x1)
         return true;
@@ -716,12 +716,12 @@ bool Scenario::minimap_sabotage (int lev, int col, int row)
     return false;
 }
 
-void Scenario::minimap_control (BITMAP *bmp, int x, int y)
+void Scenario::minimap_control(BITMAP *bmp, int x, int y)
 {
     rect(bmp, x + x1 * 4, y + y1 * 4, x + x2 * 4, y + y2 * 4, COLOR_WHITE);
 }
 
-bool Scenario::minimap_assassin (int lev, int col, int row, Map *m_map)
+bool Scenario::minimap_assassin(int lev, int col, int row, Map *m_map)
 {
     if (m_map->man(lev, col, row) != NULL) {
         if (m_map->man(lev, col, row)->get_NID() == 1000 && p2->belong(m_map->man(lev, col, row)) && p2 == platoon_remote)
@@ -733,7 +733,7 @@ bool Scenario::minimap_assassin (int lev, int col, int row, Map *m_map)
     return false;
 }
 
-bool Scenario::minimap_capture (int lev, int col, int row, Map *m_map)
+bool Scenario::minimap_capture(int lev, int col, int row, Map *m_map)
 {
     if (m_map->man(lev, col, row) != NULL) {
         if (m_map->man(lev, col, row)->get_NID() == 1000 && p2->belong(m_map->man(lev, col, row)) && p2 == platoon_remote)
@@ -745,43 +745,43 @@ bool Scenario::minimap_capture (int lev, int col, int row, Map *m_map)
     return false;
 }
 
-bool Scenario::is_correct_platoon (long points, Platoon *platoon, Soldier *first_soldier, PanPos pos, uint32 *buf, int len, int num_of_men_sel)
+bool Scenario::is_correct_platoon(long points, Platoon *platoon, Soldier *first_soldier, PanPos pos, uint32 *buf, int len, int num_of_men_sel)
 {
     bool n = true;
 
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        n = platoon_escape(platoon, pos, first_soldier);
-        break;
+            n = platoon_escape(platoon, pos, first_soldier);
+            break;
 
         case SC_SABOTAGE:
-        n = platoon_sabotage(pos, buf, len);
-        break;
+            n = platoon_sabotage(pos, buf, len);
+            break;
 
         case SC_CONTROL:
-        break;
+            break;
 
         case SC_ASSASSIN:
-        n = platoon_assassin(platoon, pos, first_soldier);
-        break;
+            n = platoon_assassin(platoon, pos, first_soldier);
+            break;
 
         case SC_HOLD:
-        n = platoon_hold (pos, num_of_men_sel);
-        break;
+            n = platoon_hold(pos, num_of_men_sel);
+            break;
 
         case SC_BREAK:
-        n = platoon_break (pos, num_of_men_sel);
-        break;
+            n = platoon_break(pos, num_of_men_sel);
+            break;
 
         case SC_CAPTURE:
-        n = platoon_capture (platoon, first_soldier, pos, buf, len);
-        break;
-        
+            n = platoon_capture(platoon, first_soldier, pos, buf, len);
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
 
     if (n == false) return n;
@@ -792,7 +792,7 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, Soldier *first
     return true;
 }
 
-bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos)
+bool Scenario::platoon_common(long points, Platoon *platoon, PanPos pos)
 {
     if (points > rules[1] * 1000) {
         g_console->printf(COLOR_RED04, _("%d points limit exceeded!"), rules[1] * 1000);
@@ -808,8 +808,8 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos)
             std::vector<std::string> ammo;
             Item::get_ammo_list(items[j]->name(), ammo);
             if (ammo.size() > 0 && !items[j]->haveclip()) {
-                g_console->printf(COLOR_RED04, _("%s does not have his %s loaded!"), 
-                    platoon->findnum(i)->md.Name, items[j]->name().c_str());
+                g_console->printf(COLOR_RED04, _("%s does not have his %s loaded!"),
+                                  platoon->findnum(i)->md.Name, items[j]->name().c_str());
                 return false;
             }
         }
@@ -830,11 +830,11 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos)
     return true;
 }
 
-bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, Soldier *first_soldier)
+bool Scenario::platoon_escape(Platoon *platoon, PanPos pos, Soldier *first_soldier)
 {
     if (!options[SC_ESCAPE][0]->value && pos == POS_LEFT) {
         if (first_soldier && first_soldier->has_twohanded_weapon()) {
-            g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!") );
+            g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!"));
             return false;
         }
     }
@@ -842,7 +842,7 @@ bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, Soldier *first_sold
     return true;
 }
 
-bool Scenario::platoon_sabotage (PanPos pos, uint32 *buf, int len)
+bool Scenario::platoon_sabotage(PanPos pos, uint32 *buf, int len)
 {
     if (pos == POS_LEFT) {
         int he_num = 0;
@@ -853,7 +853,7 @@ bool Scenario::platoon_sabotage (PanPos pos, uint32 *buf, int len)
         }
 
         if (he_num < 2) {
-            g_console->printf(COLOR_RED04, _("You must have at least 2 high explosives.") );
+            g_console->printf(COLOR_RED04, _("You must have at least 2 high explosives."));
             return false;
         }
     }
@@ -861,7 +861,7 @@ bool Scenario::platoon_sabotage (PanPos pos, uint32 *buf, int len)
     return true;
 }
 
-bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, Soldier *first_soldier)
+bool Scenario::platoon_assassin(Platoon *platoon, PanPos pos, Soldier *first_soldier)
 {
     if (!options[SC_ASSASSIN][0]->value && pos == POS_RIGHT) {
         if (first_soldier && first_soldier->has_twohanded_weapon()) {
@@ -873,7 +873,7 @@ bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, Soldier *first_so
     return true;
 }
 
-bool Scenario::platoon_hold (PanPos pos, int num_of_men_sel)
+bool Scenario::platoon_hold(PanPos pos, int num_of_men_sel)
 {
     if (pos == POS_LEFT) {
         options[SC_HOLD][2]->value = num_of_men_sel;
@@ -883,7 +883,7 @@ bool Scenario::platoon_hold (PanPos pos, int num_of_men_sel)
     return true;
 }
 
-bool Scenario::platoon_break (PanPos pos, int num_of_men_sel)
+bool Scenario::platoon_break(PanPos pos, int num_of_men_sel)
 {
     if (pos == POS_LEFT) {
         options[SC_BREAK][1]->value = num_of_men_sel;
@@ -893,7 +893,7 @@ bool Scenario::platoon_break (PanPos pos, int num_of_men_sel)
     return true;
 }
 
-bool Scenario::platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos pos, uint32 *buf, int len)
+bool Scenario::platoon_capture(Platoon *platoon, Soldier *first_soldier, PanPos pos, uint32 *buf, int len)
 {
     if (pos == POS_LEFT) {
         bool stun_weapon = false;
@@ -904,7 +904,7 @@ bool Scenario::platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos
         }
 
         if (!stun_weapon) {
-            g_console->printf(COLOR_RED04, _("You must have at least one stun weapon.") );
+            g_console->printf(COLOR_RED04, _("You must have at least one stun weapon."));
             return false;
         }
     } else {
@@ -919,161 +919,161 @@ bool Scenario::platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos
     return true;
 }
 
-bool Scenario::is_deploy_zone (DeployType dep, int x, int y)
+bool Scenario::is_deploy_zone(DeployType dep, int x, int y)
 {
     switch (dep) {
         case DEP_LEFT:
-        return x < 10;
+            return x < 10;
 
         case DEP_RIGHT:
-        return x >= (mapdata.x_size - 1) * 10;
+            return x >= (mapdata.x_size - 1) * 10;
 
         case DEP_CENTER:
-        return x >= (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y >= (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20;
+            return x >= (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y >= (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20;
 
         case DEP_SURROUND:
-        return x < 5 || x >= mapdata.x_size * 10 - 5 || y < 5 || y >= mapdata.y_size * 10 - 5;
-        
+            return x < 5 || x >= mapdata.x_size * 10 - 5 || y < 5 || y >= mapdata.y_size * 10 - 5;
+
         case DEP_ALL:
-        return true;
+            return true;
     }
 
     return false;
 }
 
-bool Scenario::is_correct_place (PanPos pos, int x, int y)
+bool Scenario::is_correct_place(PanPos pos, int x, int y)
 {
-    return is_deploy_zone (pos == POS_LEFT ? deploy_type[0] : deploy_type[1], x, y);
+    return is_deploy_zone(pos == POS_LEFT ? deploy_type[0] : deploy_type[1], x, y);
 }
 
-void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)
+void Scenario::draw_deploy_zone(PanPos pos, int x, int y, int color)
 {
     switch (pos == POS_LEFT ? deploy_type[0] : deploy_type[1]) {
         case DEP_LEFT:
-        rect(screen2, x, y, x + 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
-        break;
+            rect(screen2, x, y, x + 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
+            break;
 
         case DEP_RIGHT:
-        rect(screen2, x + (mapdata.x_size - 1) * 10 * 4, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-        break;
+            rect(screen2, x + (mapdata.x_size - 1) * 10 * 4, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+            break;
 
         case DEP_CENTER:
-        rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
-        break;
+            rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
+            break;
 
         case DEP_SURROUND:
-        rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-        rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
-        break;
-        
+            rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+            rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+            break;
+
         case DEP_ALL:
-        rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-        break;
+            rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+            break;
     }
 }
 
-void Scenario::update_deploy_type ()
+void Scenario::update_deploy_type()
 {
     switch (type) {
         case SC_DEATHMATCH:
-        deploy_type[0] = DEP_LEFT;
-        deploy_type[1] = DEP_RIGHT;
-        break;
+            deploy_type[0] = DEP_LEFT;
+            deploy_type[1] = DEP_RIGHT;
+            break;
 
         case SC_ESCAPE:
-        deploy_type[0] = DEP_LEFT;
-        deploy_type[1] = DEP_RIGHT;
-        break;
+            deploy_type[0] = DEP_LEFT;
+            deploy_type[1] = DEP_RIGHT;
+            break;
 
         case SC_SABOTAGE:
-        deploy_type[0] = DEP_LEFT;
-        deploy_type[1] = DEP_RIGHT;
-        break;
+            deploy_type[0] = DEP_LEFT;
+            deploy_type[1] = DEP_RIGHT;
+            break;
 
         case SC_CONTROL:
-        deploy_type[0] = DEP_LEFT;
-        deploy_type[1] = DEP_RIGHT;
-        break;
+            deploy_type[0] = DEP_LEFT;
+            deploy_type[1] = DEP_RIGHT;
+            break;
 
         case SC_ASSASSIN:
-        deploy_type[0] = DEP_SURROUND;
-        deploy_type[1] = DEP_CENTER;
-        break;
+            deploy_type[0] = DEP_SURROUND;
+            deploy_type[1] = DEP_CENTER;
+            break;
 
         case SC_HOLD:
-        if (options[SC_HOLD][1]->value) {
-            deploy_type[0] = DEP_CENTER;
-            deploy_type[1] = DEP_SURROUND;
-        } else {
-            deploy_type[0] = DEP_LEFT;
-            deploy_type[1] = DEP_RIGHT;
-        }
-        break;
+            if (options[SC_HOLD][1]->value) {
+                deploy_type[0] = DEP_CENTER;
+                deploy_type[1] = DEP_SURROUND;
+            } else {
+                deploy_type[0] = DEP_LEFT;
+                deploy_type[1] = DEP_RIGHT;
+            }
+            break;
 
         case SC_BREAK:
-        if (options[SC_BREAK][0]->value) {
-            deploy_type[0] = DEP_CENTER;
-            deploy_type[1] = DEP_SURROUND;
-        } else {
-            deploy_type[0] = DEP_LEFT;
-            deploy_type[1] = DEP_RIGHT;
-        }
-        break;
+            if (options[SC_BREAK][0]->value) {
+                deploy_type[0] = DEP_CENTER;
+                deploy_type[1] = DEP_SURROUND;
+            } else {
+                deploy_type[0] = DEP_LEFT;
+                deploy_type[1] = DEP_RIGHT;
+            }
+            break;
 
         case SC_CAPTURE:
-        deploy_type[0] = DEP_LEFT;
-        deploy_type[1] = DEP_RIGHT;
-        break;
-        
+            deploy_type[0] = DEP_LEFT;
+            deploy_type[1] = DEP_RIGHT;
+            break;
+
         case SC_SEARCH:
-        deploy_type[0] = DEP_ALL;
-        deploy_type[1] = DEP_ALL;
-        break;
+            deploy_type[0] = DEP_ALL;
+            deploy_type[1] = DEP_ALL;
+            break;
     }
 }
 
-bool Scenario::can_use (Soldier *sld, Item *it)
+bool Scenario::can_use(Soldier *sld, Item *it)
 {
     switch (type) {
         case SC_DEATHMATCH:
-        break;
+            break;
 
         case SC_ESCAPE:
-        return use_escape(sld, it);
-        break;
+            return use_escape(sld, it);
+            break;
 
         case SC_SABOTAGE:
-        break;
+            break;
 
         case SC_CONTROL:
-        break;
+            break;
 
         case SC_ASSASSIN:
-        return use_assassin(sld, it);
-        break;
+            return use_assassin(sld, it);
+            break;
 
         case SC_HOLD:
-        break;
+            break;
 
         case SC_BREAK:
-        break;
+            break;
 
         case SC_CAPTURE:
-        break;
-        
+            break;
+
         case SC_SEARCH:
-        break;
+            break;
     }
 
     return true;
 }
 
-bool Scenario::use_escape (Soldier *sld, Item *it)
+bool Scenario::use_escape(Soldier *sld, Item *it)
 {
     if (!options[SC_ESCAPE][0]->value) {
         if (sld->get_NID() == 1000) {
             if (it->obdata_twoHanded()) {
-                g_console->printf(COLOR_RED04, _("Leader can't use two-handed weapons.") );
+                g_console->printf(COLOR_RED04, _("Leader can't use two-handed weapons."));
                 return false;
             }
         }
@@ -1082,12 +1082,12 @@ bool Scenario::use_escape (Soldier *sld, Item *it)
     return true;
 }
 
-bool Scenario::use_assassin (Soldier *sld, Item *it)
+bool Scenario::use_assassin(Soldier *sld, Item *it)
 {
     if (!options[SC_ASSASSIN][0]->value) {
         if (sld->get_NID() == 2000) {
             if (it->obdata_twoHanded()) {
-                g_console->printf(COLOR_RED04, _("Leader can't use two-handed weapons.") );
+                g_console->printf(COLOR_RED04, _("Leader can't use two-handed weapons."));
                 return false;
             }
         }

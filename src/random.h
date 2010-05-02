@@ -41,7 +41,7 @@ private:
     REAL m_normalsaved;
     bool m_iff, m_normalready;
     void next() {
-        ASSERT (m_iff);
+        ASSERT(m_iff);
         if (++m_inext == 56) m_inext = 1;
         if (++m_inextp == 56) m_inextp = 1;
         m_j = m_a[m_inext] - m_a[m_inextp];
@@ -57,7 +57,7 @@ public:
     REAL getNormal(REAL varsqrt);
     void init(long init_num, long preiters = 0);
     void save(long &state_init, long &state_iters, bool &state_normalready, REAL &state_normalsaved) {
-        ASSERT (m_iff);
+        ASSERT(m_iff);
         state_init = m_init;
         state_iters = m_iters;
         state_normalready = m_normalready;

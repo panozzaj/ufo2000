@@ -29,35 +29,35 @@ class Soldier;
 #define EXPLOITEMS 100
 
 /**
- * Explosives management 
+ * Explosives management
  *
  * @ingroup battlescape
  */
 class Explosive: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Explosive);
+    DECLARE_PERSISTENCE(Explosive);
 private:
-	Item *item[EXPLOITEMS];
-	int delaytime[EXPLOITEMS];
-	int owner[EXPLOITEMS]; // SID of the soldier who threw it - 0 if none
+    Item *item[EXPLOITEMS];
+    int delaytime[EXPLOITEMS];
+    int owner[EXPLOITEMS]; // SID of the soldier who threw it - 0 if none
 
 public:
-	Explosive();
-	void reset();
+    Explosive();
+    void reset();
 
-	void add(Soldier *man, Item *it, int delay_time);
-	void remove(Item *it);
-	
-	int get_owner(Item *it);
+    void add(Soldier *man, Item *it, int delay_time);
+    void remove(Item *it);
 
-	void step(int crc);      // -1 if local
-	int detonate(int SID, Item *it);
-	int detonate(int SID, int lev, int col, int row, int iplace, int ix, int iy);
-	void check_for_detonation(int isprox, Item *it);
-	int on_hand(Item *it);
+    int get_owner(Item *it);
 
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
+    void step(int crc);      // -1 if local
+    int detonate(int SID, Item *it);
+    int detonate(int SID, int lev, int col, int row, int iplace, int ix, int iy);
+    void check_for_detonation(int isprox, Item *it);
+    int on_hand(Item *it);
+
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 };
 
 #endif

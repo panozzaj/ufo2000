@@ -30,22 +30,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 SPK::SPK()
 {
-	m_dat = NULL;
-	m_datlen = 0;
+    m_dat = NULL;
+    m_datlen = 0;
 };
 
 SPK::SPK(const char *pckfname)
 {
-	m_dat = NULL;
-	m_datlen = 0;
+    m_dat = NULL;
+    m_datlen = 0;
 
-	load(pckfname);
+    load(pckfname);
 }
 
 SPK::~SPK()
 {
-	if (m_dat != NULL)
-		delete [] m_dat;
+    if (m_dat != NULL)
+        delete [] m_dat;
 }
 
 /**
@@ -53,16 +53,16 @@ SPK::~SPK()
  */
 void SPK::load(const char *fname)
 {
-	std::string fullname = F(fname);
-	if (!exists(fullname.c_str())) {
-		fullname = F("$(ufo2000)/arts/empty.spk");
-	}
-	m_datlen = file_size(fullname.c_str());
-	if (m_dat != NULL) delete [] m_dat;
-	m_dat = new unsigned char[m_datlen];
-	PACKFILE *pfh = pack_fopen(fullname.c_str(), F_READ);
-	m_datlen = pack_fread(m_dat, m_datlen, pfh);
-	pack_fclose(pfh);
+    std::string fullname = F(fname);
+    if (!exists(fullname.c_str())) {
+        fullname = F("$(ufo2000)/arts/empty.spk");
+    }
+    m_datlen = file_size(fullname.c_str());
+    if (m_dat != NULL) delete [] m_dat;
+    m_dat = new unsigned char[m_datlen];
+    PACKFILE *pfh = pack_fopen(fullname.c_str(), F_READ);
+    m_datlen = pack_fread(m_dat, m_datlen, pfh);
+    pack_fclose(pfh);
 }
 
 /**
@@ -70,30 +70,30 @@ void SPK::load(const char *fname)
  */
 void SPK::show(BITMAP *_dest, int _x, int _y)
 {
-	BITMAP *bmp = spk2bmp(0);
-	draw_sprite(_dest, bmp, _x, _y);
-	destroy_bitmap(bmp);
+    BITMAP *bmp = spk2bmp(0);
+    draw_sprite(_dest, bmp, _x, _y);
+    destroy_bitmap(bmp);
 }
 void SPK::show_pal2(BITMAP *_dest, int _x, int _y)
 {
-	BITMAP *bmp = spk2bmp(1);
-	draw_sprite(_dest, bmp, _x, _y);
-	destroy_bitmap(bmp);
+    BITMAP *bmp = spk2bmp(1);
+    draw_sprite(_dest, bmp, _x, _y);
+    destroy_bitmap(bmp);
 }
 
 void SPK::show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h)
 {
-	BITMAP *bmp = spk2bmp(0);
-	stretch_blit(bmp, _dest, 0, 0, 320, 200, 0, 0, _w, _h);
-	destroy_bitmap(bmp);
+    BITMAP *bmp = spk2bmp(0);
+    stretch_blit(bmp, _dest, 0, 0, 320, 200, 0, 0, _w, _h);
+    destroy_bitmap(bmp);
 }
 
-// ?? same as SPK::show() 
+// ?? same as SPK::show()
 void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 {
-	BITMAP *bmp = spk2bmp(0);
-	draw_sprite(_dest, bmp, _x, _y);
-	destroy_bitmap(bmp);
+    BITMAP *bmp = spk2bmp(0);
+    draw_sprite(_dest, bmp, _x, _y);
+    destroy_bitmap(bmp);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 /// 2 bytes: size (value should be multiplied by 2 to get size)            ///
 //////////////////////////////////////////////////////////////////////////////
 
-// ?? Format of .scr - files 
+// ?? Format of .scr - files
 
 /**
  * Convert graphics from SPK-format to bitmap
@@ -121,62 +121,62 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
  */
 BITMAP *SPK::spk2bmp(int _pal)
 {
-	BITMAP *bmp = create_bitmap(320, 200);
-	if (_pal == 1){
-		clear_to_color(bmp, xcom1_research_color(0));
-	}else{
-		clear_to_color(bmp, xcom_color(0));
-	}
-	long i = 0, j = 0;
+    BITMAP *bmp = create_bitmap(320, 200);
+    if (_pal == 1) {
+        clear_to_color(bmp, xcom1_research_color(0));
+    } else {
+        clear_to_color(bmp, xcom_color(0));
+    }
+    long i = 0, j = 0;
 
 //	Process .scr files
-	if (m_datlen == 64000 && (intel_uint16(*(uint16 *)m_dat) & 0xFFF0) != 0xFFF0) {
-		long size = 64000;
-		while (size--) {
-			if (_pal == 1){
-				putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
-			}else{
-				putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
-			}
-			j++;
-		}
-		return bmp;
-	}
+    if (m_datlen == 64000 && (intel_uint16(*(uint16 *)m_dat) & 0xFFF0) != 0xFFF0) {
+        long size = 64000;
+        while (size--) {
+            if (_pal == 1) {
+                putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
+            } else {
+                putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+            }
+            j++;
+        }
+        return bmp;
+    }
 
 //	Process .spk files
-	while (true) {
-		if (!(i + 2 <= m_datlen)) return bmp;
-		switch (intel_uint16(*(uint16 *)(m_dat + i))) {
-			case 0xFFFF: {	// Skip-marker
-				if (!(i + 4 <= m_datlen)) return bmp;
-				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
-				i += 4;
-				if (!(j + size <= 64000)) return bmp;
-				j += size;
-				break;
-			}
-			case 0xFFFE: { // Marker for normal data-block
-				if (!(i + 4 <= m_datlen)) 
-					return bmp;
-				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
-				i += 4;
-				if (!(i + size <= m_datlen && j + size <= 64000)) 
-					return bmp;
-				while (size--) {
-					if (_pal == 1){
-						putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
-					}else{
-						putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
-					}
-					j++;
-				}
-				break;
-			}
-			case 0xFFFD:	// End-marker
-				return bmp;
-			default:
-				// error decoding SPK file
-				return bmp;
-		}
-	}
+    while (true) {
+        if (!(i + 2 <= m_datlen)) return bmp;
+        switch (intel_uint16(*(uint16 *)(m_dat + i))) {
+            case 0xFFFF: {	// Skip-marker
+                if (!(i + 4 <= m_datlen)) return bmp;
+                long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
+                i += 4;
+                if (!(j + size <= 64000)) return bmp;
+                j += size;
+                break;
+            }
+            case 0xFFFE: { // Marker for normal data-block
+                if (!(i + 4 <= m_datlen))
+                    return bmp;
+                long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
+                i += 4;
+                if (!(i + size <= m_datlen && j + size <= 64000))
+                    return bmp;
+                while (size--) {
+                    if (_pal == 1) {
+                        putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
+                    } else {
+                        putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+                    }
+                    j++;
+                }
+                break;
+            }
+            case 0xFFFD:	// End-marker
+                return bmp;
+            default:
+                // error decoding SPK file
+                return bmp;
+        }
+    }
 }

@@ -49,8 +49,9 @@ int Map::m_animation_cycle = 0;
 int Map::dir2ofs[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 //  y  x      -1  0  1  x
 char Map::ofs2dir[3][3] = {{5, 6, 7},
-                           {4, 8, 0},
-                           {3, 2, 1}};
+    {4, 8, 0},
+    {3, 2, 1}
+};
 
 IMPLEMENT_PERSISTENCE(Map, "Map");
 
@@ -62,7 +63,7 @@ void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
     // Enter 'TerrainTable' table
     lua_pushstring(L, "TerrainTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [tid] table
     lua_pushstring(L, tid.c_str());
     lua_gettable(L, -2);
@@ -129,9 +130,9 @@ void Map::create(int l, int w, int h)
     int i, j, k;
     level = l; width = w; height = h;
 
-    m_cell = new Cell***[level];
+    m_cell = new Cell ***[level];
     for (i = 0; i < level; i++) {
-        m_cell[i] = new Cell ** [10 * width];
+        m_cell[i] = new Cell **[10 * width];
         for (j = 0; j < 10 * width; j++) {
             m_cell[i][j] = new Cell * [10 * height];
             for (k = 0; k < 10 * height; k++) {
@@ -156,13 +157,13 @@ Map::Map(GEODATA &mapdata)
     strcpy(m_terrain_name, terrain_name.c_str());
     load_terrain_pck(m_terrain_name, m_terrain);
     loadmaps(mapdata.mapdata);
-	
+
     build_visi();
 
-	build_lights();
-	
+    build_lights();
+
     m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
-    
+
     explo_spr_list = new effect_vector;
 }
 
@@ -183,14 +184,14 @@ Map::~Map()
     delete m_terrain;
 
     delete m_minimap_area;
-    
+
     delete explo_spr_list;
     delete m_changed_visicells;
 }
 
 void Map::loadmaps(unsigned char *_map)
 {
-	char map_name[512];
+    char map_name[512];
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "TerrainTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
@@ -210,22 +211,22 @@ void Map::loadmaps(unsigned char *_map)
                 // Todo: fix ufo200 crashing
                 // when loading invalid map-number
                 // ?? maybe just replace map with "00" ??
-				if(lua_isstring(L, -1)){
-					loadmap(lua_tostring(L, -1), col * 10, row * 10);
-					lua_pop(L, 1);
-				}else if(lua_istable(L, -1)) {
-					lua_pushstring(L, "Name");
-					lua_gettable(L, -2);
-					ASSERT(lua_isstring(L, -1)); 
-					sprintf(map_name, "%s", lua_tostring(L, -1));
-					lua_pop(L, 1);
-					load_lua_map(map_name, col * 10, row * 10);
-					lua_pop(L, 1);
-				}else{
-					battle_report("Unable to load terrain, line 230 of map.cpp\n");
-					//This should not happen - check Terrain::terrain(str)
-					ASSERT(false);
-				}
+                if (lua_isstring(L, -1)) {
+                    loadmap(lua_tostring(L, -1), col * 10, row * 10);
+                    lua_pop(L, 1);
+                } else if (lua_istable(L, -1)) {
+                    lua_pushstring(L, "Name");
+                    lua_gettable(L, -2);
+                    ASSERT(lua_isstring(L, -1));
+                    sprintf(map_name, "%s", lua_tostring(L, -1));
+                    lua_pop(L, 1);
+                    load_lua_map(map_name, col * 10, row * 10);
+                    lua_pop(L, 1);
+                } else {
+                    battle_report("Unable to load terrain, line 230 of map.cpp\n");
+                    //This should not happen - check Terrain::terrain(str)
+                    ASSERT(false);
+                }
             }
             i++;
         }
@@ -237,92 +238,92 @@ void Map::loadmaps(unsigned char *_map)
 /**
  * @brief : Loads a lua map, which is contained at the top of the lua stack. Called by Map::Loadmaps
  */
- int Map::load_lua_map(const char *mapname, int _x, int _y)
+int Map::load_lua_map(const char *mapname, int _x, int _y)
 {
-	//Debug purpose
-	//char tmp[1024];
-	
-	int lua_stack_top = lua_gettop(L);
-	int map_x;
-	int map_y;
-	int map_z;
-	
-	int mcol;
-	int mrow;
-	int mlev;
-	int mindex;
-	//Get dimensions
-	lua_pushstring(L, "X");
-	lua_gettable(L, -2);
-	ASSERT(lua_isnumber(L, -1));
-	map_x = (unsigned int)lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	
-	lua_pushstring(L, "Y");
-	lua_gettable(L, -2);
-	ASSERT(lua_isnumber(L, -1));
-	map_y = (unsigned int)lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	
-	lua_pushstring(L, "Z");
-	lua_gettable(L, -2);
-	ASSERT(lua_isnumber(L, -1));
-	map_z = (unsigned int)lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	//Get data
-	lua_pushstring(L, "MapData");
-	lua_gettable(L, -2);
-	ASSERT(lua_istable(L, -1));
-	//sprintf(tmp, "Load Lua Map size %d,%d,%d\n", map_x, map_y, map_z); 
-	//lua_message(tmp);
+    //Debug purpose
+    //char tmp[1024];
 
-	for (mlev = 0; mlev < map_z; mlev++) {
-		lua_pushnumber(L, mlev + 1);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-		// exec
+    int lua_stack_top = lua_gettop(L);
+    int map_x;
+    int map_y;
+    int map_z;
+
+    int mcol;
+    int mrow;
+    int mlev;
+    int mindex;
+    //Get dimensions
+    lua_pushstring(L, "X");
+    lua_gettable(L, -2);
+    ASSERT(lua_isnumber(L, -1));
+    map_x = (unsigned int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "Y");
+    lua_gettable(L, -2);
+    ASSERT(lua_isnumber(L, -1));
+    map_y = (unsigned int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+
+    lua_pushstring(L, "Z");
+    lua_gettable(L, -2);
+    ASSERT(lua_isnumber(L, -1));
+    map_z = (unsigned int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    //Get data
+    lua_pushstring(L, "MapData");
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    //sprintf(tmp, "Load Lua Map size %d,%d,%d\n", map_x, map_y, map_z);
+    //lua_message(tmp);
+
+    for (mlev = 0; mlev < map_z; mlev++) {
+        lua_pushnumber(L, mlev + 1);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+        // exec
         for (mindex = map_x * map_y; mindex > 0; mindex--) {
 
-				mcol = (int)((mindex - 1) % map_x) + _x;
-				mrow = (int)((mindex - 1) / map_x) + _y;
-				
-				lua_pushnumber(L, mindex);
-				lua_gettable(L, -2);
-				ASSERT(lua_istable(L, -1));
-				//Set tiles
-				lua_pushnumber(L, 1);
-				lua_gettable(L, -2);
-				ASSERT(lua_isnumber(L, -1));
-			    assign_type(mlev, mcol, mrow, 0, (unsigned int)lua_tonumber(L, -1));
-				lua_pop(L, 1);
+            mcol = (int)((mindex - 1) % map_x) + _x;
+            mrow = (int)((mindex - 1) / map_x) + _y;
 
-				lua_pushnumber(L, 2);
-				lua_gettable(L, -2);
-				ASSERT(lua_isnumber(L, -1));
-                assign_type(mlev, mcol, mrow, 1, (unsigned int)lua_tonumber(L, -1));
-				lua_pop(L, 1);
+            lua_pushnumber(L, mindex);
+            lua_gettable(L, -2);
+            ASSERT(lua_istable(L, -1));
+            //Set tiles
+            lua_pushnumber(L, 1);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            assign_type(mlev, mcol, mrow, 0, (unsigned int)lua_tonumber(L, -1));
+            lua_pop(L, 1);
 
-				lua_pushnumber(L, 3);
-				lua_gettable(L, -2);
-				ASSERT(lua_isnumber(L, -1));
-                assign_type(mlev, mcol, mrow, 2, (unsigned int)lua_tonumber(L, -1));
-				lua_pop(L, 1);
+            lua_pushnumber(L, 2);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            assign_type(mlev, mcol, mrow, 1, (unsigned int)lua_tonumber(L, -1));
+            lua_pop(L, 1);
 
-				lua_pushnumber(L, 4);
-				lua_gettable(L, -2);
-				ASSERT(lua_isnumber(L, -1));
-                assign_type(mlev, mcol, mrow, 3, (unsigned int)lua_tonumber(L, -1));
-				lua_pop(L, 1);
-				
-				m_cell[mlev][mcol][mrow]->set_soldier(NULL);
-				//Go back to MapData
-				lua_pop(L, 1);
-		}
-		lua_pop(L, 1);
-	}
-	lua_pop(L, 1);
-	lua_settop(L, lua_stack_top);
-	return 1;
+            lua_pushnumber(L, 3);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            assign_type(mlev, mcol, mrow, 2, (unsigned int)lua_tonumber(L, -1));
+            lua_pop(L, 1);
+
+            lua_pushnumber(L, 4);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            assign_type(mlev, mcol, mrow, 3, (unsigned int)lua_tonumber(L, -1));
+            lua_pop(L, 1);
+
+            m_cell[mlev][mcol][mrow]->set_soldier(NULL);
+            //Go back to MapData
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+    lua_settop(L, lua_stack_top);
+    return 1;
 }
 
 int Map::loadmap(const char *fname, int _c, int _r)
@@ -379,7 +380,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     Cell &cell = *m_cell[_lev][_col][_row];
     int i = cell.type[_type];
     if (i == 0) return;
-    
+
     ASSERT(i < (int)m_terrain->m_mcd.size());
 
     MCD &mcd = m_terrain->m_mcd[i];
@@ -394,12 +395,12 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     ASSERT(frame);
 
     /*int light_level = _seen ? cell.m_light * 16 : 0;*/
-	int light_level = 0;
-	if (_seen) {
-		light_level = ((cell.m_light < cell.m_visi)) ? cell.m_visi * 16 : cell.m_light * 16;
-	}else {
-		light_level = 0;
-	}	
+    int light_level = 0;
+    if (_seen) {
+        light_level = ((cell.m_light < cell.m_visi)) ? cell.m_visi * 16 : cell.m_light * 16;
+    } else {
+        light_level = 0;
+    }
     draw_alpha_sprite(_dest, frame, _x, _y - CELL_SCR_Y, light_level);
 }
 
@@ -408,7 +409,7 @@ extern volatile unsigned int ANIMATION;
 /**
  * Draw "3D" Battlescape-Map
  *
- * @todo optimize performance, some caching is needed in order to 
+ * @todo optimize performance, some caching is needed in order to
  *       avoid doing extra blit operations
  */
 void Map::draw(int show_cursor, int battleview_width, int battleview_height)
@@ -427,7 +428,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
         l2 = level - 1;
     else
         l2 = sel_lev;
-        
+
     for (int lev = l1; lev <= l2; lev++) {
         // Draw floor sprites first (otherwise they can overlap unit animation)
         for (int row = r1; row <= r2; row++) {
@@ -456,7 +457,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             } else {
                                 mtype = ((int)throwbox.size() / 2) + ((ANIMATION / 3) % ((int)throwbox.size() / 2));
                             }
-                                
+
                             if (!TARGET)
                                 draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - CELL_SCR_Y);
                             else if (target.action != THROW)
@@ -490,7 +491,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                     if (platoon_local->is_seen(lev, col, row)) {
                         int gy = sy;
                         if ((lev > 0) && mcd(lev, col, row, 0)->No_Floor && isStairs(lev - 1, col, row)) {
-                            gy += CELL_SCR_Z + mcd(lev - 1, col, row, 3)->T_Level; 
+                            gy += CELL_SCR_Z + mcd(lev - 1, col, row, 3)->T_Level;
                         } else {
                             gy += mcd(lev, col, row, 0)->T_Level;
                             gy += mcd(lev, col, row, 3)->T_Level;
@@ -499,13 +500,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                         int it = platoon_local->get_seen_item_index(lev, col, row);
                         if (it != -1)
                             drawitem(Item::obdata_get_bitmap(it, "pMap"), sx, gy);
-                            
+
                         if (lev < level - 1) {
                             if (mcd(lev + 1, col, row, 0)->No_Floor && isStairs(lev, col, row)) {
                                 gy = sy + mcd(lev, col, row, 3)->T_Level;
-                                
+
                                 it = platoon_local->get_seen_item_index(lev + 1, col, row);
-                                if(it != -1)
+                                if (it != -1)
                                     drawitem(Item::obdata_get_bitmap(it, "pMap"), sx, gy);
                             }
                         }
@@ -535,7 +536,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             } else {
                                 mtype = (ANIMATION / 3) % ((int)throwbox.size() / 2);
                             }
-                                
+
                             if (!TARGET)
                                 draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - CELL_SCR_Y);
                             else if (target.action != THROW)
@@ -583,29 +584,29 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             }
         }
     }
-                                   
+
     //explosions have to be drawn over all other sprites
     //explosions have to be weapon specific
     //The center of an explosion sprite is defined as 1/2 of it's width and 1/3 of it's height starting from the bottom
     //This center is placed above the middle of the tile that explodes.
-    std::vector<effect>::iterator exp;  
+    std::vector<effect>::iterator exp;
     for (exp = explo_spr_list->begin(); exp != explo_spr_list->end(); exp++) {
         int l = exp->lev, r = exp->row, c = exp->col;
-        int it_type = exp->type;    
+        int it_type = exp->type;
         if (!(platoon_local->is_seen(l, c, r)) ||
-            !(l >= l1 && l <= l2) ||
-            !(r >= r1 && r <= r2) ||
-            !(c >= c1 && c <= c2)) continue;
-                
+                !(l >= l1 && l <= l2) ||
+                !(r >= r1 && r <= r2) ||
+                !(c >= c1 && c <= c2)) continue;
+
         sx = x + CELL_SCR_X * c + CELL_SCR_X * r;
         sy = y - (c) * CELL_SCR_Y + CELL_SCR_Y * r - CELL_SCR_Z - l * CELL_SCR_Z - 1;
-                
+
         int e = exp->state;
         if (e >= 0) {
             int stack_top = lua_gettop(L);
             lua_pushstring(L, "ExplosionAnimation");
             lua_gettable(L, LUA_GLOBALSINDEX);
-            ASSERT(lua_istable(L, -1)); 
+            ASSERT(lua_istable(L, -1));
             // Enter [tid] table
             lua_pushnumber(L, e / 2 + 1);
             lua_gettable(L, -2);
@@ -616,13 +617,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                     ALPHA_SPRITE *exp_frame = Item::obdata_get_bitmap(it_type, "hitAnim", e / 2 + 1);
                     if (exp_frame) {
                         draw_alpha_sprite(screen2, exp_frame, (sx + 16) - (exp_frame->w / 2), (sy + 12) - (exp_frame->h * 2 / 3));
-                    }else if( !Item::obdata_get_bitmap(it_type, "hitAnim", 1) ) {
+                    } else if (!Item::obdata_get_bitmap(it_type, "hitAnim", 1)) {
                         draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
                     }
                 } else {
                     ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
                     draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
-                } 
+                }
             }
             lua_settop(L, stack_top);
         }
@@ -637,10 +638,10 @@ void Map::step()
     int width_10 = 10 * width;
     int height_10 = 10 * height;
     for (int k = 0; k < level; k++)
-        for(int i = 0; i < width_10;i++)
-            for(int j = 0; j < height_10; j++) {
+        for (int i = 0; i < width_10; i++)
+            for (int j = 0; j < height_10; j++) {
                 if (fire_time(k, i, j) > 0) {
-                    dec_fire_time(k,i,j);
+                    dec_fire_time(k, i, j);
                     for (int h = 0; h < 4; h++)
                         damage_cell_part(k, i, j, h, 25);
                     if (man(k, i, j) != NULL)
@@ -696,7 +697,7 @@ void Map::move(int ofs_x, int ofs_y)
     int sx = x, sy = y;
     x += ofs_x;
     y += ofs_y;
-	//Consider the middle to be on current level
+    //Consider the middle to be on current level
     int mx = SCREEN2W / 2;
     int my = SCREEN2H / 2 + sel_lev * CELL_SCR_Z;
     if (FLAGS & F_SCALE2X) {
@@ -715,9 +716,9 @@ void Map::move(int ofs_x, int ofs_y)
     // When the center of view is already outside of the map, it should be
     // possible to scroll in the direction of the map.
     if (((center_col < 0) && (center_col < old_center_col)) ||
-        ((center_row < 0) && (center_row < old_center_row)) ||
-        ((center_col >= 10 * width) && (center_col > old_center_col)) ||
-        ((center_row >= 10 * height) && (center_row > old_center_row))) {
+            ((center_row < 0) && (center_row < old_center_row)) ||
+            ((center_col >= 10 * width) && (center_col > old_center_col)) ||
+            ((center_row >= 10 * height) && (center_row > old_center_row))) {
         x = sx; y = sy;
     }
 }
@@ -749,31 +750,31 @@ void Map::draw2d()
 
     int c1 = sel_col - 27; if (c1 < 0) c1 = 0;
     int c2 = sel_col + 27; if (c2 >= width * 10) c2 = width * 10 - 1;
-    
-    rectfill(screen2, cx - 160 + 4 + 48, cy - 100 + 12 + 16, 
-            cx - 160 + 4 + 268, cy - 100 + 12 + 163, COLOR_GRAY15);
+
+    rectfill(screen2, cx - 160 + 4 + 48, cy - 100 + 12 + 16,
+             cx - 160 + 4 + 268, cy - 100 + 12 + 163, COLOR_GRAY15);
 
     for (int lev = 0; lev <= sel_lev; lev++)
         for (int row = r1; row <= r2; row++)
             for (int col = c1; col <= c2; col++) {
                 if (!platoon_local->is_seen(lev, col, row)) continue;
 
-                blit(tmp, screen2, 
-                    col * 4 + 3, 
-                    row * 4,
-                    cx + ( -sel_col + col) * 4 + 3,
-                    cy + ( -sel_row + row) * 4,
-                    4, 4);
+                blit(tmp, screen2,
+                     col * 4 + 3,
+                     row * 4,
+                     cx + (-sel_col + col) * 4 + 3,
+                     cy + (-sel_row + row) * 4,
+                     4, 4);
 
                 if (man(lev, col, row) == NULL) continue;
-                
+
                 if (platoon_local->belong(man(lev, col, row)))
-                    rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
-                             cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
+                    rectfill(screen2, cx + (-sel_col + col) * 4 + 1, cy + (-sel_row + row) * 4 + 1,
+                             cx + (-sel_col + col) * 4 + SCANGSIZE - 1, cy + (-sel_row + row) * 4 + SCANGSIZE - 1,
                              COLOR_YELLOW);
                 else if (platoon_local->is_visible(lev, col, row))
-                    rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
-                             cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
+                    rectfill(screen2, cx + (-sel_col + col) * 4 + 1, cy + (-sel_row + row) * 4 + 1,
+                             cx + (-sel_col + col) * 4 + SCANGSIZE - 1, cy + (-sel_row + row) * 4 + SCANGSIZE - 1,
                              COLOR_RED00);
             }
 
@@ -790,8 +791,8 @@ BITMAP *Map::create_bitmap_of_map(int max_lev)
     clear_to_color(bmp, COLOR_BLACK1);
 
     for (int lev = 0; lev <= max_lev; lev++) {
-        for (int row = 0; row < height*10; row++) {
-            for (int col = 0; col < width*10; col++) {
+        for (int row = 0; row < height * 10; row++) {
+            for (int col = 0; col < width * 10; col++) {
                 for (int j = 0; j < 4; j++) {
                     int mcd_index = m_cell[lev][col][row]->type[j];
                     if (mcd_index == 0) continue;
@@ -839,16 +840,16 @@ int Map::center2d(int xx, int yy)
 void Map::clearseen()
 {
     for (int k = 0; k < level; k++)
-        for (int i = 0; i < 10*width; i++)
-            for (int j = 0; j < 10*height; j++)
+        for (int i = 0; i < 10 * width; i++)
+            for (int j = 0; j < 10 * height; j++)
                 platoon_local->set_seen(k, i, j, 0);
 }
 
 void Map::unhide()
 {
     for (int k = 0; k < level; k++)
-        for (int i = 0; i < 10*width; i++)
-            for (int j = 0; j < 10*height; j++)
+        for (int i = 0; i < 10 * width; i++)
+            for (int j = 0; j < 10 * height; j++)
                 platoon_local->set_seen(k, i, j, 1);
 }
 
@@ -940,8 +941,8 @@ void Map::build_visi_cell(int lev, int col, int row)
 void Map::build_visi()
 {
     for (int lev = 0; lev < level; lev++) {
-        for (int col = 0; col < width*10; col++) {
-            for (int row = 0; row < height*10; row++) {
+        for (int col = 0; col < width * 10; col++) {
+            for (int row = 0; row < height * 10; row++) {
                 build_visi_cell(lev, col, row);
             }
         }
@@ -951,37 +952,37 @@ void Map::build_visi()
 void Map::build_lights()
 {
     for (int lev = 0; lev < level; lev++) {
-        for (int col = 0; col < width*10; col++) {
-            for (int row = 0; row < height*10; row++) {
-				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[0]].Light_Source)
-					m_cell[lev][col][row]->islight = TILE_LIGHT;
-				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[1]].Light_Source)
-					m_cell[lev][col][row]->islight = TILE_LIGHT;
-				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[2]].Light_Source)
-					m_cell[lev][col][row]->islight = TILE_LIGHT;
-				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[3]].Light_Source)
-					m_cell[lev][col][row]->islight = TILE_LIGHT;
+        for (int col = 0; col < width * 10; col++) {
+            for (int row = 0; row < height * 10; row++) {
+                if (m_terrain->m_mcd[m_cell[lev][col][row]->type[0]].Light_Source)
+                    m_cell[lev][col][row]->islight = TILE_LIGHT;
+                if (m_terrain->m_mcd[m_cell[lev][col][row]->type[1]].Light_Source)
+                    m_cell[lev][col][row]->islight = TILE_LIGHT;
+                if (m_terrain->m_mcd[m_cell[lev][col][row]->type[2]].Light_Source)
+                    m_cell[lev][col][row]->islight = TILE_LIGHT;
+                if (m_terrain->m_mcd[m_cell[lev][col][row]->type[3]].Light_Source)
+                    m_cell[lev][col][row]->islight = TILE_LIGHT;
             }
         }
     }
-	update_lights();
+    update_lights();
 }
 
 void Map::update_lights()
 {
-	battle_report("== UPDATE LIGHTS");
-	/* set all to default value from scenario rules */
+    battle_report("== UPDATE LIGHTS");
+    /* set all to default value from scenario rules */
     for (int i = 0; i < level; i++)
         for (int j = 0; j < width * 10; j++)
             for (int k = 0; k < height * 10; k++)
-				m_cell[i][j][k]->m_light = scenario->rules[0];
+                m_cell[i][j][k]->m_light = scenario->rules[0];
 
-	/* and then add all known light sources */
+    /* and then add all known light sources */
     for (int lev = 0; lev < level; lev++) {
-        for (int col = 0; col < width*10; col++) {
-            for (int row = 0; row < height*10; row++) {
-				if (m_cell[lev][col][row]->islight > 0)
-					show_light_source(lev, col, row);
+        for (int col = 0; col < width * 10; col++) {
+            for (int row = 0; row < height * 10; row++) {
+                if (m_cell[lev][col][row]->islight > 0)
+                    show_light_source(lev, col, row);
             }
         }
     }
@@ -1016,9 +1017,9 @@ int Map::stopLOS(int oz, int ox, int oy, int part)
     //A "big" diagonal ufo's wall acts like it consists of inner object (part 3)
     //and 2 "normal" walls (parts 1 and 2)
     int central_part_type = cell(oz, ox, oy)->type[3];
-    if(part && m_terrain->m_mcd[central_part_type].Big_Wall)
+    if (part && m_terrain->m_mcd[central_part_type].Big_Wall)
         return 1;
-        
+
     int ct = cell(oz, ox, oy)->type[part];
     return m_terrain->m_mcd[ct].Stop_LOS;
 }
@@ -1085,7 +1086,7 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
     //A "big" diagonal ufo's wall acts like it consists of inner object (part 3)
     //and 2 "normal" walls (parts 1 and 2)
     int central_part_type = cell(oz, ox, oy)->type[3];
-    if(part && m_terrain->m_mcd[central_part_type].Big_Wall)
+    if (part && m_terrain->m_mcd[central_part_type].Big_Wall)
         return 1;
 
     int ct = cell(oz, ox, oy)->type[part];
@@ -1140,7 +1141,7 @@ int Map::passable(int oz, int ox, int oy, int dir)
     if (dir == DIR_UP)
         dz++;
 
-   if (dir == DIR_DOWN)
+    if (dir == DIR_DOWN)
         dz--;
 
     if (!cell_inside(oz, ox, oy) || !cell_inside(dz, dx, dy)) return 0;
@@ -1232,7 +1233,7 @@ int Map::scroll(int mx, int my)
         move(mapscroll, 0); r = 1;
     }
     if (mx >= SCREEN2W - 1) {
-        move( -mapscroll, 0); r = 1;
+        move(-mapscroll, 0); r = 1;
     }
     if (my == 0) {
         move(0, mapscroll); r = 1;
@@ -1337,7 +1338,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 }
 
 /**
- * For debugging (enabled by setting F_SHOWLOFCELL flag in ufo2000.ini), 
+ * For debugging (enabled by setting F_SHOWLOFCELL flag in ufo2000.ini),
  * shows cell shape in the top right corner of the battlescape view.
  */
 void Map::show_lof_cell()
@@ -1348,7 +1349,7 @@ void Map::show_lof_cell()
 }
 
 /**
- * Tests if a voxel at (_z, _x, _y) is not solid and does not 
+ * Tests if a voxel at (_z, _x, _y) is not solid and does not
  * stop bullets
  */
 int Map::pass_lof_cell(int _z, int _x, int _y)
@@ -1397,8 +1398,8 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
             m_cell[lev][col][row]->type[_part] = 0;
             place(lev, col, row)->dropall(lev, col, row);
             return ;
-        }                                        
-        
+        }
+
         if (_part == 0 && lev == 0 && mcd == 0)
             mcd = 1;                    //"scorched earth" instead of blank space on the ground level
 
@@ -1409,7 +1410,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
                 m_cell[lev][col][row]->type[_part] = 0;
             m_cell[lev][col][row]->type[m_terrain->m_mcd[mcd].Tile_Type] = mcd;
         }
-                    
+
         if (m_terrain->m_mcd[ct].HE_Strength > 0)
             explode(lev * 12 - 6, col * 16 + 8, row * 16 + 8, m_terrain->m_mcd[ct].HE_Strength);
 
@@ -1436,9 +1437,9 @@ void Map::apply_hit(int _z, int _x, int _y, int _wtype)
                 int lev = _z / 12;
                 int col = _x / 16;
                 int row = _y / 16;
-				if (!Item::obdata_isMed(_wtype)) {
-					damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype), Item::obdata_dDeviation(_wtype));
-				}
+                if (!Item::obdata_isMed(_wtype)) {
+                    damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype), Item::obdata_dDeviation(_wtype));
+                }
             }
     }
 }
@@ -1470,8 +1471,8 @@ void Map::drawline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 Place *Map::find_item(Item *it, int &lev, int &col, int &row)
 {
     for (lev = 0; lev < level; lev++)
-        for (col = 0; col < width*10; col++)
-            for (row = 0; row < height*10; row++)
+        for (col = 0; col < width * 10; col++)
+            for (row = 0; row < height * 10; row++)
                 if (m_cell[lev][col][row]->get_place()->isthere(it))
                     return m_cell[lev][col][row]->get_place();
     return NULL;
@@ -1484,7 +1485,7 @@ int Map::find_place_coords(Place *pl, int &lev, int &col, int &row)
             for (row = 0; row < height * 10; row++)
                 if (m_cell[lev][col][row]->get_place() == pl)
                     return 1;
-    
+
     return 0;
 }
 
@@ -1534,16 +1535,16 @@ int Map::find_ground(int lev, int col, int row)
 static char field[MAP_LEVEL_LIMIT * 2 * 6*10 * 6*10];
 
 /**
- * Store position of cells whose visibility has changed in a queue. 
- * Queue is cleared when we call update_vision for the platoon. 
+ * Store position of cells whose visibility has changed in a queue.
+ * Queue is cleared when we call update_vision for the platoon.
  * Smoke, lighting changes, terrain destruction, and doors all changed
  * cell visibility.
- */ 
+ */
 void Map::cell_visibility_changed(int lev, int col, int row)
 {
-    Position pos(lev,col,row);
+    Position pos(lev, col, row);
     std::vector<Position>::iterator iter = m_changed_visicells->begin();
-    while(iter != m_changed_visicells->end()) {
+    while (iter != m_changed_visicells->end()) {
         if (*iter == pos)
             return;
         iter++;
@@ -1553,18 +1554,18 @@ void Map::cell_visibility_changed(int lev, int col, int row)
 
 /**
  * Clear a soldiers vision. Called when soldier dies, or vision is updated.
- */ 
+ */
 void Map::clear_vision_matrix(Soldier *watcher)
 {
     int32 vision_mask = watcher->get_vision_mask();
-    int32* pMask = watcher->get_platoon()->get_vision_matrix();    
-    int32* pEnd = pMask + size();
-    while(pMask < pEnd)
+    int32 *pMask = watcher->get_platoon()->get_vision_matrix();
+    int32 *pEnd = pMask + size();
+    while (pMask < pEnd)
         *(pMask++) &= (~vision_mask);
 }
 
 /**
- * Calculate viewable cells and write a soldiers vision mask to vision 
+ * Calculate viewable cells and write a soldiers vision mask to vision
  * matrix.  A discrete pseudo-raytracing algorithm is used.
  */
 void Map::update_vision_matrix(Soldier *watcher)
@@ -1573,28 +1574,28 @@ void Map::update_vision_matrix(Soldier *watcher)
     Position pos(watcher->z, watcher->x, watcher->y);
     int dir = watcher->get_dir();
     int32 vision_mask = watcher->get_vision_mask();
-    Platoon* pplatoon = watcher->get_platoon();
-    Soldier* target;
+    Platoon *pplatoon = watcher->get_platoon();
+    Soldier *target;
     int32 visible_enemies = 0;
     int32 *vision_matrix = pplatoon->get_vision_matrix();
     int32 index = pos.index();
-    
+
     vision_matrix[index] |= vision_mask;
     pplatoon->set_seen(pos.level(), pos.column(), pos.row(), 1);
-        
+
     if (pos.level() > 0 && isStairs(pos.level(), pos.column(), pos.row()))  {
         vision_matrix[index - m_level_offset] |= vision_mask;
         pplatoon->set_seen(pos.level() - 1, pos.column(), pos.row(), 1);
     }
-    
+
     memset(field, 0, size());
-	/*255 directions possible : 1 to 8, times 32 = 255. 0 is 12 O'clock, 64 is 3 O'clock, 128 is 6 O'clock, 192 is 9 O'clock*/
+    /*255 directions possible : 1 to 8, times 32 = 255. 0 is 12 O'clock, 64 is 3 O'clock, 128 is 6 O'clock, 192 is 9 O'clock*/
     int ang = dir * 32;
-/* Sweep vertical... should be : up above to 45 degrees underneath*/
+    /* Sweep vertical... should be : up above to 45 degrees underneath*/
     for (int fi = 8; fi <= 128 - 32; fi += 1) {
         fixed cos_fi = fcos(itofix(fi));
         fixed sin_fi = fsin(itofix(fi));
-/* Sweep horizontal */
+        /* Sweep horizontal */
         for (int te = ang - 32; te <= ang + 32; te += 1) {
             fixed cos_te = fcos(itofix(te));
             fixed sin_te = fsin(itofix(te));
@@ -1605,47 +1606,47 @@ void Map::update_vision_matrix(Soldier *watcher)
             int smokeway = 0;
             int lightway = 0;
             int lw_delta = 0;
-/* Sweep distance */
+            /* Sweep distance */
             for (l = 1; l < 18 - smokeway * 3; l++) { /////////////from smoke
 
-                vz = pos.level() + fixtoi(fmul(itofix(l), cos_fi));                
+                vz = pos.level() + fixtoi(fmul(itofix(l), cos_fi));
                 vx = pos.column() + fixtoi(fmul(itofix(l), fmul(cos_te, sin_fi)));
                 vy = pos.row() + fixtoi(fmul(itofix(l), fmul(sin_te, sin_fi)));
-                
-                
+
+
                 if (!cell_inside(vz, vx, vy))
                     break;
                 if ((vz == oz) && (vx == ox) && (vy == oy))
                     continue;
-                    
+
                 lw_delta = 16 - m_cell[vz][vx][vy]->m_light;
                 if (lw_delta < 0) lw_delta = 0;
-                    
+
                 if (m_cell[vz][vx][vy]->m_light < (lightway + lw_delta) / 3)
                     continue;
 
                 if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
 
-                vision_matrix[vz * width * 10 * height * 10 + vx * height * 10 + vy] |= vision_mask;
+                vision_matrix[vz *width * 10 * height * 10 + vx *height * 10 + vy] |= vision_mask;
                 pplatoon->set_seen(vz, vx, vy, 1);
-                
-                Item* item = place(vz, vx, vy)->top_item();
+
+                Item *item = place(vz, vx, vy)->top_item();
                 int itemtype = (item != NULL) ? item->itemtype() : -1;
-                pplatoon->set_seen_item_index(vz, vx, vy,itemtype);
-    
-                if (field[vz * width * 10 * height * 10 + vx * height * 10 + vy] == 0) {
+                pplatoon->set_seen_item_index(vz, vx, vy, itemtype);
+
+                if (field[vz *width * 10 * height * 10 + vx *height * 10 + vy] == 0) {
                     if (((target = man(vz, vx, vy)) != NULL) && (!pplatoon->belong(target))) {
                         visible_enemies |= target->get_vision_mask();
                     }
                 }
-                field[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
+                field[vz *width * 10 * height * 10 + vx *height * 10 + vy] = 1;
 
                 oz = vz; ox = vx; oy = vy;
 
                 if (!viewable_further(vz, vx, vy)) break;
 
                 if (smog_time(vz, vx, vy) != 0) if (++smokeway > 2) break;
-                lightway += lw_delta; 
+                lightway += lw_delta;
             }
         }
     }
@@ -1653,24 +1654,24 @@ void Map::update_vision_matrix(Soldier *watcher)
 }
 
 /**
- * Loop through platoon and update vision only for soldiers 
+ * Loop through platoon and update vision only for soldiers
  * with changed vision.
  */
-int32 Map::update_vision_matrix(Platoon* platoon)
+int32 Map::update_vision_matrix(Platoon *platoon)
 {
-    int32* vision_matrix = platoon->get_vision_matrix();
+    int32 *vision_matrix = platoon->get_vision_matrix();
     int32 soldiers_affected = 0;
     std::vector<Position>::iterator iter = m_changed_visicells->begin();
     // Build a list of soldiers whose vision has changed
-    while( iter != m_changed_visicells->end() ) {
+    while (iter != m_changed_visicells->end()) {
         soldiers_affected |= vision_matrix[iter->index()];
         iter++;
     }
     if (soldiers_affected != 0) {
-        Soldier *ss = platoon->findnum(0); 
+        Soldier *ss = platoon->findnum(0);
         // Recalculate visibile cells for soldiers whose vision has changed.
         while (ss != NULL) {
-            if ( (ss->is_active()) && (ss->get_vision_mask() & soldiers_affected) )
+            if ((ss->is_active()) && (ss->get_vision_mask() & soldiers_affected))
                 update_vision_matrix(ss);
             ss = ss->next();
         }
@@ -1684,22 +1685,22 @@ int32 Map::update_vision_matrix(Platoon* platoon)
  */
 void Map::update_seen_item(Position p)
 {
-    Item* item = place(p.level(), p.column(), p.row())->top_item();
+    Item *item = place(p.level(), p.column(), p.row())->top_item();
     int itemtype = (item != NULL) ? item->itemtype() : -1;
-    
-    if( platoon_local != NULL)
-        if( platoon_local->get_vision_matrix()[p.index()] )
+
+    if (platoon_local != NULL)
+        if (platoon_local->get_vision_matrix()[p.index()])
             platoon_local->set_seen_item_index(p.level(), p.column(), p.row(), itemtype);
-    
-    if( platoon_remote != NULL)
-        if( platoon_remote->get_vision_matrix()[p.index()] )
+
+    if (platoon_remote != NULL)
+        if (platoon_remote->get_vision_matrix()[p.index()])
             platoon_remote->set_seen_item_index(p.level(), p.column(), p.row(), itemtype);
 }
 
 double distance_3d(double v1, double v2, double v3)
 {
     // this procedure probably should be moved somewhere else
-    double r2=v1*v1 + v2*v2 + v3*v3;
+    double r2 = v1 * v1 + v2 * v2 + v3 * v3;
     return fixtof(fixsqrt(ftofix(r2)));
 }
 
@@ -1708,13 +1709,13 @@ Is point (v1, v2, v3) inside the sphere with center in (0, 0, 0) and radius "ran
 */
 bool InsideSphere(double v1, double v2, double v3, double range)
 {
-/* Try to use only integer arithmetic. TODO: rewrite this code if it solves
-problem with different results on the windows and unix clients (crc errors). */
-    long long int x=v1*10000;
-    long long int y=v2*10000;
-    long long int z=v3*10000;
-    long long int r=range*10000;
-    return x*x + y*y + z*z <= r*r;
+    /* Try to use only integer arithmetic. TODO: rewrite this code if it solves
+    problem with different results on the windows and unix clients (crc errors). */
+    long long int x = v1 * 10000;
+    long long int y = v2 * 10000;
+    long long int z = v3 * 10000;
+    long long int r = range * 10000;
+    return x * x + y * y + z * z <= r * r;
 //    return v1*v1 + v2*v2 + v3*v3 <= range*range;
 }
 
@@ -1723,24 +1724,24 @@ int calculate_hitdir(double dz, double dx, double dy)
     // Disabled since linux and windows clients get different results
     // Need more debug and testing
     return DAMAGEDIR_UNDER;
-/*
-    double ALLEGRO_PI=128; // PI=128 in the allegro trigonometry
-    double UNDER_ARMOR_ANGLE = ALLEGRO_PI/3; //to rules.h ?
-    
-    int dir = DAMAGEDIR_UNDER;
-    double hor_dist = distance_3d(dx, dy, 0);
-    if (fixtof(fixatan((ftofix(dz / hor_dist)))) >= -UNDER_ARMOR_ANGLE) {
-        dir = int(round( - 2 + (4.0/ALLEGRO_PI)*fixtof(fixatan2(ftofix(dx), ftofix(dy))) ));
-        if (hor_dist==0) dir = 0; // this should not really happen
-        if (dir < 0) dir += 8;
-    }
-    //printf("dz, dx, dy: %f, %f, %f, %f, %d \n", dz, dx, dy, atan(dz/hor_dist), dir );
-    return dir;
-*/
+    /*
+        double ALLEGRO_PI=128; // PI=128 in the allegro trigonometry
+        double UNDER_ARMOR_ANGLE = ALLEGRO_PI/3; //to rules.h ?
+
+        int dir = DAMAGEDIR_UNDER;
+        double hor_dist = distance_3d(dx, dy, 0);
+        if (fixtof(fixatan((ftofix(dz / hor_dist)))) >= -UNDER_ARMOR_ANGLE) {
+            dir = int(round( - 2 + (4.0/ALLEGRO_PI)*fixtof(fixatan2(ftofix(dx), ftofix(dy))) ));
+            if (hor_dist==0) dir = 0; // this should not really happen
+            if (dir < 0) dir += 8;
+        }
+        //printf("dz, dx, dy: %f, %f, %f, %f, %d \n", dz, dx, dy, atan(dz/hor_dist), dir );
+        return dir;
+    */
 }
 
 const double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
-const double HEIGHT_RATIO = 2; // how high is one level in squares 
+const double HEIGHT_RATIO = 2; // how high is one level in squares
 
 /*
  *Map object explosion
@@ -1749,27 +1750,27 @@ int Map::explode(int z, int x, int y, int max_damage)
 {
     int damage_type = 2;    //HE damage type
     int damage, hit_dir = 0;
-    
+
     int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
-    
+
     effect eff;
     eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16; eff.type = 0;
     eff.state = 0 - explo_spr_list->size();
     explo_spr_list->push_back(eff);
-    
+
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
-    
+
     // convert to coords relative to center of a cell
-    double lev = double(z)/12 - 0.5;
-    double col = double(x)/16 - 0.5;
-    double row = double(y)/16 - 0.5;
-    
+    double lev = double(z) / 12 - 0.5;
+    double col = double(x) / 16 - 0.5;
+    double row = double(y) / 16 - 0.5;
+
     double range = (double(max_damage) / 15);
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
                 if (InsideSphere(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO, range)) {
-                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO))/range )*double(max_damage) );
+                    damage = int ((EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE) * (range - distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO)) / range) * double(max_damage));
                     if (damage > 0 && cell_inside(l, c, r)) {
                         if (man(l, c, r) != NULL) {
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
@@ -1780,8 +1781,8 @@ int Map::explode(int z, int x, int y, int max_damage)
                 }
             }
     return 1;
-} 
-  
+}
+
 /*
  *weapon or item explosion
  */
@@ -1797,7 +1798,7 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     double range = explo_range < smoke_range ? smoke_range : explo_range;
     if (dam_dev > 0)
         max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
-    
+
     effect eff;
     eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16; eff.type = type;
     eff.state = 0 - explo_spr_list->size();
@@ -1805,40 +1806,40 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     //Play object's sound or the default sound if the latter is not found
     if (Item::obdata_get_sound(type)) {
         soundSystem::getInstance()->play(Item::obdata_get_sound(type));
-    }else {
+    } else {
         soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     }
-    
+
     // convert to coords relative to center of a cell
-    double lev = double(z)/12 - 0.5;
-    double col = double(x)/16 - 0.5;
-    double row = double(y)/16 - 0.5;
-    
+    double lev = double(z) / 12 - 0.5;
+    double col = double(x) / 16 - 0.5;
+    double row = double(y) / 16 - 0.5;
+
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
                 double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)));
                 if (InsideSphere(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO, range)) {
-                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
+                    damage = int ((EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE) * (range - distance) / range) * double(max_damage));
                     if (damage >= 0 && cell_inside(l, c, r)) {
                         if (man(l, c, r) != NULL) {
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
-                        
+
                         if (distance <= explo_range) {
                             explocell(sniper, l, c, r, damage, damage_type, hit_dir);
                             if (man(l, c, r))
                                 man(l, c, r)->change_morale(((int)(distance - explo_range) - 1) * 2);
                         }
                         if (distance <= smoke_range)
-                            smokecell(l, c, r, smoke_time);                    
+                            smokecell(l, c, r, smoke_time);
                     }
                 }
             }
     return 1;
-} 
-  
-bool Map::check_mine(int lev, int col, int row) 
+}
+
+bool Map::check_mine(int lev, int col, int row)
 {
     for (int c = col - 1; c <= col + 1; c++) {
         for (int r = row - 1; r <= row + 1; r++) {
@@ -1851,8 +1852,8 @@ bool Map::check_mine(int lev, int col, int row)
 }
 
 void Map::smokecell(int lev, int col, int row, int time)
-{ 
-    set_smog_time(lev, col, row, time);              
+{
+    set_smog_time(lev, col, row, time);
 
     for (int i = 0; i < 4; i++)
         if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row))
@@ -1867,14 +1868,14 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
                 set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
             }
         }
-        
+
         if ((mcd(lev, col, row, i)->Armour < damage) && (damage_type != DT_STUN)) {
             destroy_cell_part(lev, col, row, i);
         }
     }
 
     if (damage_type != DT_STUN)
-       place(lev, col, row)->damage_items(damage);
+        place(lev, col, row)->damage_items(damage);
 
     if (man(lev, col, row) != NULL) {
         if (hitdir != DAMAGEDIR_UNDER)
@@ -1882,62 +1883,62 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
         man(lev, col, row)->explo_hit(sniper, damage, damage_type, hitdir);
     }
 }
-                        
-const double POWER_TO_RANGE = 2.5;
-                     
 
-void Map::Init_visi_platoon(Platoon* platoon)
+const double POWER_TO_RANGE = 2.5;
+
+
+void Map::Init_visi_platoon(Platoon *platoon)
 {
-	if (platoon == platoon_local) {
-		reset_visi();
-		Soldier *ss = platoon->findnum(0);
-		while (ss != NULL) {
-			add_visi(ss->z, ss->x, ss->y, 15);
-			ss = ss->next();
+    if (platoon == platoon_local) {
+        reset_visi();
+        Soldier *ss = platoon->findnum(0);
+        while (ss != NULL) {
+            add_visi(ss->z, ss->x, ss->y, 15);
+            ss = ss->next();
         }
-	}
+    }
 }
-					 
+
 void Map::add_visi(int lev, int col, int row, int pow)
-{   
-	if (scenario->rules[0] != 16) {
-		int power = (pow - scenario->rules[0]);
-		double range = power / POWER_TO_RANGE;
-	    for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
-	        for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
-	            for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
-	                double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
-	                if (i < 0 || j < 0 || k < 0 ||
-	                    i >= level || j >= width * 10 || k >= height * 10 ||
-	                    dst > range)
-	                        continue;
-					m_cell[i][j][k]->m_visi += power - (int)((double)(power - 1) / range * dst);
-	            }
-	        }
-	    }
-	}
+{
+    if (scenario->rules[0] != 16) {
+        int power = (pow - scenario->rules[0]);
+        double range = power / POWER_TO_RANGE;
+        for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+            for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+                for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+                    double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO);
+                    if (i < 0 || j < 0 || k < 0 ||
+                            i >= level || j >= width * 10 || k >= height * 10 ||
+                            dst > range)
+                        continue;
+                    m_cell[i][j][k]->m_visi += power - (int)((double)(power - 1) / range * dst);
+                }
+            }
+        }
+    }
 }
 
 void Map::remove_visi(int lev, int col, int row, int pow)
-{   
-	if (scenario->rules[0] != 16) {
-		int power = (pow - scenario->rules[0]); 
-		double range = power / POWER_TO_RANGE;
-		for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
-			for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
-				for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
-					double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
-					if (i < 0 || j < 0 || k < 0 ||
-						i >= level || j >= width * 10 || k >= height * 10 ||
-						dst > range)
-							continue;
-					m_cell[i][j][k]->m_visi -= power - (int)((double)(power - 1) / range * dst);
-					if (m_cell[i][j][k]->m_visi < scenario->rules[0])
-						m_cell[i][j][k]->m_visi = scenario->rules[0];
-				}
-			}
-		}
-	}
+{
+    if (scenario->rules[0] != 16) {
+        int power = (pow - scenario->rules[0]);
+        double range = power / POWER_TO_RANGE;
+        for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+            for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+                for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+                    double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO);
+                    if (i < 0 || j < 0 || k < 0 ||
+                            i >= level || j >= width * 10 || k >= height * 10 ||
+                            dst > range)
+                        continue;
+                    m_cell[i][j][k]->m_visi -= power - (int)((double)(power - 1) / range * dst);
+                    if (m_cell[i][j][k]->m_visi < scenario->rules[0])
+                        m_cell[i][j][k]->m_visi = scenario->rules[0];
+                }
+            }
+        }
+    }
 }
 
 //Resets visibility
@@ -1946,41 +1947,41 @@ void Map::reset_visi()
     for (int i = 0; i < level; i++)
         for (int j = 0; j < width * 10; j++)
             for (int k = 0; k < height * 10; k++)
-				m_cell[i][j][k]->m_visi = scenario->rules[0];
+                m_cell[i][j][k]->m_visi = scenario->rules[0];
 }
 
 
 void Map::add_light_source(int lev, int col, int row, int power)
-{	
-	m_cell[lev][col][row]->islight = power;
-	show_light_source(lev, col, row);
+{
+    m_cell[lev][col][row]->islight = power;
+    show_light_source(lev, col, row);
 }
 
 void Map::show_light_source(int lev, int col, int row)
 {
-	battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev,col,row);
-	int power = m_cell[lev][col][row]->islight;
+    battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev, col, row);
+    int power = m_cell[lev][col][row]->islight;
 
-	double range = power / POWER_TO_RANGE;
-	//We know this cell is the LightSource and should be blocked by the same object.
+    double range = power / POWER_TO_RANGE;
+    //We know this cell is the LightSource and should be blocked by the same object.
     for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
         for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
             for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
-			    double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO);
-			    if (i < 0 || j < 0 || k < 0 || i >= level || j >= width * 10 || k >= height * 10 || dst > range)
+                double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO);
+                if (i < 0 || j < 0 || k < 0 || i >= level || j >= width * 10 || k >= height * 10 || dst > range)
                     continue;
-				if (i == lev && j == col && k == row) {
-					m_cell[i][j][k]->m_light += power;
-					cell_visibility_changed(i, j, k);
-					continue;
-				}
-				if (ray_visi(lev,col,row,i,j,k)) {
-					m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
-					cell_visibility_changed(i, j, k);
-					continue;
-				}
+                if (i == lev && j == col && k == row) {
+                    m_cell[i][j][k]->m_light += power;
+                    cell_visibility_changed(i, j, k);
+                    continue;
+                }
+                if (ray_visi(lev, col, row, i, j, k)) {
+                    m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
+                    cell_visibility_changed(i, j, k);
+                    continue;
+                }
             }
-		}
+        }
     }
 }
 /*
@@ -1989,19 +1990,19 @@ void Map::show_light_source(int lev, int col, int row)
 */
 bool Map::ray_visi(int oz, int ox, int oy, int tz, int tx, int ty)
 {
-	return true;
+    return true;
 }
 
 void Map::remove_light_source(int lev, int col, int row, int power)
 {
-	m_cell[lev][col][row]->islight -= power;
-	update_lights();
+    m_cell[lev][col][row]->islight -= power;
+    update_lights();
 }
 
 /**
  * End-of-turn - save game state into a buffer as a large block of text
- */                                        
-int Map::eot_save(char *buf, int & buf_size)
+ */
+int Map::eot_save(char *buf, int &buf_size)
 {
     buf_size += sprintf(buf + buf_size, "\r\nmap level=%d, width=%d, height=%d\r\n", level, width, height);
 
@@ -2058,7 +2059,7 @@ void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "MapGenerator");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_isfunction(L, -1)); 
+    ASSERT(lua_isfunction(L, -1));
     // Enter [terrain_name] table
     lua_pushstring(L, terrain_name.c_str());
     lua_pushnumber(L, MAP_WIDTH);
@@ -2083,11 +2084,11 @@ int Map::valid_GEODATA(GEODATA *md)
     std::string terrain_name = terrain_set->get_terrain_name(md->terrain);
 
     if ((md->x_size > 6) || (md->y_size > 6) ||
-        (md->x_size < 2) || (md->y_size < 2) ||
-        (md->z_size > MAP_LEVEL_LIMIT) || terrain_name == "") return 0;
-        
-    if (net->is_network_game() && 
-        g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;
+            (md->x_size < 2) || (md->y_size < 2) ||
+            (md->z_size > MAP_LEVEL_LIMIT) || terrain_name == "") return 0;
+
+    if (net->is_network_game() &&
+            g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;
 
     return 1;
 }
@@ -2100,7 +2101,7 @@ bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
 {
     memset(mapdata, 0, sizeof(GEODATA));
     mapdata->z_size = MAP_LEVEL_LIMIT; // !!! Hack
-    
+
     int stack_top = lua_gettop(L);
 
     // we have a table with map data returned at the top of the stack
@@ -2128,37 +2129,37 @@ bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
     if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
     mapdata->y_size = (uint16)lua_tonumber(L, -1);
     lua_pop(L, 1);
-    
+
     lua_pushstring(L, "Scenario");
     lua_gettable(L, -2);
     int mission = lua_isstring(L, -1);
     lua_pop(L, 1);
-    
+
     if (mission) {
         lua_pushstring(L, "Scenario");
         lua_gettable(L, -2);
         if (!lua_isstring(L, -1)) { lua_settop(L, stack_top); return false; }
         if (!scenario->new_scenario(lua_tostring(L, -1))) { lua_settop(L, stack_top); return false; }
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "TargetX1");
         lua_gettable(L, -2);
         if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
         scenario->x1 = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "TargetY1");
         lua_gettable(L, -2);
         if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
         scenario->y1 = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "TargetX2");
         lua_gettable(L, -2);
         if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
         scenario->x2 = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "TargetY2");
         lua_gettable(L, -2);
         if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
@@ -2214,10 +2215,10 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
     if (fh == NULL) return false;
 
     fprintf(fh, "return {\n");
-    fprintf(fh, "\tName = \"%s\",\n", 
-        lua_escape_string(terrain_set->get_terrain_name(mapdata->terrain)).c_str());
+    fprintf(fh, "\tName = \"%s\",\n",
+            lua_escape_string(terrain_set->get_terrain_name(mapdata->terrain)).c_str());
     fprintf(fh, "\tSizeX = %d, SizeY = %d,\n", mapdata->x_size, mapdata->y_size);
-    
+
     fprintf(fh, "\tMapdata = {\n");
 
     int x = 0;
@@ -2249,7 +2250,7 @@ int Map::walk_time(int _z, int _x, int _y)
 }
 
 bool Map::Write(persist::Engine &archive) const
-{                                   
+{
     PersistWriteBinary(archive, *this);
 
     for (int lev = 0; lev < level; lev++)
@@ -2264,9 +2265,9 @@ bool Map::Read(persist::Engine &archive)
 {
     PersistReadBinary(archive, *this);
 
-    m_cell = new Cell***[level];
+    m_cell = new Cell ***[level];
     for (int i = 0; i < level; i++) {
-        m_cell[i] = new Cell ** [10 * width];
+        m_cell[i] = new Cell **[10 * width];
         for (int j = 0; j < 10 * width; j++) {
             m_cell[i][j] = new Cell * [10 * height];
         }
@@ -2280,7 +2281,7 @@ bool Map::Read(persist::Engine &archive)
     load_terrain_pck(m_terrain_name, m_terrain);
 
     m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
-    
+
     explo_spr_list = new effect_vector;
     m_changed_visicells = new std::vector<Position>;
 
@@ -2295,27 +2296,27 @@ bool Map::Read(persist::Engine &archive)
 
 Terrain::Terrain(const std::string &terrain_name)
 {
-	int current_max = 1;
+    int current_max = 1;
     int stack_top = lua_gettop(L);
     // Enter 'TerrainTable' table
     lua_pushstring(L, "TerrainTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [terrain_name] table
     lua_pushstring(L, terrain_name.c_str());
     lua_gettable(L, -2);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Extract terrain crc32
     lua_pushstring(L, "Crc32");
     lua_gettable(L, -2);
-    ASSERT(lua_isnumber(L, -1)); 
+    ASSERT(lua_isnumber(L, -1));
     m_crc32 = (unsigned long)lua_tonumber(L, -1);
     lua_pop(L, 1);
     m_name = terrain_name;
     // Enter 'Maps' table
     lua_pushstring(L, "Maps");
     lua_gettable(L, -2);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     m_rand_weight = 1;
 
     m_blocks.resize(MAP_BLOCKS_LIMIT);
@@ -2323,40 +2324,40 @@ Terrain::Terrain(const std::string &terrain_name)
     for (index = 0; index < m_blocks.size(); index++) {
         lua_pushnumber(L, index);
         lua_gettable(L, -2);
-		
-		//Check if we have a lua map entry
-		if (lua_istable(L, -1)){
-			// Extract map definition
-			lua_pushstring(L, "X");
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1)); 
-			m_blocks[index].x_size = (unsigned int)lua_tonumber(L, -1) / 10;
-			lua_pop(L, 1);
-			
-			lua_pushstring(L, "Y");
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1)); 
-			m_blocks[index].y_size = (unsigned int)lua_tonumber(L, -1) / 10;
-			lua_pop(L, 1);		
-			
-			lua_pushstring(L, "Z");
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1)); 
-			m_blocks[index].z_size = (unsigned int)lua_tonumber(L, -1);
-			if (m_blocks[index].z_size + 1 > current_max) {
-				if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
-					current_max = m_blocks[index].z_size + 1;
-				}else {
-					current_max = MAP_LEVEL_LIMIT;
-				}
-			}
-			lua_pop(L, 1);
-			
-			m_blocks[index].rand_weight = 1;
-			lua_pop(L, 1);
-			continue;
-		}
-		//Check if we have a map file entry
+
+        //Check if we have a lua map entry
+        if (lua_istable(L, -1)) {
+            // Extract map definition
+            lua_pushstring(L, "X");
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            m_blocks[index].x_size = (unsigned int)lua_tonumber(L, -1) / 10;
+            lua_pop(L, 1);
+
+            lua_pushstring(L, "Y");
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            m_blocks[index].y_size = (unsigned int)lua_tonumber(L, -1) / 10;
+            lua_pop(L, 1);
+
+            lua_pushstring(L, "Z");
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            m_blocks[index].z_size = (unsigned int)lua_tonumber(L, -1);
+            if (m_blocks[index].z_size + 1 > current_max) {
+                if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
+                    current_max = m_blocks[index].z_size + 1;
+                } else {
+                    current_max = MAP_LEVEL_LIMIT;
+                }
+            }
+            lua_pop(L, 1);
+
+            m_blocks[index].rand_weight = 1;
+            lua_pop(L, 1);
+            continue;
+        }
+        //Check if we have a map file entry
         if (!lua_isstring(L, -1)) {
             m_blocks[index].rand_weight = 0;
             lua_pop(L, 1);
@@ -2364,11 +2365,10 @@ Terrain::Terrain(const std::string &terrain_name)
         }
 
         const char *fname = lua_tostring(L, -1);
-		
-		//Open the file
+
+        //Open the file
         int fh = open(fname, O_RDONLY | O_BINARY);
-        if (fh == -1)
-        {
+        if (fh == -1) {
             m_blocks[index].rand_weight = 0;
             lua_pop(L, 1);
             continue;
@@ -2383,21 +2383,21 @@ Terrain::Terrain(const std::string &terrain_name)
         m_blocks[index].x_size      = buffer[0] / 10;
         m_blocks[index].y_size      = buffer[1] / 10;
         m_blocks[index].z_size      = buffer[2];
-		if (m_blocks[index].z_size + 1 > current_max) {
-			if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
-				current_max = m_blocks[index].z_size + 1;
-			}else {
-				current_max = MAP_LEVEL_LIMIT;
-			}
-		}
+        if (m_blocks[index].z_size + 1 > current_max) {
+            if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
+                current_max = m_blocks[index].z_size + 1;
+            } else {
+                current_max = MAP_LEVEL_LIMIT;
+            }
+        }
         m_blocks[index].rand_weight = 1;
         lua_pop(L, 1);
     }
-	if (current_max > 4) {
-		m_max_levels = current_max;
-	}else {
-		m_max_levels = 4;
-	}
+    if (current_max > 4) {
+        m_max_levels = current_max;
+    } else {
+        m_max_levels = 4;
+    }
     lua_settop(L, stack_top);
 }
 
@@ -2453,8 +2453,8 @@ bool Terrain::create_geodata(GEODATA &gd)
                 }
 
             map[y][x] = i;
-            gd.mapdata[y * gd.x_size + x] = i;
-			gd.z_size = m_max_levels;
+            gd.mapdata[y *gd.x_size + x] = i;
+            gd.z_size = m_max_levels;
         }
     return true;
 }
@@ -2467,7 +2467,7 @@ TerrainSet::TerrainSet()
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "TerrainTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
 
     lua_pushnil(L);
     while (lua_next(L, -2) != 0) {
@@ -2484,8 +2484,8 @@ TerrainSet::TerrainSet()
     // ?? gettext:
     if (terrain.empty()) {
         display_error_message(
-            "Terrain data initialization failed." 
-            "At least one valid terrain required." );
+            "Terrain data initialization failed."
+            "At least one valid terrain required.");
     }
 }
 
@@ -2507,7 +2507,7 @@ bool TerrainSet::create_geodata(const std::string &terrain_name, int x_size, int
     gd.x_size    = x_size;
     gd.y_size    = y_size;
     gd.z_size    = MAP_LEVEL_LIMIT;
-    
+
     return terrain[terrain_index]->create_geodata(gd);
 }
 
@@ -2530,7 +2530,7 @@ int TerrainSet::get_random_terrain_id()
 }
 
 /**
- * Displays dialog asking the user to select terrain type from the list of 
+ * Displays dialog asking the user to select terrain type from the list of
  * available terrains, additional requirement for network games is
  * that remote user should have these maps installed too.
  *
@@ -2558,12 +2558,12 @@ std::string TerrainSet::select_terrain_gui_dialog(
             default_index = i;
             break;
         }
-    
+
     int result = gui_select_from_list(
-        300, 200,
-        _("Select terrain type"), 
-        gui_list,
-        default_index);
-    
+                     300, 200,
+                     _("Select terrain type"),
+                     gui_list,
+                     default_index);
+
     return gui_list[result];
 }

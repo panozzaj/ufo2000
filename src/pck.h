@@ -37,7 +37,7 @@ class PCK
 {
 private:
     friend ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
-    
+
     std::vector<ALPHA_SPRITE *> m_bmp;
 
     char m_fname[0x100];
@@ -54,8 +54,7 @@ public:
     PCK(const char *pckfname, int tftd_flag = 0, int width = 32, int height = 48);
     ~PCK();
 
-    ALPHA_SPRITE *get_image(int index)
-    {
+    ALPHA_SPRITE *get_image(int index) {
         if (index < 0 || index >= (int)m_bmp.size()) return NULL;
         return m_bmp[index];
     }

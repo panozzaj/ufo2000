@@ -33,7 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // Not every Win32 system has GetLongPathName function available, so we try to get its
 // address at runtime
 
-static DWORD (WINAPI *lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer) = 
+static DWORD (WINAPI *lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer) =
     (DWORD (WINAPI *)(LPCTSTR, LPTSTR, DWORD))GetProcAddress(GetModuleHandle("kernel32.dll"), "GetLongPathNameA");
 
 #endif
@@ -47,7 +47,7 @@ static DWORD (WINAPI *lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongP
 bool check_filename_case_consistency(const char *filename)
 {
 #ifdef _WIN32
-    // Windows 98 seems to have some troubles with GetLongPathName function, so 
+    // Windows 98 seems to have some troubles with GetLongPathName function, so
     // we test operating system type before
     OSVERSIONINFO osVer;
     osVer.dwOSVersionInfoSize = sizeof(osVer);
@@ -91,31 +91,31 @@ static BITMAP *g_cached_large_bitmap = NULL;
  */
 static BITMAP *load_bitmap_alpha(const char *filename)
 {
-    // Allow any color conversions except when loaded file 
+    // Allow any color conversions except when loaded file
     // contains alpha channel
 #if ALLEGRO_MAJOR == 0
     int cc = _color_conv;
 #else
     int cc = get_color_conversion();
 #endif
-    set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) & 
-        ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
+    set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) &
+                         ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
     BITMAP *bmp_orig = load_bitmap(filename, NULL);
     set_color_conversion(cc);
     return bmp_orig;
 }
 
 /**
- * Load sprite from PNG file. Is used for graphics resources loading 
+ * Load sprite from PNG file. Is used for graphics resources loading
  * in the game.
  *
  * It could be a sprite stored as a separate png file. It can also
  * be a sprite loaded as a part of much larger picture. Files having
  * the name format like "../name/XXxYY-ZZZ.png" and NOT FOUND on disk
  * are interpreted as sprite number ZZZ inside of "../name.png" file
- * each sprite having width XX and height YY and organized as a grid 
- * of rectangular images (with one pixel separator lines). Top left 
- * sprite has index 1, other sprites have indexes numbered sequentially 
+ * each sprite having width XX and height YY and organized as a grid
+ * of rectangular images (with one pixel separator lines). Top left
+ * sprite has index 1, other sprites have indexes numbered sequentially
  * with indexes growing from left to right and from top to bottom
  *
  * @param filename  path to a file with image on disk
@@ -261,24 +261,24 @@ PCK::~PCK()
  * @return     bitmap with a frame image
  */
 ALPHA_SPRITE *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag)
-{   
+{
     BITMAP *bmp = create_bitmap(width, height);
     clear_to_color(bmp, xcom1_color(0));
 
-    long ofs = ((int)*data * width);
+    long ofs = ((int) * data * width);
 
     if (data[--size] != 0xFF) ASSERT(false);
 
     for (int j = 1; j < size; j++) {
         switch (data[j]) {
-            case 0xFE: 
+            case 0xFE:
                 ofs += data[++j]; break;
-            case 0x00: 
+            case 0x00:
                 ofs++; break;
             default:
                 ASSERT(ofs / width < height);
-                putpixel(bmp, ofs % width, ofs / width, 
-                    tftd_flag ? tftd_color(data[j]) : xcom1_color(data[j]));
+                putpixel(bmp, ofs % width, ofs / width,
+                         tftd_flag ? tftd_color(data[j]) : xcom1_color(data[j]));
                 ofs++;
                 break;
         }
@@ -297,7 +297,7 @@ ALPHA_SPRITE *PCK::pckdat2bmp(const unsigned char *data, int size, int width, in
  */
 int PCK::loadpck(const char *pckfname, int width, int height)
 {
-    int i;                   
+    int i;
 
     int fh = open(F(pckfname), O_RDONLY | O_BINARY);
     if (fh == -1) {
@@ -320,7 +320,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
         m_bmp[0] = pckdat2bmp(pck, pcksize, width, height, m_tftd_flag);
         delete [] pck;
         return 1;
-    } 
+    }
 
     long tabsize = filelength(fh);
     unsigned char *tabdata = new unsigned char[tabsize + 4];
@@ -395,7 +395,7 @@ void PCK::save_as_bmp(const char *fname)
     int rows = ((m_imgnum + SIZE - 1) / SIZE);
     BITMAP *bmp = create_bitmap_ex(32, m_width * SIZE + SIZE - 1, m_height * rows + rows - 1);
     clear_to_color(bmp, makeacol32(0, 0, 0, 0));
-    
+
     for (int x = m_width; x < bmp->w; x += m_width + 1) vline(bmp, x, 0, bmp->h - 1, makeacol32(255, 255, 255, 255));
     for (int y = m_height; y < bmp->h; y += m_height + 1) hline(bmp, 0, y, bmp->w - 1, makeacol32(255, 255, 255, 255));
 
@@ -409,14 +409,14 @@ void PCK::save_as_bmp(const char *fname)
             for (int y = 0; y < m_height; y++) {
                 int c = getpixel(tmp, x, y);
                 if (c != bitmap_mask_color(tmp))
-                    putpixel(bmp, 
-                        (i % SIZE) * (m_width + 1) + x,
-                        (i / SIZE) * (m_height + 1) + y,
-                        makeacol32(getr(c), getg(c), getb(c), 255));
+                    putpixel(bmp,
+                             (i % SIZE) *(m_width + 1) + x,
+                             (i / SIZE) *(m_height + 1) + y,
+                             makeacol32(getr(c), getg(c), getb(c), 255));
             }
 
         destroy_bitmap(tmp);
-        
+
 #ifdef LINUX
         mkdir(fname, 0755);
 #else
@@ -426,7 +426,7 @@ void PCK::save_as_bmp(const char *fname)
         sprintf(suffix, "%dx%d-%03d.png", m_width, m_height, i + 1);
         std::string smallfname = std::string(fname) + "/" + suffix;
         tmp = create_bitmap_ex(32, m_width, m_height);
-        blit(bmp, tmp, (i % SIZE) * (m_width + 1), (i / SIZE) * (m_height + 1), 0, 0, m_width, m_height);
+        blit(bmp, tmp, (i % SIZE) *(m_width + 1), (i / SIZE) *(m_height + 1), 0, 0, m_width, m_height);
         save_bitmap(smallfname.c_str(), tmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
         destroy_bitmap(tmp);
     }

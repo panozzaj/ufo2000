@@ -59,13 +59,11 @@ class WindowBorder: public VisualObject
 
 public:
     WindowBorder(VisualObject *chield, const std::string &title = "", FONT *fnt = g_small_font)
-        : m_title(title), m_fnt(fnt), m_chield(chield)
-    {
+        : m_title(title), m_fnt(fnt), m_chield(chield) {
         resize(-1, -1);
     }
 
-    virtual void redraw_full(BITMAP *bmp, int x, int y)
-    {
+    virtual void redraw_full(BITMAP *bmp, int x, int y) {
         BITMAP *temp_bmp = create_bitmap(m_width, m_height);
         clear_to_color(temp_bmp, COLOR_BLACK1);
         draw_border(temp_bmp, 0, 0, m_width - 1, m_height - 1, BORDER_COLOR);
@@ -79,12 +77,10 @@ public:
         if (bmp == screen) unscare_mouse();
         destroy_bitmap(temp_bmp);
     }
-    virtual void redraw_fast(BITMAP *bmp, int x, int y)
-    {
+    virtual void redraw_fast(BITMAP *bmp, int x, int y) {
         m_chield->redraw(bmp, x + 2, y + 2 + m_title_height);
     }
-    virtual bool resize(int width, int height)
-    {
+    virtual bool resize(int width, int height) {
         if (width == -1 && height == -1) {
             m_width  = m_chield->get_width() + 5;
             if (m_width < text_length(m_fnt, m_title.c_str()) + 5)
@@ -110,8 +106,7 @@ public:
 /**
  * Other users status on the server from the client's point of view
  */
-enum USER_STATUS
-{
+enum USER_STATUS {
     USER_STATUS_READY = 0,     //!< user is available in chat
     USER_STATUS_BUSY,          //!< user is playing with someone (not you)
     USER_STATUS_CHALLENGE_IN,  //!< you have received a challenge from this user
@@ -120,8 +115,7 @@ enum USER_STATUS
     USER_STATUS_SELF           //!< own name in the list of connected players
 };
 
-struct UserInfo
-{
+struct UserInfo {
     std::string name;
     USER_STATUS status;
 
@@ -139,7 +133,7 @@ struct UserInfo
 
 /**
  * Object for displaying list of users in the server chat
- * 
+ *
  * @ingroup gui
  */
 class UsersList: public VisualObject
@@ -153,16 +147,13 @@ class UsersList: public VisualObject
     int  m_height;
 
 public:
-    UsersList(FONT *font = g_small_font) : m_font(font), m_need_redraw(false)
-    {
+    UsersList(FONT *font = g_small_font) : m_font(font), m_need_redraw(false) {
         resize(-1, -1);
     }
 
-    void update_user_info(const std::string &name, USER_STATUS status)
-    {
+    void update_user_info(const std::string &name, USER_STATUS status) {
         for (unsigned int i = 0; i < m_users.size(); i++)
-            if (m_users[i].name == name)
-            {
+            if (m_users[i].name == name) {
                 if (status == USER_STATUS_OFFLINE)
                     m_users.erase(m_users.begin() + i, m_users.begin() +  i + 1);
                 else
@@ -175,13 +166,11 @@ public:
         resize(-1, -1);
     }
 
-    void remove_all_users()
-    {
+    void remove_all_users() {
         m_users.clear();
     }
 
-    virtual void redraw_full(BITMAP *bmp, int x, int y)
-    {
+    virtual void redraw_full(BITMAP *bmp, int x, int y) {
         m_x = x; m_y = y; // Hack - only has sence when bmp is screen
         if (m_height == 0 || m_width == 0) return;
         BITMAP *temp_bmp = create_bitmap(m_width, m_height);
@@ -198,8 +187,8 @@ public:
                 default: color = COLOR_GRAY; break;
             }
 
-            textout(temp_bmp, m_font, m_users[i].name.c_str(), 0, 
-                i * text_height(m_font), color);
+            textout(temp_bmp, m_font, m_users[i].name.c_str(), 0,
+                    i * text_height(m_font), color);
         }
         if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
         blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
@@ -207,21 +196,18 @@ public:
         destroy_bitmap(temp_bmp);
     }
 
-    virtual void redraw_fast(BITMAP *bmp, int x, int y)
-    {
+    virtual void redraw_fast(BITMAP *bmp, int x, int y) {
         m_x = x; m_y = y; // Hack - only has sence when bmp is screen
     }
 
     virtual int get_width() const { return m_width; }
     virtual int get_height() const { return m_height; }
 
-    virtual bool resize(int width, int height)
-    {
+    virtual bool resize(int width, int height) {
         if (width != -1 || height != -1) return false;
         m_width = 0;
         m_height = text_height(m_font) * m_users.size();
-        for (unsigned int i = 0; i < m_users.size(); i++)
-        {
+        for (unsigned int i = 0; i < m_users.size(); i++) {
             int width = text_length(m_font, m_users[i].name.c_str());
             if (width > m_width) m_width = width;
         }
@@ -229,15 +215,13 @@ public:
         return true;
     }
 
-    std::string mouse_click(int mx, int my)
-    {
+    std::string mouse_click(int mx, int my) {
         if (mx < m_x || mx >= m_x + m_width) return "";
         if (my < m_y || my >= m_y + m_height) return "";
         return m_users[(my - m_y) / text_height(m_font)].name;
     }
 
-    USER_STATUS get_user_status(const std::string &name)
-    {
+    USER_STATUS get_user_status(const std::string &name) {
         for (unsigned int i = 0; i < m_users.size(); i++) {
             if (m_users[i].name == name)
                 return m_users[i].status;
@@ -262,16 +246,14 @@ void lobby_init_mouse()
 class initHawkNL
 {
 public:
-    initHawkNL()
-    { 
+    initHawkNL() {
         if (!nlInit() || !nlSelectNetwork(NL_IP)) {
             display_error_message("HawkNL library failed to init");
             exit(1);
         }
         nlEnable(NL_SOCKET_STATS);
     }
-    ~initHawkNL()
-    {
+    ~initHawkNL() {
         nlShutdown();
     }
 };
@@ -300,7 +282,7 @@ static int chat_msg_color(const std::string &msg)
 /**
  * Login-Dialog
  */
- 
+
 bool set_autologin_on = false;
 
 static void show_help(const char *text)
@@ -356,26 +338,26 @@ static bool asklogin()
         { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL }
     };
-    
+
     login_dialog[8].dp2 = (void *)_(
-        "The game can connect to the server running on the internet or on a "
-        "local network (to start the server on your computer, just run "
-        "'ufo2000-srv' executable included in ufo2000 distributive).\n\n"
+                              "The game can connect to the server running on the internet or on a "
+                              "local network (to start the server on your computer, just run "
+                              "'ufo2000-srv' executable included in ufo2000 distributive).\n\n"
 
-        "You need to enter server address. On the first run of the game, the server address "
-        "contains some default value, it is the official ufo2000 "
-        "server running on the internet. If you want to play on a local "
-        "network, you need to start the ufo2000 server on one computer and "
-        "enter its IP address when connecting to it from ufo2000 on another computer.\n\n"
+                              "You need to enter server address. On the first run of the game, the server address "
+                              "contains some default value, it is the official ufo2000 "
+                              "server running on the internet. If you want to play on a local "
+                              "network, you need to start the ufo2000 server on one computer and "
+                              "enter its IP address when connecting to it from ufo2000 on another computer.\n\n"
 
-        "The other two required fields are login and password. They are "
-        "used to identify the user to track some game statistics like the number "
-        "of victories and ELO rating.\n\n"
+                              "The other two required fields are login and password. They are "
+                              "used to identify the user to track some game statistics like the number "
+                              "of victories and ELO rating.\n\n"
 
-        "Login should be any name not used by other players and password should be "
-        "at least 6 characters long. If you are connecting to the server for the first "
-        "time, your account will be registered automatically. After successful login "
-        "or registration, you will see the internet server chat screen.");
+                              "Login should be any name not used by other players and password should be "
+                              "at least 6 characters long. If you are connecting to the server for the first "
+                              "time, your account will be registered automatically. After successful login "
+                              "or registration, you will see the internet server chat screen.");
 
     strcpy(host_buffer, g_server_host.c_str());
     strcpy(login_buffer, g_server_login.c_str());
@@ -431,7 +413,7 @@ const char *get_os_type_string()
  */
 int connect_internet_server()
 {
-  //lua_message( "Enter: connect_internet_server" );
+    //lua_message( "Enter: connect_internet_server" );
     if ((rand() % 2) == 1)
         FS_MusicPlay(F(cfg_get_net2_music_file_name()));
     else
@@ -443,9 +425,9 @@ int connect_internet_server()
         if (!asklogin())
             return -1;
 
-    text_mode(-1); 
+    text_mode(-1);
     textprintf(screen, font, 1, 1, COLOR_SYS_INFO1, "%s", _("Connecting to server..."));
-    lua_message( "Start: connect_internet_server" );
+    lua_message("Start: connect_internet_server");
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     std::string error_message;
@@ -456,18 +438,18 @@ int connect_internet_server()
     }
 
     if (!server->login(cfg_get_server_login(), cfg_get_server_password(), UFO_VERSION_TAG,
-            get_os_type_string(), g_version_id.c_str(), error_message)) {
+                       get_os_type_string(), g_version_id.c_str(), error_message)) {
         alert(" ", error_message.c_str(), " ", _("    OK    "), NULL, 1, 0);
         g_server_autologin = 0;
         return -1;
     }
 
     if (set_autologin_on)
-       g_server_autologin = 1; // Remember successful login
+        g_server_autologin = 1; // Remember successful login
 
     std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H));
-    std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
-        std::string( _("ufo2000 internet server (") ) + cfg_get_server_host() + std::string(")"), large));
+    std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(),
+                                            std::string(_("ufo2000 internet server (")) + cfg_get_server_host() + std::string(")"), large));
     chat_border->set_full_redraw();
     std::auto_ptr<UsersList> users(new UsersList(large));
     users->update_user_info(g_server_login, USER_STATUS_SELF);
@@ -475,19 +457,19 @@ int connect_internet_server()
     users_border->set_full_redraw();
 
     // Write greetings and the short help to the chat console
-    chat->printf(COLOR_SYS_HEADER, _("You have just connected to ufo2000 internet server") );
-    chat->printf(COLOR_SYS_HEADER, _("There are two windows here: chat console in the left window") );
-    chat->printf(COLOR_SYS_HEADER, _("and the list of online players in the right") );
+    chat->printf(COLOR_SYS_HEADER, _("You have just connected to ufo2000 internet server"));
+    chat->printf(COLOR_SYS_HEADER, _("There are two windows here: chat console in the left window"));
+    chat->printf(COLOR_SYS_HEADER, _("and the list of online players in the right"));
     chat->printf("\n");
-    chat->printf(COLOR_WHITE,      _("white player name - that's your own name") );
-    chat->printf(COLOR_GRAY,       _("gray player name - available for chat") );
-    chat->printf(COLOR_YELLOW,     _("yellow player name - you have sent a challenge to this player") );
-    chat->printf(COLOR_GREEN,      _("green player name - you can accept a challenge from this player") );
-    chat->printf(COLOR_RED00,      _("red player name - the player is busy playing with someone else") );
+    chat->printf(COLOR_WHITE,      _("white player name - that's your own name"));
+    chat->printf(COLOR_GRAY,       _("gray player name - available for chat"));
+    chat->printf(COLOR_YELLOW,     _("yellow player name - you have sent a challenge to this player"));
+    chat->printf(COLOR_GREEN,      _("green player name - you can accept a challenge from this player"));
+    chat->printf(COLOR_RED00,      _("red player name - the player is busy playing with someone else"));
     chat->printf("\n");
-    chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents") );
+    chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents"));
     chat->printf("\n");
-    chat->printf(COLOR_SYS_PROMPT, _("If you have an unfinished game at the server you can press F3 to continue it.") );
+    chat->printf(COLOR_SYS_PROMPT, _("If you have an unfinished game at the server you can press F3 to continue it."));
     chat->printf("\n");
 
     chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -498,26 +480,23 @@ int connect_internet_server()
     net->gametype = GAME_TYPE_INTERNET_SERVER;
     net->m_internet_server = server.get();
 
-    lua_message( std::string("Server: ") + cfg_get_server_host() );
-    lua_message( std::string("Login: ")  + g_server_login );
-    battle_report( "\n# %s: %s\n", _("Connected to server"), cfg_get_server_host().c_str() );
-    battle_report( "# %s: %s\n", _("as user"), g_server_login.c_str() );
+    lua_message(std::string("Server: ") + cfg_get_server_host());
+    lua_message(std::string("Login: ")  + g_server_login);
+    battle_report("\n# %s: %s\n", _("Connected to server"), cfg_get_server_host().c_str());
+    battle_report("# %s: %s\n", _("as user"), g_server_login.c_str());
 
-    while (true)
-    {
+    while (true) {
         NLuint id;
         std::string packet;
         int res = server->recv_packet(id, packet);
         if (res == -1) {
             alert(" ", _("  Connection lost  "), " ", _("    OK    "), NULL, 1, 0);
-            battle_report( "# %s\n", _("  Connection lost  ") );
+            battle_report("# %s\n", _("  Connection lost  "));
             // Todo: Trim blanks
             return -1;
         }
-        if (res != 0)
-        {
-            switch (id)
-            {
+        if (res != 0) {
+            switch (id) {
                 case SRV_USER_ONLINE:
                     if (users->get_user_status(packet) != USER_STATUS_READY) {
                         soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
@@ -547,7 +526,7 @@ int connect_internet_server()
                     break;
                 case SRV_USER_BUSY:
                     if (users->get_user_status(packet) != USER_STATUS_BUSY &&
-                        users->get_user_status(packet) != USER_STATUS_OFFLINE) {
+                            users->get_user_status(packet) != USER_STATUS_OFFLINE) {
                         soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
                         chat->printf(COLOR_DARKGRAY, _("%s left chat to play a game"), packet.c_str());
                     }
@@ -563,8 +542,8 @@ int connect_internet_server()
                     FS_MusicPlay(NULL);
                     HOST = 1;
 
-                    battle_report( "# %s: %s\n", _("Start networkgame with"), packet.c_str() );
-                    lua_message( std::string("Start networkgame with") + packet.c_str() );
+                    battle_report("# %s: %s\n", _("Start networkgame with"), packet.c_str());
+                    lua_message(std::string("Start networkgame with") + packet.c_str());
                     // Todo: use this name for endgame-stats
 
                     if (initgame()) {
@@ -589,8 +568,8 @@ int connect_internet_server()
                     FS_MusicPlay(NULL);
                     HOST = 0;
 
-                    lua_message( std::string("Join networkgame with") + packet.c_str() );
-                    battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
+                    lua_message(std::string("Join networkgame with") + packet.c_str());
+                    battle_report("# %s: %s\n", _("Join networkgame with"), packet.c_str());
                     // Todo: use this name for endgame-stats
 
                     if (initgame()) {
@@ -618,8 +597,8 @@ int connect_internet_server()
                     else
                         HOST = 0;
 
-                    lua_message( std::string("Start recovering") + packet.c_str() );
-                    battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
+                    lua_message(std::string("Start recovering") + packet.c_str());
+                    battle_report("# %s: %s\n", _("Join networkgame with"), packet.c_str());
                     // Todo: use this name for endgame-stats
 
                     if (initgame()) {
@@ -664,7 +643,7 @@ int connect_internet_server()
                     case USER_STATUS_READY:
                     case USER_STATUS_CHALLENGE_IN:
                     case USER_STATUS_CHALLENGE_OUT:
-                        if (mouse_b & 1) server->challenge(name); 
+                        if (mouse_b & 1) server->challenge(name);
                         else if (mouse_b & 2) server->decline_challenge(name);
                         break;
                     default:
@@ -689,10 +668,10 @@ int connect_internet_server()
             switch (scancode) {
                 case KEY_ASTERISK:
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
+                    g_console->printf(COLOR_SYS_OK, _("Music OFF"));
                     break;
                 case KEY_F1:
-                    help( HELP_NET );
+                    help(HELP_NET);
                     break;
                 case KEY_F3:
                     server->resume_game();
@@ -705,16 +684,16 @@ int connect_internet_server()
                     lobby_init_mouse();
                     break;
                 case KEY_ESC:
-                    if (askmenu( _("DISCONNECT FROM SERVER") )) {
-                        lua_message( std::string("DISCONNECT FROM SERVER") );
-                        battle_report( "# %s\n\n", _("DISCONNECT FROM SERVER") );
+                    if (askmenu(_("DISCONNECT FROM SERVER"))) {
+                        lua_message(std::string("DISCONNECT FROM SERVER"));
+                        battle_report("# %s\n\n", _("DISCONNECT FROM SERVER"));
                         return -1;
                     }
                     break;
                 default:
                     if (chat->process_keyboard_input(keycode, scancode)) {
-                        if(strstr(chat->get_text(),"getreplay"))
-                            server->resume_game_debug(chat->get_text()+9);
+                        if (strstr(chat->get_text(), "getreplay"))
+                            server->resume_game_debug(chat->get_text() + 9);
                         else
                             server->send_packet(SRV_MESSAGE, chat->get_text());
                         users_border->resize(-1, -1);
@@ -732,8 +711,8 @@ int connect_internet_server()
     show_mouse(NULL);
     FS_MusicPlay(NULL);
 
-    lua_message( std::string("DISCONNECT FROM SERVER") );
-    battle_report( "# %s\n\n", _("DISCONNECT FROM SERVER") );
+    lua_message(std::string("DISCONNECT FROM SERVER"));
+    battle_report("# %s\n\n", _("DISCONNECT FROM SERVER"));
 
     return -1;
 }

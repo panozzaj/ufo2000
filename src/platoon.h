@@ -52,16 +52,16 @@ private:
     //! Each bit in the vision_matrix is set to 1 if the soldier
     //! with the corresponding vision_mask can see that map cell.
     int32 m_vision_matrix[MAP_LEVEL_LIMIT * 10 * 6 * 10 * 6];
-        
+
     //! Map cell that has been explored
     int m_seen[MAP_LEVEL_LIMIT][10 * 6][10 * 6];
-        
+
     //! Seen items remain visible until you look at them again
     int m_seen_item_index[MAP_LEVEL_LIMIT][10 * 6][10 * 6];
-        
+
     //! All visible enemy soldiers
     int32 m_visible_enemies;
-        
+
     Statistics *m_stats;
 
 public:
@@ -74,7 +74,7 @@ public:
     Statistics *get_stats() {return m_stats;}
 
     void move(int ISLOCAL);
-        void restore_moved();
+    void restore_moved();
     void restore();
     void bullmove();
     void bulldraw();
@@ -87,17 +87,16 @@ public:
     Soldier *next_not_moved_man(Soldier *sel_man);
     Place *find_item(Item *it, int &lev, int &col, int &row);
     int find_place_coords(Place *pl, int &lev, int &col, int &row);
-    int check_for_hit(int z, int x, int y, Soldier* no_test = NULL);
+    int check_for_hit(int z, int x, int y, Soldier *no_test = NULL);
     void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
     int dist_to_nearest(Soldier *some);
-        
+
     int nobullfly();
     int nomoves();
 
     int realsize();
 
-    Soldier *captain()
-    {
+    Soldier *captain() {
         if (man == NULL) return NULL;
         return man->is_active() ? man : man->next_active_soldier();
     }
@@ -105,7 +104,7 @@ public:
     int calc_platoon_cost();
 
     int check_reaction_fire(Soldier *target);
-    
+
     void change_morale(int delta, bool send_to_remote);
     void check_morale();
 
@@ -119,22 +118,22 @@ public:
 
     //! Visibility calculations for the platoon
     void initialize_vision_matrix();
-    int32 *get_vision_matrix(){return m_vision_matrix;}
+    int32 *get_vision_matrix() {return m_vision_matrix;}
     void set_seen(int lev, int col, int row, int value) { m_seen[lev][col][row] = value; }
     int is_seen(int lev, int col, int row);
     int is_visible(int lev, int col, int row);
-        
+
     //! Platoon's visible items and enemies
     int get_seen_item_index(int lev, int col, int row) { return m_seen_item_index[lev][col][row]; }
     void set_seen_item_index(int lev, int col, int row, int value) { m_seen_item_index[lev][col][row] = value; }
-    int32 get_visible_enemies(){return m_visible_enemies;}
-    void set_visible_enemies(int32 visible_enemies){m_visible_enemies = visible_enemies;}
+    int32 get_visible_enemies() {return m_visible_enemies;}
+    void set_visible_enemies(int32 visible_enemies) {m_visible_enemies = visible_enemies;}
     int32 update_visible_enemies();
-    void draw_enemy_indicators(bool draw_indicators, bool draw_markers); 
+    void draw_enemy_indicators(bool draw_indicators, bool draw_markers);
     int center_enemy_seen();
-        
-    void soldier_moved(Soldier* const target);
-        
+
+    void soldier_moved(Soldier *const target);
+
     void sit_on_start();
     void save_to_string(std::string &str);
 

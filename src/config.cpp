@@ -80,27 +80,27 @@ const char *cfg_get_console_font_file()
     return console_font_file.c_str();
 }
 
-int cfg_get_music_volume()                    { return music_volume; } 
-int cfg_get_base_accuracy()                   { return base_accuracy; } 
-int cfg_get_screen_x_res()                    { return preferred_screen_xres; } 
-int cfg_get_screen_y_res()                    { return preferred_screen_yres; } 
-int cfg_get_min_color_depth()                 { return min_color_depth; } 
+int cfg_get_music_volume()                    { return music_volume; }
+int cfg_get_base_accuracy()                   { return base_accuracy; }
+int cfg_get_screen_x_res()                    { return preferred_screen_xres; }
+int cfg_get_screen_y_res()                    { return preferred_screen_yres; }
+int cfg_get_min_color_depth()                 { return min_color_depth; }
 
-const std::string &cfg_get_server_host()      { return g_server_host; } 
-const std::string &cfg_get_server_login()     { return g_server_login; } 
-const std::string &cfg_get_server_password()  { return g_server_password; } 
+const std::string &cfg_get_server_host()      { return g_server_host; }
+const std::string &cfg_get_server_login()     { return g_server_login; }
+const std::string &cfg_get_server_password()  { return g_server_password; }
 const std::string &cfg_get_server_proxy()     { return g_server_proxy; }
 const std::string &cfg_get_server_proxy_login() { return g_server_proxy_login; }
 
-const char *cfg_get_menu_music_file_name()    { return menu_midi_file_name.c_str(); } 
-const char *cfg_get_setup_music_file_name()   { return setup_midi_file_name.c_str(); } 
-const char *cfg_get_editor_music_file_name()  { return editor_midi_file_name.c_str(); } 
-const char *cfg_get_combat1_music_file_name() { return combat1_midi_file_name.c_str(); } 
-const char *cfg_get_combat2_music_file_name() { return combat2_midi_file_name.c_str(); } 
-const char *cfg_get_win_music_file_name()     { return win_midi_file_name.c_str(); } 
-const char *cfg_get_lose_music_file_name()    { return lose_midi_file_name.c_str(); } 
-const char *cfg_get_net1_music_file_name()    { return net1_midi_file_name.c_str(); } 
-const char *cfg_get_net2_music_file_name()    { return net2_midi_file_name.c_str(); } 
+const char *cfg_get_menu_music_file_name()    { return menu_midi_file_name.c_str(); }
+const char *cfg_get_setup_music_file_name()   { return setup_midi_file_name.c_str(); }
+const char *cfg_get_editor_music_file_name()  { return editor_midi_file_name.c_str(); }
+const char *cfg_get_combat1_music_file_name() { return combat1_midi_file_name.c_str(); }
+const char *cfg_get_combat2_music_file_name() { return combat2_midi_file_name.c_str(); }
+const char *cfg_get_win_music_file_name()     { return win_midi_file_name.c_str(); }
+const char *cfg_get_lose_music_file_name()    { return lose_midi_file_name.c_str(); }
+const char *cfg_get_net1_music_file_name()    { return net1_midi_file_name.c_str(); }
+const char *cfg_get_net2_music_file_name()    { return net2_midi_file_name.c_str(); }
 
 const char *cfg_get_loading_image_file_name() { return loading_image_file_name.c_str(); }
 const char *cfg_get_menu_image_file_name()    { return menu_image_file_name.c_str(); }
@@ -173,10 +173,10 @@ void saveini()
     set_config_int(gen,     "mouse_sens",      mouse_sens);
 
     set_config_string(gen,  "console_font_file", console_font_file.c_str());
-    set_config_int(gen,     "console_font_size", get_console_font_size());               
-    
+    set_config_int(gen,     "console_font_size", get_console_font_size());
+
     set_config_int(gen,     "music_volume", music_volume);
-    
+
     set_config_int(edit,    "platoon_size",    local_platoon_size);
 
     set_config_string(edit, "weaponset", g_default_weaponset.c_str());
@@ -185,7 +185,7 @@ void saveini()
     set_config_string(serv, "login",           g_server_login.c_str());
     set_config_string(serv, "password",        g_server_password.c_str());
     set_config_int(serv,    "autologin",       g_server_autologin);
-    
+
     set_config_int(flag,    "F_ENDTURNSND",    FLAGS & F_ENDTURNSND ? 1 : 0);
     set_config_int(flag,    "F_SECONDSIT",     FLAGS & F_SECONDSIT ? 1 : 0);
     set_config_int(flag,    "F_TOOLTIPS",      FLAGS & F_TOOLTIPS ? 1 : 0);
@@ -234,9 +234,9 @@ void set_language(const char *lang)
 #define OK_BUTTON        15
 #define FLAG_PXG         24
 #define MAX_VALUE        99
-                                                 
-static DIALOG *config_dlg = NULL;                                                 
-                                                 
+
+static DIALOG *config_dlg = NULL;
+
 static int d_slider_pro2(int msg, DIALOG *d, int c)
 {
     char s[100];
@@ -247,11 +247,10 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
             sprintf(s, "%2d", d->d2);
             text_mode(d->bg);
             gui_textout(screen, s, d->x - 18, d->y + 4, d->fg, 0);
-            break;    
+            break;
         case MSG_CLICK:
         case MSG_CHAR:
-            if (d != &config_dlg[VOLUME])
-            {
+            if (d != &config_dlg[VOLUME]) {
                 if (d == &config_dlg[FONT_SIZE]) {
                     if (d->d2 < 9) d->d2 = 9;
                 } else {
@@ -267,7 +266,7 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
             break;
     }
     return v;
-}                                                   
+}
 
 std::vector<std::string> language_names;
 
@@ -335,7 +334,7 @@ void configure()
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
-    
+
     ::config_dlg = config_dlg;
 
     // Start-values for sliders:
@@ -366,19 +365,19 @@ void configure()
         set_console_font_size(config_dlg[FONT_SIZE].d2);
         mouse_sens = config_dlg[MOUSE_SENS].d2;
         set_mouse_sens(mouse_sens);
-        
+
         if (config_dlg[FLAG_ETS].flags == D_SELECTED) FLAGS |= F_ENDTURNSND;
         else FLAGS &= ~F_ENDTURNSND;
-            
+
         if (config_dlg[FLAG_SS].flags == D_SELECTED) FLAGS |= F_SECONDSIT;
         else FLAGS &= ~F_SECONDSIT;
-            
+
         if (config_dlg[FLAG_TT].flags == D_SELECTED) FLAGS |= F_TOOLTIPS;
         else FLAGS &= ~F_TOOLTIPS;
-         
+
         if (config_dlg[FLAG_SCALE].flags == D_SELECTED) FLAGS |= F_SCALE2X;
         else FLAGS &= ~F_SCALE2X;
-        
+
         if (config_dlg[FLAG_COE].flags == D_SELECTED) FLAGS |= F_CENTER_ON_ENEMY;
         else FLAGS &= ~F_CENTER_ON_ENEMY;
 

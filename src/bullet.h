@@ -26,8 +26,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class Item;
 
 /**
- * Fired bullets, thrown grenades, rockets and other projectiles 
- * simulation. 
+ * Fired bullets, thrown grenades, rockets and other projectiles
+ * simulation.
  *
  * @ingroup battlescape
  */
@@ -51,30 +51,30 @@ private:
 
     int owner;
     bool explodes;
-    
+
     std::vector<int> *affected;
-    
+
     static std::vector<ALPHA_SPRITE *> hit_bullet, hit_laser, hit_plasma, hit_punch;
 public:
-    
+
     Bullet(Soldier *man);
     ~Bullet();
-    
+
     void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
     void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
     void thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item);
     void aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_item);
     void punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
-	void heal(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
+    void heal(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
 
-	
+
     void move();
     void draw();
     void draw_bullet_trace(int length, int color);
 
     void hitcell();
     void hitman();
-    
+
     void affect_morale(int cz, int cx, int cy);
 
     void detonate();
@@ -86,8 +86,7 @@ public:
     void showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
     int calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
 
-    inline int ready()
-    {
+    inline int ready() {
         if (state == READY)
             return 1;
         return 0;

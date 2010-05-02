@@ -14,7 +14,7 @@
 #define PLAYERS_COUNT_LIMIT g_srv_players_count_limit
 // Maximum number of connections
 #define CONNECTIONS_COUNT_LIMIT g_srv_connections_count_limit
-// Number of miliseconds for users to login (after this time the socket 
+// Number of miliseconds for users to login (after this time the socket
 // will be closed)
 #define LOGIN_TIME_LIMIT g_srv_login_time_limit
 // The maximum length of user name
@@ -98,7 +98,7 @@ public:
 //  This function sends a packet to the opponent of this user
     bool send_packet_opponent(NLuint id, const std::string &packet);
 
-//  Function that handles packets received from this client 
+//  Function that handles packets received from this client
     virtual bool recv_packet(NLuint id, const std::string &packet) = 0;
 };
 

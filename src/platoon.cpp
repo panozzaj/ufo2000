@@ -35,7 +35,7 @@ Platoon::Platoon(int PID, int num)
 {
     StatEntry *current;
     ID = PID;
-        
+
     size = num;
     memset(m_seen, 0, sizeof(m_seen));
     //Number of levels should be set relative to map max number of levels
@@ -49,9 +49,9 @@ Platoon::Platoon(int PID, int num)
 
     Soldier *s1 = NULL, *s2;
     for (int i = 0; i < size; i++) {
-        s2 = new Soldier(this, i+PID);
+        s2 = new Soldier(this, i + PID);
         current->set_name("Soldier"); // This will NEVER be seen.
-        current->set_SID(i+PID);
+        current->set_SID(i + PID);
         current = current->getnext();
         if (s1 != NULL) {
             s1->set_next(s2);
@@ -63,13 +63,13 @@ Platoon::Platoon(int PID, int num)
     }
 }
 
-Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
+Platoon::Platoon(int PID, PLAYERDATA *pd, DeployType dep_type)
 {
     StatEntry *current;
     ID = PID;
     size = pd->size;
     memset(m_seen, 0, sizeof(m_seen));
-    
+
     for (int i = 0; i < map->level; i++)
         for (int j = 0; j < 10 * 6; j++)
             for (int k = 0; k < 10 * 6; k++)
@@ -82,9 +82,9 @@ Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
     int i;
     int32 vision_mask = 1;
     for (i = 0; i < size; i++) {
-        s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i], dep_type,vision_mask);
+        s2 = new Soldier(this, i + PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i], dep_type, vision_mask);
         current->set_name(pd->md[i].Name);
-        current->set_SID(i+PID);
+        current->set_SID(i + PID);
         current = current->getnext();
         if (s1 != NULL) {
             s1->set_next(s2);
@@ -121,8 +121,7 @@ void Platoon::move(int ISLOCAL)
     Soldier *ss = man;
     while (ss != NULL) {
         if (ss->move(ISLOCAL) == 0) { //dead, or stunned
-            if (ss->is_dead()) // dead. New captain for platoon needed.
-            {
+            if (ss->is_dead()) { // dead. New captain for platoon needed.
                 if (ss == man)
                     man = man->nextman();      //!!ret this if no other
                 if (ss == man) {
@@ -136,12 +135,12 @@ void Platoon::move(int ISLOCAL)
                 map->clear_vision_matrix(s);
                 s->die();
                 size--;
-                            
+
                 if (this == platoon_local)
                     platoon_remote->soldier_moved(s);
                 else
                     platoon_local->soldier_moved(s);
-                            
+
                 delete s;
             } else if (s->x != -1) {
                 map->clear_vision_matrix(s);
@@ -151,7 +150,7 @@ void Platoon::move(int ISLOCAL)
                 else
                     platoon_local->soldier_moved(s);
             }
-            
+
         } else {
             ss = ss->next();
         }
@@ -225,35 +224,35 @@ void Platoon::initialize_vision_matrix()
     memset(m_vision_matrix, 0, map->size() * sizeof(int32));
     Soldier *ss = man;
     while (ss != NULL) {
-        if ( ss->is_active() )
+        if (ss->is_active())
             map->update_vision_matrix(ss);
         ss = ss->next();
     }
 }
 
-int Platoon::is_seen(int lev, int col, int row) 
+int Platoon::is_seen(int lev, int col, int row)
 {
     return m_seen[lev][col][row] || net->gametype == GAME_TYPE_REPLAY;
 }
 
-int Platoon::is_visible(int lev, int col, int row) 
+int Platoon::is_visible(int lev, int col, int row)
 {
-    return m_vision_matrix[Position(lev,col,row).index()] || (net->gametype == GAME_TYPE_REPLAY);
+    return m_vision_matrix[Position(lev, col, row).index()] || (net->gametype == GAME_TYPE_REPLAY);
 }
 
 /**
  * When a soldier moves into a new voxel, tell all of the enemy
  * soldiers who can see that voxel that he is there.  This avoids
  * having to unneccesarily recalculate those soldier's visibility.
- */ 
-void Platoon::soldier_moved(Soldier* mover)
+ */
+void Platoon::soldier_moved(Soldier *mover)
 {
     Soldier *ss = man;
     int32 index = Position(mover->z, mover->x, mover->y).index();
     int32 vision_mask = mover->get_vision_mask();
     while (ss != NULL) {
-        if ( ss->is_active()) {
-            if(mover->is_active() && m_vision_matrix[index] & ss->get_vision_mask())
+        if (ss->is_active()) {
+            if (mover->is_active() && m_vision_matrix[index] & ss->get_vision_mask())
                 ss->set_visible_enemies(ss->get_visible_enemies() | vision_mask);
             else
                 ss->set_visible_enemies(ss->get_visible_enemies() & ~vision_mask);
@@ -271,9 +270,9 @@ int32 Platoon::update_visible_enemies()
     m_visible_enemies = 0;
     Soldier *ss = man;
     while (ss != NULL) {
-        if ( ss->is_active() )
+        if (ss->is_active())
             m_visible_enemies |= ss->get_visible_enemies();
-        ss = ss->next();    
+        ss = ss->next();
     }
 
     return m_visible_enemies;
@@ -293,9 +292,9 @@ int Platoon::check_reaction_fire(Soldier *target)
     Soldier *ss = man;
     int32 n = Position(target->z, target->x, target->y).index();
     while (ss != NULL) {
-        if ( ss->is_active() ) {
+        if (ss->is_active()) {
             // Can we see this cell?
-            if( get_vision_matrix()[n] & ss->get_vision_mask() ){
+            if (get_vision_matrix()[n] & ss->get_vision_mask()) {
                 soldiers.push_back(ss);
             }
         }
@@ -308,28 +307,28 @@ int Platoon::check_reaction_fire(Soldier *target)
             return 1;
         soldiers.erase(soldiers.begin() + index);
     }
-    
+
     return 0;
 }
 
 /**
- * Create appropriate bar with a digit in the right bottom corner 
- * for enemies that are seen.  
+ * Create appropriate bar with a digit in the right bottom corner
+ * for enemies that are seen.
  */
 #define ES_SIDE 15
-void Platoon::draw_enemy_indicators(bool draw_indicators, bool draw_markers) 
+void Platoon::draw_enemy_indicators(bool draw_indicators, bool draw_markers)
 {
-    if (m_visible_enemies == 0 )
+    if (m_visible_enemies == 0)
         return;
-    
-    text_mode( -1);
+
+    text_mode(-1);
     char num[2] = {0, 0};
     int32 counter = 0;
-        
-    Soldier* s = platoon_remote->man;
-    while (s != NULL && counter < 10){
-        if (m_visible_enemies & s->get_vision_mask()){
-            
+
+    Soldier *s = platoon_remote->man;
+    while (s != NULL && counter < 10) {
+        if (m_visible_enemies & s->get_vision_mask()) {
+
             // Start at 1 instead of 0.
             num[0] = ((counter + 1) % 10) + '0';
 
@@ -337,20 +336,20 @@ void Platoon::draw_enemy_indicators(bool draw_indicators, bool draw_markers)
                 int x1, y1, x2, y2;
                 x1 = SCREEN2W - ES_SIDE - 3;
                 y1 = SCREEN2H - 23 - counter * 20;
-        
+
                 x2 = x1 + ES_SIDE;
                 y2 = y1 + ES_SIDE - 1;
-                
-                // Draw it bright red if the selected soldier can see 
+
+                // Draw it bright red if the selected soldier can see
                 // the enemy, otherwise make the indicator dull red.
                 if (sel_man != NULL)
                     rectfill(screen2, x1, y1, x2, y2, (sel_man->get_visible_enemies() & s->get_vision_mask()) ? COLOR_RED07 : COLOR_RED15);
-        
+
                 textout(screen2, font, num, x1 + 5, y1 + 4, COLOR_GOLD);
             }
 
             counter++;
-            
+
             // Draw numbers above seen enemies
             if (draw_markers) {
                 int sx = g_map->x + CELL_SCR_X * s->x + CELL_SCR_X * s->y + 12;
@@ -380,17 +379,17 @@ void Platoon::draw_enemy_indicators(bool draw_indicators, bool draw_markers)
 int Platoon::center_enemy_seen()
 {
     int counter = 0; // Number displayed inside visible enemy indicator
-    Soldier* s = platoon_remote->man;
+    Soldier *s = platoon_remote->man;
     while (s != NULL) {
         if (m_visible_enemies & s->get_vision_mask()) {
             int x1, y1, x2, y2;
             x1 = SCREEN2W - ES_SIDE - 3;
             y1 = SCREEN2H - 23 - counter * 20;
-            
+
             x2 = x1 + ES_SIDE;
             y2 = y1 + ES_SIDE - 1;
 
-            counter++;        
+            counter++;
             if (mouse_inside(x1, y1, x2, y2)) {
                 map->center(s);
                 return 1;
@@ -427,7 +426,7 @@ Soldier *Platoon::findnum(int N)
 
 /**
  * Returns pointer to the next soldier who is not still marked as moved.
- * When reaching end of soldiers list, the search is wrapped around to the 
+ * When reaching end of soldiers list, the search is wrapped around to the
  * first soldier
  */
 Soldier *Platoon::next_not_moved_man(Soldier *sel_man)
@@ -518,7 +517,7 @@ int Platoon::calc_platoon_cost()
 {
     int n = 0;
     Soldier *ss = man;
-    
+
     while (ss != NULL) {
         n += ss->calc_full_ammunition_cost();
         ss = ss->next();
@@ -544,7 +543,7 @@ Place *Platoon::find_item(Item *it, int &lev, int &col, int &row)
 int Platoon::find_place_coords(Place *pl, int &lev, int &col, int &row)
 {
     Soldier *ss = man;
-    
+
     while (ss != NULL) {
         int pf = ss->find_place_coords(pl, lev, col, row);
         if (pf)
@@ -555,13 +554,13 @@ int Platoon::find_place_coords(Place *pl, int &lev, int &col, int &row)
 }
 
 
-int Platoon::check_for_hit(int z, int x, int y, Soldier* no_test)
+int Platoon::check_for_hit(int z, int x, int y, Soldier *no_test)
 {
     Soldier *ss = man;
 
     int v = 0;
     while (ss != NULL) {
-        if(no_test != ss)
+        if (no_test != ss)
             v |= ss->check_for_hit(z, x, y);
         ss = ss->next();
     }
@@ -583,7 +582,7 @@ int Platoon::dist_to_nearest(Soldier *some)
 {
     int res = -1, cur;
     Soldier *ss = man;
-    
+
     while (ss != NULL) {
         if (ss != some) {
             cur = (int)sqrt((some->x - ss->x) * (some->x - ss->x) +
@@ -594,7 +593,7 @@ int Platoon::dist_to_nearest(Soldier *some)
 
         ss = ss->next();
     }
-    
+
     return res;
 }
 
@@ -603,11 +602,11 @@ void Platoon::change_morale(int delta, bool send_to_remote)
     Soldier *ss = man;
 
     if (! g_game_receiving || !send_to_remote)
-    while (ss != NULL) {
-        ss->change_morale(delta);   
-        ss = ss->next();
-    }
-    
+        while (ss != NULL) {
+            ss->change_morale(delta);
+            ss = ss->next();
+        }
+
     if (send_to_remote)
         net->send_morale_change(delta);
 }
@@ -616,7 +615,7 @@ void Platoon::check_morale()
 {
     bool panicked = false;
     Soldier *ss = man;
-    
+
     while (ss != NULL) {
         if (rand() % 100 < 100 - 2 * ss->ud.Morale) {
             int action = rand() % 2;
@@ -626,9 +625,9 @@ void Platoon::check_morale()
         }
         ss = ss->next();
     }
-    
+
     if (!panicked)
-        change_morale(5, true);     
+        change_morale(5, true);
 }
 
 /**
@@ -641,13 +640,13 @@ void Platoon::save_FULLDATA(const char *fn)
     FILE *f = fopen(F(fn), "wt");
     if (f == NULL) {
         alert(" ", "Can't create specified file", " ", "    OK    ", NULL, 1, 0);
-        return;     
+        return;
     }
     std::string x = "return {\n" + indent(str) + "}\n";
     fprintf(f, "%s", x.c_str());
     fclose(f);
 
-    // !!! The next code is a hack added to workaround a problem 
+    // !!! The next code is a hack added to workaround a problem
     // when soldiers start the battle unarmed (because of some weird
     // code in send/receive team data protocol implementation)
     Soldier *ss = man;
@@ -679,7 +678,7 @@ void Platoon::load_FULLDATA(const char *fn)
 {
     lua_pushstring(L, "LoadSquad");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    
+
     // load team information as a table on the top of lua stack
     int stack_top = lua_gettop(L);
     lua_safe_dofile(L, F(fn), "restricted_sandbox");
@@ -687,7 +686,7 @@ void Platoon::load_FULLDATA(const char *fn)
     LUA_PUSH_OBJECT_POINTER(L, this);
     lua_safe_call(L, 2, 0);
 
-    // !!! The next code is a hack added to workaround a problem 
+    // !!! The next code is a hack added to workaround a problem
     // when soldiers start the battle unarmed (because of some weird
     // code in send/receive team data protocol implementation)
     Soldier *ss = man;
@@ -700,7 +699,7 @@ void Platoon::load_FULLDATA(const char *fn)
 
 void Platoon::build_Units(Units &u)
 {
-    Soldier * ss = man;
+    Soldier *ss = man;
     //u.reset();
     int num = 0;
     while (ss != NULL) {
@@ -751,7 +750,7 @@ int Platoon::eot_save(char *buf, int &buf_size)
 
     Soldier *ss = man;
     while (ss != NULL) {
-            buf_size += ss->eot_save(buf + buf_size);
+        buf_size += ss->eot_save(buf + buf_size);
         ss = ss->next();
     }
 
@@ -784,7 +783,7 @@ void Platoon::sit_on_start()
 {
     Soldier *ss = man;
     while (ss != NULL) {
-            ss->set_start_sit();
+        ss->set_start_sit();
         ss = ss->next();
     }
 }

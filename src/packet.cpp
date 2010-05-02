@@ -53,15 +53,14 @@ extern int GAMELOOP;
 void Packet::create(Command cmd)
 {
     reset();
-    assert (local.Position >= 1 && local.Position <= 2);
+    assert(local.Position >= 1 && local.Position <= 2);
     int len = sprintf(data + size, "_Xcom_%d_%05d_%s_", local.Position, local.packet_num, strCommand[(int)cmd]);
-    g_current_packet_num=local.packet_num;
-    g_current_packet_pos=local.Position;
+    g_current_packet_num = local.packet_num;
+    g_current_packet_pos = local.Position;
     local.packet_num++;
     size += len;
-    
-    if(GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER)
-    {
+
+    if (GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER) {
         // send debug info to the server (crc)
         char debug_info[1000];
         sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
@@ -88,11 +87,11 @@ Command Packet::command(char *buf, int buf_size)
             char *xcom = strstr(buf, "_Xcom_");
             char *pkt = NULL;
             Position = xcom [strlen("_Xcom_")] - '0';
-            
+
             //get packet number from the packet
             char packet_num[100];
             strncpy(packet_num, xcom + strlen("_Xcom_") + 2, 5);
-            packet_num[5]=0;
+            packet_num[5] = 0;
             g_current_packet_num = atol(packet_num);
             g_current_packet_pos = Position;
 
@@ -200,10 +199,12 @@ Packet &Packet::operator>>(uint32 &i)
     return *this;
 }
 
-BQ::BQ(int sz) {
+BQ::BQ(int sz)
+{
 }
 
-BQ::~BQ() {
+BQ::~BQ()
+{
 }
 
 void BQ::put(const std::string &str)

@@ -25,35 +25,35 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "mouse.h"
 
 /**
- * Inventory management in the battlecape. 
- 
+ * Inventory management in the battlecape.
+
  * @ingroup battlescape
  * @ingroup gui
  * @relates Editor
- * @todo Try to simplify Inventory and Editor classes and make them 
+ * @todo Try to simplify Inventory and Editor classes and make them
  *       share common code -serge-
  */
 class Inventory
 {
 private:
-	int x, y;	
+    int x, y;
 
-	Item   *sel_item;
-	int    sel_item_place;
+    Item   *sel_item;
+    int    sel_item_place;
 
-	BITMAP *b123, *b4, *b5;
-	
-	MouseRange *m_mouse_range;
+    BITMAP *b123, *b4, *b5;
+
+    MouseRange *m_mouse_range;
 
 public:
-	Inventory();
-	~Inventory();
+    Inventory();
+    ~Inventory();
 
-	void draw(int _x, int _y);
-	void execute();
-	void close();
-	void backput();
-    Item* get_sel_item() {return sel_item;}
+    void draw(int _x, int _y);
+    void execute();
+    void close();
+    void backput();
+    Item *get_sel_item() {return sel_item;}
 };
 
 #endif

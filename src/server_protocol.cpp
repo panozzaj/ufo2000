@@ -31,7 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * Calculate password hash for secure transmission of it over network and
  * storing it in the database. In order to protect from services like
- * http://passcracking.com/ a prefix 'ufo2000:' is always added to the 
+ * http://passcracking.com/ a prefix 'ufo2000:' is always added to the
  * password before calculating md5 hash.
  * @param pass password
  * @return password hash value
@@ -173,9 +173,9 @@ ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 
 ServerClientUfo::~ServerClientUfo()
 {
-    if(game)
+    if (game)
         Server_Game_UFO::DeactivatePlayer(this);
-        
+
     if (m_name != "") {
         // send information that the user is offline to all other users
         send_packet_all(SRV_USER_OFFLINE, m_name);
@@ -195,7 +195,7 @@ ServerClientUfo::~ServerClientUfo()
             where id=(%d);", session_id);
             db_conn.executenonquery("commit;");
             db_conn.executenonquery("begin transaction;");
-        } catch(std::exception &ex) {
+        } catch (std::exception &ex) {
             LOG_EXCEPTION(ex.what());
         }
 
@@ -219,17 +219,17 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
         game->PacketToServer(this, id, packet);
     } else {
         if (id == SRV_DEBUG_MESSAGE) {
-        std::string param, val;
-        split_with_colon(packet, param, val);
+            std::string param, val;
+            split_with_colon(packet, param, val);
 
-        sqlite3::command sql_cmd(db_conn, "\
+            sqlite3::command sql_cmd(db_conn, "\
         insert into ufo2000_debug_packets\
         (game, id, sender, time, param, value, session) values \
         (null, null, null, julianday('now'), ?, ?, ?);");
-        sql_cmd.parameters.push_back(sqlite3::parameter(1, param.c_str(), param.size()));
-        sql_cmd.parameters.push_back(sqlite3::parameter(2, val.c_str(), val.size()));
-        sql_cmd.parameters.push_back(sqlite3::parameter(3, (long long int) session_id));
-        sql_cmd.executenonquery();
+            sql_cmd.parameters.push_back(sqlite3::parameter(1, param.c_str(), param.size()));
+            sql_cmd.parameters.push_back(sqlite3::parameter(2, val.c_str(), val.size()));
+            sql_cmd.parameters.push_back(sqlite3::parameter(3, (long long int) session_id));
+            sql_cmd.executenonquery();
         }
     }
 
@@ -264,7 +264,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
             m_version = packet_properties["version"];
 
             server_log("user login (name='%s', pwd='%s', ip=%s)\n",
-                login.c_str(), password.c_str(), m_ip.c_str());
+                       login.c_str(), password.c_str(), m_ip.c_str());
 
             if (login.size() > USERNAME_SIZE_LIMIT) {
                 server_log("login failed: user name is too long\n");
@@ -277,7 +277,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
                 m_error = true;
                 break;
             }
-            
+
             int validate_user_result = validate_user(login, password);
             if (validate_user_result < 0) {
                 server_log("login failed: invalid password\n");
@@ -314,21 +314,21 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
                 db_conn.executenonquery("update ufo2000_sequences set seq_val=seq_val+1 where name='ufo2000_user_sessions';");
                 session_id = db_conn.executeint32("select seq_val from ufo2000_sequences where name='ufo2000_user_sessions';");
                 db_conn.executenonquery("\
-                insert into ufo2000_user_sessions\
-                (id, user, begin, realm, system, version) \
-                values \
-                (%d, '%q', julianday('now'), '%q', '%q', '%q');", session_id, login.c_str(), 
-                packet_properties["realm"].c_str(), packet_properties["system"].c_str(), packet_properties["version"].c_str());
+            insert into ufo2000_user_sessions\
+            (id, user, begin, realm, system, version) \
+            values \
+            (%d, '%q', julianday('now'), '%q', '%q', '%q');", session_id, login.c_str(),
+                                        packet_properties["realm"].c_str(), packet_properties["system"].c_str(), packet_properties["version"].c_str());
                 db_conn.executenonquery("commit;");
                 db_conn.executenonquery("begin transaction;");
-            } catch(std::exception &ex) {
+            } catch (std::exception &ex) {
                 LOG_EXCEPTION(ex.what());
             }
 
             server_log("login ok\n");
 
-            db_conn.executenonquery("update ufo2000_users set last_login=julianday('now') where name='%q'", 
-                login.c_str());
+            db_conn.executenonquery("update ufo2000_users set last_login=julianday('now') where name='%q'",
+                                    login.c_str());
 
             db_conn.executenonquery("commit;");
             db_conn.executenonquery("begin transaction;");
@@ -352,7 +352,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
                 it++;
             }
 
-        //  If we are alone on the server, show information about the last user disconnected
+            //  If we are alone on the server, show information about the last user disconnected
             if (m_server->m_clients_by_name.size() == 0 && !m_last_user_name.empty()) {
                 NLtime now;
                 nlTime(&now);
@@ -371,7 +371,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
             break;
         }
         case SRV_CHALLENGE: {
-        //  Check that the opponent is currently online
+            //  Check that the opponent is currently online
             std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.find(packet);
             if (it == m_server->m_clients_by_name.end()) {
                 printf("Warning: opponent '%s' is offline\n", packet.c_str());
@@ -381,16 +381,16 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
 
             ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
 
-        //  Check that the opponent is not busy now
+            //  Check that the opponent is not busy now
             if (opponent->m_busy) {
                 printf("Warning: opponent '%s' is busy\n", packet.c_str());
                 send_packet_back(SRV_USER_BUSY, packet);
                 break;
             }
 
-        //  Try to find self in the opponent's challenge list
+            //  Try to find self in the opponent's challenge list
             if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
-            //  opponent found in the challenge list
+                //  opponent found in the challenge list
                 long int game_id = Server_Game_UFO::CreateGame(opponent->m_name, m_name);
                 Server_Game_UFO::ActivatePlayer(game_id, this);
                 Server_Game_UFO::ActivatePlayer(game_id, opponent);
@@ -409,7 +409,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
                 m_challenged_opponents.clear();
                 opponent->m_challenged_opponents.clear();
             } else {
-            //  insert the opponent into challenge list
+                //  insert the opponent into challenge list
                 m_challenged_opponents.insert(packet);
                 opponent->send_packet_back(SRV_USER_CHALLENGE_IN, m_name);
                 send_packet_back(SRV_USER_CHALLENGE_OUT, packet);
@@ -417,14 +417,14 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
             break;
         }
         case SRV_MESSAGE: {
-        // send message to all other logged in users
+            // send message to all other logged in users
             send_packet_all(SRV_MESSAGE, m_name + ": " + packet);
             break;
         }
         case SRV_ENDGAME: {
             m_busy = false;
 
-        //  Report other players status
+            //  Report other players status
             std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
             while (it != m_server->m_clients_by_name.end()) {
                 ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
@@ -444,20 +444,20 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
             send_packet_back(SRV_GAME_RECOVERY_START, "1");
             try {
                 debug_game_id = atol(packet.c_str());
-                sqlite3::reader reader=db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%ld order by id;", debug_game_id);
+                sqlite3::reader reader = db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%ld order by id;", debug_game_id);
                 int game_start_sended = 0;
-                while(reader.read()) {
-                    if(reader.getint32(1) == SRV_GAME_PACKET) {
-                        if(!(reader.getstring(0) == "START" && game_start_sended))
+                while (reader.read()) {
+                    if (reader.getint32(1) == SRV_GAME_PACKET) {
+                        if (!(reader.getstring(0) == "START" && game_start_sended))
                             send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
-                        if(reader.getstring(0) == "START") {
+                        if (reader.getstring(0) == "START") {
                             game_start_sended = 1;
                             send_packet_back(SRV_GAME_PACKET, "_Xcom_2_99999_VSRC_");
                         }
                     }
                 }
                 reader.close();
-            } catch(std::exception &ex) {
+            } catch (std::exception &ex) {
                 LOG_EXCEPTION(ex.what());
             }
             break;
@@ -465,23 +465,22 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
         case SRV_GAME_CONTINUE_REQUEST: {
             int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%q';", m_name.c_str());
             debug_game_id = game_id;
-            if(game_id > 0) {
+            if (game_id > 0) {
                 Server_Game_UFO::ActivatePlayer(game_id, this);
                 int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%q' and game=%d;", m_name.c_str(), game_id);
                 int last_sended_packet = db_conn.executeint32("select last_sended_packet from ufo2000_game_players where player='%q' and game=%d;", m_name.c_str(), game_id);
                 char pos_str_buffer[100];
                 sprintf(pos_str_buffer, "%d", players_position);
                 send_packet_back(SRV_GAME_RECOVERY_START, pos_str_buffer);
-                sqlite3::reader reader=db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%d order by id;", game_id);
+                sqlite3::reader reader = db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%d order by id;", game_id);
                 int game_start_sended = 0;
-                while(reader.read())
-                    if(reader.getint32(1) == SRV_GAME_PACKET)
-                    {
-                        if(!(reader.getstring(0) == "START" && game_start_sended))
+                while (reader.read())
+                    if (reader.getint32(1) == SRV_GAME_PACKET) {
+                        if (!(reader.getstring(0) == "START" && game_start_sended))
                             send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
-                        if(reader.getstring(0) == "START")
+                        if (reader.getstring(0) == "START")
                             game_start_sended = 1;
-                        if(reader.getint32(2) == last_sended_packet) {
+                        if (reader.getint32(2) == last_sended_packet) {
                             char start_visible_packet[100];
                             sprintf(start_visible_packet, "_Xcom_%d_99999_VSRC_", 3 - players_position);
                             send_packet_back(SRV_GAME_PACKET, start_visible_packet);
@@ -496,16 +495,16 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
         }
         case SRV_SAVE_DEBUG_INFO: {
             char str_packet_debug_id[100];
-            strncpy(str_packet_debug_id, packet.c_str()+2, 5);
-            str_packet_debug_id[5]=0;
-            long int packet_debug_id=atol(str_packet_debug_id);
+            strncpy(str_packet_debug_id, packet.c_str() + 2, 5);
+            str_packet_debug_id[5] = 0;
+            long int packet_debug_id = atol(str_packet_debug_id);
             try {
                 db_conn.executenonquery("\
-                insert into ufo2000_debug_log\
-                (game, session, sender, id, time, type, value) \
-                values (%d, %d, %d, %d, julianday('now'), 1, '%q');",
-                debug_game_id, session_id, (int) (packet.c_str()[0]-'0'), packet_debug_id, packet.c_str()+8);
-            } catch(std::exception &ex) {
+            insert into ufo2000_debug_log\
+            (game, session, sender, id, time, type, value) \
+            values (%d, %d, %d, %d, julianday('now'), 1, '%q');",
+                                        debug_game_id, session_id, (int)(packet.c_str()[0] - '0'), packet_debug_id, packet.c_str() + 8);
+            } catch (std::exception &ex) {
                 LOG_EXCEPTION(ex.what());
             }
             break;
@@ -517,12 +516,11 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
 bool ServerClientUfo::add_user(const std::string &login, const std::string &password)
 {
     try {
-        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%q','%q');", 
-            login.c_str(), ufo2000_get_password_hash(password).c_str());
+        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%q','%q');",
+                                login.c_str(), ufo2000_get_password_hash(password).c_str());
         db_conn.executenonquery("commit;");
         db_conn.executenonquery("begin transaction;");
-    }
-    catch(std::exception &ex) {
+    } catch (std::exception &ex) {
         LOG_EXCEPTION(ex.what());
     }
     return true;
@@ -538,13 +536,12 @@ int ServerClientUfo::validate_user(const std::string &username, const std::strin
     try {
         if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%q';", username.c_str()))
             return 0;
-        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';", 
-            username.c_str(), ufo2000_get_password_hash(password).c_str())) return 1;
+        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';",
+                                 username.c_str(), ufo2000_get_password_hash(password).c_str())) return 1;
         // Support for legacy clients that send passwords as clear text - calculate hash twice
-        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';", 
-            username.c_str(), ufo2000_get_password_hash(ufo2000_get_password_hash(password)).c_str())) return 1;
-    }
-    catch(std::exception &ex) {
+        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';",
+                                 username.c_str(), ufo2000_get_password_hash(ufo2000_get_password_hash(password)).c_str())) return 1;
+    } catch (std::exception &ex) {
         LOG_EXCEPTION(ex.what());
     }
     return -1;

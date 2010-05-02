@@ -40,14 +40,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
 {
     m_pathfind_mode = pf_mode;
-        
+
     static Pathfinding pathfinding;
     return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, less_time, way, pf_mode);
 }
 
 static int TU, TU_max, TU_color;
 
-void Map::draw_path_from(Soldier * s)
+void Map::draw_path_from(Soldier *s)
 {
     char way[100];
     int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), s->is_panicking(), way, PF_DISPLAY);
@@ -72,18 +72,18 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 
         int sx = x + 16 * _x + 16 * _y + 16;
         int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
-        
+
         TU -= time_of_dst;
 
         if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
             if (TU < sld->tus_reserved()) {
                 TU_color = 32;      // COLOR_RED00
             }
-            
+
             // Keep showing consecutive turns:
             if (TU < 0) {
                 TU = TU_max - time_of_dst;
-              //TU_color += 4;      // COLOR_GRAY04
+                //TU_color += 4;      // COLOR_GRAY04
                 TU_color =  4;      // COLOR_GRAY04
             }
             if (TU < 0) break;
@@ -95,16 +95,16 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
     }
 }
 
-int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost, bool less_time)
+int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int &z2, int &x2, int &y2, int &tu_cost, bool less_time)
 {
     // Is starting movement allowed?
     if (!passable(z1, x1, y1, dir))
         return 0;
 
     // Calculating of a final point
-    z2=z1;
-    x2=x1;
-    y2=y1;
+    z2 = z1;
+    x2 = x1;
+    y2 = y1;
 
     //Horizontal moving
     x2 += DIR_DELTA_X(dir);
@@ -129,16 +129,16 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
         return 0;
 
     // If we have to fly but we can't
-    if (trying_to_fly && !(flying || map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift ))
+    if (trying_to_fly && !(flying || map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift))
         return 0;
 
     // TU cost of horisontal moving
-    if(dir<DIR_NULL) {
+    if (dir < DIR_NULL) {
         tu_cost = walk_time(z2, x2, y2);
         if (DIR_DIAGONAL(dir))
             tu_cost = tu_cost * 3 / 2;
     }
-    
+
     if (less_time)
         tu_cost = tu_cost * 3 / 4;
 
@@ -150,7 +150,7 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
         return 0;
 
     //Down if we have no ground under our feet
-    while ( !support_for_feet(z2, x2, y2) && !flying)
+    while (!support_for_feet(z2, x2, y2) && !flying)
         z2--;
 
     if (!passable(z2, x2, y2))
@@ -166,7 +166,7 @@ int Map::support_for_feet(int z, int x, int y)
     return !mcd(z, x, y, 0)->No_Floor || isStairs(z - 1, x, y);
 }
 
-int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
+int Pathfinding::pathfind(Map *_map, int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
 {
     SetMap(_map);
 
@@ -194,7 +194,7 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
     pathfinding_cell_list.front() -> prev_point = NULL;
 
     // Processing found accesible cells in order they were found
-    while(!pathfinding_cell_list.empty()) {
+    while (!pathfinding_cell_list.empty()) {
         // Iterating directions from current cell
         for (int dir = 0; dir < DIR_NUM; dir++) {
             int nx, ny, nz, tu_cost;
@@ -202,49 +202,48 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
             int oy = pathfinding_cell_list.front() -> y;
             int oz = pathfinding_cell_list.front() -> z;
             // If we found new best way to cell in this direction ...
-            if(map->step_dest(oz, ox, oy, dir, can_fly, nz, nx, ny, tu_cost, less_time)) {
-                if( (!pf_info(nz, nx, ny)->path_is_known ||
-                pf_info(nz, nx, ny)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost) &&
-                (!pf_info(dz, dx, dy)->path_is_known ||
-                pf_info(dz, dx, dy)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost )
-                //&& pf_info(oz, ox, oy)->tu_cost + tu_cost<80
-                ) {
+            if (map->step_dest(oz, ox, oy, dir, can_fly, nz, nx, ny, tu_cost, less_time)) {
+                if ((!pf_info(nz, nx, ny)->path_is_known ||
+                        pf_info(nz, nx, ny)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost) &&
+                        (!pf_info(dz, dx, dy)->path_is_known ||
+                         pf_info(dz, dx, dy)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost)
+                        //&& pf_info(oz, ox, oy)->tu_cost + tu_cost<80
+                   ) {
                     // Marking found cell for further processing
                     pf_info(nz, nx, ny)->path_is_known = 1;
                     pf_info(nz, nx, ny)->tu_cost = pf_info(oz, ox, oy)->tu_cost + tu_cost;
                     pf_info(nz, nx, ny)->steps_num = pf_info(oz, ox, oy)->steps_num + 1;
                     pf_info(nz, nx, ny)->prev_point = pf_info(oz, ox, oy);
-                    pf_info(nz, nx, ny)->prev_dir=dir;
+                    pf_info(nz, nx, ny)->prev_dir = dir;
                     pathfinding_cell_list.push_back(pf_info(nz, nx, ny));
                 }
             }
         }
-    //Deleting processed cell
-    pathfinding_cell_list.pop_front();
+        //Deleting processed cell
+        pathfinding_cell_list.pop_front();
     }
 
-    if(!pf_info(dz, dx, dy)->path_is_known) return 0;
+    if (!pf_info(dz, dx, dy)->path_is_known) return 0;
 
     //Backward tracking of the path
-    pathfinding_info* cur_pf=pf_info(dz, dx, dy);
+    pathfinding_info *cur_pf = pf_info(dz, dx, dy);
     for (i = pf_info(dz, dx, dy)->steps_num; i > 0; i--) {
         way[i] = cur_pf->prev_dir;
-        cur_pf=cur_pf->prev_point;
+        cur_pf = cur_pf->prev_point;
     }
 
     return pf_info(dz, dx, dy)->steps_num + 1;
 }
 
-void Pathfinding::SetMap(Map* _map)
+void Pathfinding::SetMap(Map *_map)
 {
-    map=_map;
+    map = _map;
     // If size of existed matrix m_pf differs from a size of map, reallocate
     // memory for matrix.
-    if(level != map -> level || width != map -> width || height != map -> height)
-    {
+    if (level != map -> level || width != map -> width || height != map -> height) {
         int i, j, k;
 
-        if(level && width && height) {
+        if (level && width && height) {
             for (i = 0; i < level; i++) {
                 for (j = 0; j < 10 * width; j++) {
                     for (k = 0; k < 10 * height; k++) {
@@ -253,28 +252,28 @@ void Pathfinding::SetMap(Map* _map)
                     delete [] m_pf[i][j];
                 }
                 delete [] m_pf[i];
-           }
-           delete [] m_pf;
+            }
+            delete [] m_pf;
         }
         level = map -> level;
         width = map -> width;
         height = map -> height;
 
-        m_pf = new pathfinding_info***[map->level];
+        m_pf = new pathfinding_info ***[map->level];
 
         for (i = 0; i < level; i++) {
-            m_pf[i] = new pathfinding_info ** [10 * width];
-                for (j = 0; j < 10 * map->width; j++) {
-                    m_pf[i][j] = new pathfinding_info * [10 * height];
-                    for (k = 0; k < 10 * height; k++) {
-                        m_pf[i][j][k] = new pathfinding_info();
-                        m_pf[i][j][k] -> z = i;
-                        m_pf[i][j][k] -> x = j;
-                        m_pf[i][j][k] -> y = k;
-                    }
+            m_pf[i] = new pathfinding_info **[10 * width];
+            for (j = 0; j < 10 * map->width; j++) {
+                m_pf[i][j] = new pathfinding_info * [10 * height];
+                for (k = 0; k < 10 * height; k++) {
+                    m_pf[i][j][k] = new pathfinding_info();
+                    m_pf[i][j][k] -> z = i;
+                    m_pf[i][j][k] -> x = j;
+                    m_pf[i][j][k] -> y = k;
                 }
+            }
         }
-     }
+    }
 }
 
 Pathfinding::Pathfinding(): level(0), width(0), height(0)
@@ -284,7 +283,7 @@ Pathfinding::Pathfinding(): level(0), width(0), height(0)
 Pathfinding::~Pathfinding()
 {
     // If matrix is not zero size, we have to free memory
-    if(level && width && height) {
+    if (level && width && height) {
         int i, j, k;
         for (i = 0; i < level; i++) {
             for (j = 0; j < 10 * width; j++) {

@@ -29,8 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "skin.h"
 #include "position.h"
 
-struct UNITDATA
-{
+struct UNITDATA {
     unsigned char CurTU;        //!< The number of TUs the unit has currently
     unsigned char CurHealth;    //!< Current Health
     unsigned char CurStun;      //!< The stun level: if this is higher than CurHealth, they're stunned.
@@ -55,7 +54,7 @@ struct UNITDATA
     unsigned char MaxUnder;     //!< Maximum armor at the bottom
     unsigned char MaxFA;        // ?
     unsigned char MaxTA;        // ?
-    
+
     unsigned char Morale;
     unsigned char HeadWound;    //!< Number of fatal wounds in the head.
     unsigned char TorsoWound;
@@ -110,7 +109,7 @@ enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
  * A class which describes unit with all his equipment, health status and
- * position on map 
+ * position on map
  *
  * @ingroup battlescape
  */
@@ -151,12 +150,12 @@ private:
 
 //! Each soldier in a platoon has a unique vision mask
 //! This bit is written to the index vision matrix when a soldier can see that cell
-    int32 m_vision_mask;            
+    int32 m_vision_mask;
 
-//! Information about seen enemies. 
+//! Information about seen enemies.
     int32 m_visible_enemies;
 
-//! This flag is set after soldier has moved. 
+//! This flag is set after soldier has moved.
 //! Needed for correct work of 'switch to next soldier'-button
     int MOVED;
 
@@ -169,7 +168,7 @@ private:
     int FIRE_z, FIRE_x, FIRE_y;
 
 //! Number of chances for reaction fire enemy soldiers get
-    int m_reaction_chances; 
+    int m_reaction_chances;
 
 //! Information for pathfinding. It does not need to be saved and can be built
 //! by calling wayto function. If waylen != 0 this soldier is currently moving
@@ -181,7 +180,7 @@ private:
     void berserk_fire();
     int calc_z();
     void standard_aiming(int za, int xa, int ya);
-    void precise_aiming(int za, int xa, int ya);    
+    void precise_aiming(int za, int xa, int ya);
 
 public:
     //! Flag that sets a unit as stunned when the game starts (I.E. same square as another unit on game start)
@@ -196,7 +195,7 @@ public:
     bool set_skin_info(int skin_type, int female, int appearance);
     //! get pointer to body part by name
     Place *find_place(const char *place_name);
-    
+
     //! get name of a soldier
     const char *get_name() { return ud.Name; }
 
@@ -207,7 +206,7 @@ public:
     static void freepck() { Skin::freepck(); }
 
     Soldier(Platoon *platoon, int _NID);
-    Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask);
+    Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type, int32 vision_mask);
     virtual ~Soldier();
 
     void initialize();
@@ -235,7 +234,7 @@ public:
     void showspk(BITMAP *dest);
     //void showspk() { showspk(screen2); }
     void drawinfo(int x, int y);
-    void draw_stats(BITMAP* bitmap, int x, int y, bool selected);
+    void draw_stats(BITMAP *bitmap, int x, int y, bool selected);
     void draw_bullet_way();
     //void draw_enemy_seen(int select_y);
 
@@ -259,7 +258,7 @@ public:
     void apply_accuracy(REAL &fi, REAL &te);
     void apply_throwing_accuracy(REAL &fi, REAL &te, int weight);
     int required(int pertime);
-        int eff_FAccuracy();
+    int eff_FAccuracy();
     int FAccuracy(int peraccur, int TWOHAND);
     int TAccuracy(int peraccur);
 
@@ -273,15 +272,15 @@ public:
     int fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
     int punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
     int do_heal(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
-	int aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
 
     int check_for_hit(int _z, int _x, int _y);
-    
-	void heal_wounds(int, int);
-	void heal_energy_stun(int, int, int, int);
-	void heal_morale(int, int);
-	
-	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
+
+    void heal_wounds(int, int);
+    void heal_energy_stun(int, int, int, int);
+    void heal_morale(int, int);
+
+    void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
     int do_armour_check(int &pierce, int damdir);
     void apply_wound(int hitloc);
     void hit(int sniper, int pierce, int type, int hitdir, int dam_dev = 50);
@@ -294,7 +293,7 @@ public:
     void spend_time(int tm, int use_energy = 0);
     int walktime(int _dir);
     int tus_reserved(std::string *error = NULL);
-	int get_dir() { return dir; }
+    int get_dir() { return dir; }
     State state() { return m_state; }
 
     void unlink();
@@ -307,31 +306,26 @@ public:
     Bullet *bullet() { return m_bullet; }
     Skin *skin() { return m_skin; }
 
-    void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
-        void calc_shot_stat(int zd, int xd, int yd);
+    void calc_bullet_start(int xs, int ys, int zs, int *xr, int *yr, int *zr); //calculates starting position for a bullet
+    void calc_shot_stat(int zd, int xd, int yd);
 
-    bool is_active()
-    {
+    bool is_active() {
         return !is_dead() && !is_stunned() && z != -1;
     }
 
-    bool is_dead()
-    {
+    bool is_dead() {
         return ud.CurHealth == 0;
     }
 
-    bool is_stunned()
-    {
+    bool is_stunned() {
         return ud.CurStun >= ud.CurHealth;
     }
-    
-    bool is_panicking()
-    {
+
+    bool is_panicking() {
         return panicking;
     }
 
-    Soldier *next_active_soldier()
-    {
+    Soldier *next_active_soldier() {
         Soldier *s = m_next;
         while (s != NULL) {
             if (s->is_active())
@@ -341,8 +335,7 @@ public:
         return NULL;
     }
 
-    Soldier *prev_active_soldier()
-    {
+    Soldier *prev_active_soldier() {
         Soldier *s = m_prev;
         while (s != NULL) {
             if (s->is_active())
@@ -352,8 +345,8 @@ public:
         return NULL;
     }
 
-    int32 get_vision_mask(){return m_vision_mask;}
-    void set_visible_enemies(int32 visible_enemies) {m_visible_enemies=visible_enemies;}
+    int32 get_vision_mask() {return m_vision_mask;}
+    void set_visible_enemies(int32 visible_enemies) {m_visible_enemies = visible_enemies;}
     int32 get_visible_enemies() {return m_visible_enemies;}
 
     int check_reaction_fire(Soldier *the_target);
@@ -363,7 +356,7 @@ public:
 
     int count_weight();
     int has_forbidden_equipment();
-	int has_twohanded_weapon();
+    int has_twohanded_weapon();
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     static int calc_mandata_cost(MANDATA _md);
@@ -377,65 +370,60 @@ public:
     int find_place_coords(Place *pl, int &lev, int &col, int &row);
     int haveitem(Item *it);
 
-	/** Return item in left hand. */
+    /** Return item in left hand. */
     Item *lhand_item() { return m_place[P_ARM_LEFT]->item(); }
     /** Return item in right hand. */
     Item *rhand_item() { return m_place[P_ARM_RIGHT]->item(); }
 
-	/** Return the item at the specific place.
-		It stays in the place! */
-    Item *item(int ip)
-    {
+    /** Return the item at the specific place.
+    	It stays in the place! */
+    Item *item(int ip) {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->item();
     }
 
-	/** Return the item at the specific place and position.
-		It stays in the place! */
-    Item *item(int ip, int ix, int iy)
-    {
+    /** Return the item at the specific place and position.
+    	It stays in the place! */
+    Item *item(int ip, int ix, int iy) {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->item(ix, iy);
     }
 
-	/** Remove and return item from place.
-		@return The item that was there. It gets deleted from the place. */
-    Item *getitem(int ip, int ix, int iy)
-    {
+    /** Remove and return item from place.
+    	@return The item that was there. It gets deleted from the place. */
+    Item *getitem(int ip, int ix, int iy) {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->get(ix, iy);
     }
 
-	/** Put an item to a place, to the given position */
-    int putitem(Item *it, int ip, int ix = -1, int iy = -1)
-    {
+    /** Put an item to a place, to the given position */
+    int putitem(Item *it, int ip, int ix = -1, int iy = -1) {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         if (ix == -1 || iy == -1)
             return m_place[ip]->put(it);
         else
             return m_place[ip]->put(it, ix, iy);
     }
-	
+
     int place(Place *place);
-    
+
     /** return a place at given index. */
-    Place *place(int ip)
-    {
+    Place *place(int ip) {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip];
     }
-    
+
     Item *get_stunned_body() { return m_stunned_body; }
 
     void destroy_all_items();
     void draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place);
     void damage_items(int damage);
-    
+
     void panic(int action);
     void change_morale(int delta);
 
-    void set_start_sit() {m_state=SIT;};
-    
+    void set_start_sit() {m_state = SIT;};
+
     void save_to_string(std::string &str);
 
     virtual bool Write(persist::Engine &archive) const;

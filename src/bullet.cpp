@@ -85,11 +85,11 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
            )
             break;
     }
-/*
-    x0 += (int)(8 * cos(te) * sin(fi));
-    y0 += (int)(8 * sin(te) * sin(fi));
-    z0 += (int)(8 * cos(fi));
-*/
+    /*
+        x0 += (int)(8 * cos(te) * sin(fi));
+        y0 += (int)(8 * sin(te) * sin(fi));
+        z0 += (int)(8 * cos(fi));
+    */
     i = 0;
 }
 /**
@@ -117,11 +117,11 @@ void Bullet::heal(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
            )
             break;
     }
-/*
-    x0 += (int)(8 * cos(te) * sin(fi));
-    y0 += (int)(8 * sin(te) * sin(fi));
-    z0 += (int)(8 * cos(fi));
-*/
+    /*
+        x0 += (int)(8 * cos(te) * sin(fi));
+        y0 += (int)(8 * sin(te) * sin(fi));
+        z0 += (int)(8 * cos(fi));
+    */
     i = 0;
 }
 
@@ -151,7 +151,7 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
     z0 = _z0; x0 = _x0; y0 = _y0;
     fi = _fi; te = _te;
     type = _type;
-    
+
     int cx = -1, cy = -1, cz = -1;
     bool new_check = false;
 
@@ -159,11 +159,11 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
         z = (int)(z0 + i * cos(fi));
         x = (int)(x0 + i * cos(te) * sin(fi));
         y = (int)(y0 + i * sin(te) * sin(fi));
-        
+
         if (cz != z / 12) { cz = z / 12; new_check = true; }
         if (cx != x / 16) { cx = x / 16; new_check = true; }
         if (cy != y / 16) { cy = y / 16; new_check = true; }
-        
+
         if (new_check)
             affect_morale(cz, cx, cy);
 
@@ -176,11 +176,11 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
             break;
     }
 
-/*
-    x0 += (int)(8 * cos(te) * sin(fi));
-    y0 += (int)(8 * sin(te) * sin(fi));
-    z0 += (int)(8 * cos(fi));
-*/
+    /*
+        x0 += (int)(8 * cos(te) * sin(fi));
+        y0 += (int)(8 * sin(te) * sin(fi));
+        z0 += (int)(8 * cos(fi));
+    */
     i = 0;
 }
 
@@ -214,16 +214,13 @@ void Bullet::aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_it
 void Bullet::hitcell()
 {
     if (z < 0) z = 0;
-    else
-        if (z >= map->level * 12) z = map->level * 12 - 1;
+    else if (z >= map->level * 12) z = map->level * 12 - 1;
 
     if (x < 0) x = 0;
-    else
-        if (x >= map->width * 10 * 16) x = map->width * 10 * 16 - 1;
+    else if (x >= map->width * 10 * 16) x = map->width * 10 * 16 - 1;
 
     if (y < 0) y = 0;
-    else
-        if (y >= map->height * 10 * 16) y = map->height * 10 * 16 - 1;
+    else if (y >= map->height * 10 * 16) y = map->height * 10 * 16 - 1;
 
     lev = z / 12;      //if (lev >= map->level) lev = map->level - 1;
     col = x / 16;      //if (col >= map->width*10) col = map->width*10 - 1;
@@ -252,7 +249,7 @@ void Bullet::move()
                 z = (int)(z0 + i * cos(fi));
                 //text_mode(0);
                 //textprintf(screen, font, 0, SCREEN2H+20, 1, "(%f,%f,%f)", z, x, y);
-                
+
                 if (cz != z / 12) { cz = z / 12; new_check = true; }
                 if (cx != x / 16) { cx = x / 16; new_check = true; }
                 if (cy != y / 16) { cy = y / 16; new_check = true; }
@@ -268,7 +265,7 @@ void Bullet::move()
                     explodes = map->inside(z, x, y);
                     hitcell();
                     state = HIT;
-                    
+
                     Item::obdata_play_sound_sample(type);
                     break;
                 }
@@ -435,7 +432,7 @@ void Bullet::draw()
 
         case FLY: {
             if (!platoon_local->is_visible(z / 12, x / 16, y / 16)) return;
-            
+
             xg = map->x + x + y;
             yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
@@ -470,20 +467,20 @@ void Bullet::draw()
                 zt = z0 + j * cos(fi);
                 xt = x0 + j * cos(te) * sin(fi);
                 yt = y0 + j * sin(te) * sin(fi);
-                
+
                 if ((!map->inside((int)zt, (int)xt, (int)yt)) ||
-                    (!map->pass_lof_cell((int)zt, (int)xt, (int)yt)))
+                        (!map->pass_lof_cell((int)zt, (int)xt, (int)yt)))
                     break;
                 if (platoon_remote->check_for_hit((int)zt, (int)xt, (int)yt) ||
-                    platoon_local->check_for_hit((int)zt, (int)xt, (int)yt))
+                        platoon_local->check_for_hit((int)zt, (int)xt, (int)yt))
                     break;
 
                 if (!platoon_local->is_visible((int)(zt) / 12, (int)(xt) / 16, (int)(yt) / 16))
                     continue;
-                
+
                 xg = (int)(map->x + xt + yt);
                 yg = (int)(map->y - (xt + 1) / 2.0 + yt / 2.0 - zt * 2.0 - 2);
-                
+
                 if (Item::can_set_color(type)) {
                     //the following fades the beam to black
                     //i is the beam animation state and goes from 0 to 9, see Beam() and Move()
@@ -491,7 +488,7 @@ void Bullet::draw()
                     int it_col = Item::get_color(type, 1);
                     blended_color = makecol(getr(it_col) - i * getr(it_col) / 10, getg(it_col) - i * getg(it_col) / 10, getb(it_col) - i * getb(it_col) / 10);
                     putpixel(screen2, xg, yg, blended_color);
-                }else {
+                } else {
                     putpixel(screen2, xg, yg, xcom1_color(143 + i));
                 }
             }
@@ -536,7 +533,7 @@ void Bullet::draw()
 
         case ST_PUNCH:
             if (!platoon_local->is_visible(z0 / 12, x0 / 16, y0 / 16)) return;
-        
+
             xg = map->x + x0 + y0;
             yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
@@ -550,7 +547,7 @@ void Bullet::draw()
 
         case HIT:
             if (!platoon_local->is_visible(z / 12, x / 16, y / 16)) return;
-        
+
             xg = map->x + x + y;
             yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
@@ -559,27 +556,27 @@ void Bullet::draw()
                 ALPHA_SPRITE *hit_frame = Item::obdata_get_bitmap(type, "hitAnim", 1 + (phase / PHASE));
                 if (hit_frame) {
                     draw_alpha_sprite(screen2, hit_frame, xg - 15, yg - 16);
-                }else if (!Item::obdata_get_bitmap(type, "hitAnim", 1)) {
+                } else if (!Item::obdata_get_bitmap(type, "hitAnim", 1)) {
                     ALPHA_SPRITE *default_frame = NULL;
                     int frame_id = (phase / PHASE);
                     if (Item::obdata_isHandToHand(type)) {
-                        if(frame_id < (int)hit_punch.size()) {
+                        if (frame_id < (int)hit_punch.size()) {
                             default_frame = hit_punch[frame_id];
                         }
-                    }else {
+                    } else {
                         switch (Item::obdata_damageType(type)) {
                             case DT_LAS:
-                                if(frame_id < (int)hit_laser.size()) {
+                                if (frame_id < (int)hit_laser.size()) {
                                     default_frame = hit_laser[frame_id];
                                 }
                                 break;
                             case DT_PLAS:
-                                if(frame_id < (int)hit_plasma.size()) {
+                                if (frame_id < (int)hit_plasma.size()) {
                                     default_frame = hit_plasma[frame_id];
                                 }
                                 break;
                             default:
-                                if(frame_id < (int)hit_bullet.size()) {
+                                if (frame_id < (int)hit_bullet.size()) {
                                     default_frame = hit_bullet[frame_id];
                                 }
                                 break;
@@ -631,13 +628,13 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
         if ((!map->inside(zd, xd, yd)) || (!map->pass_lof_cell(zd, xd, yd)))
             break;
 
-        // hit enemy soldier, only visible soldiers are taken into account in 
+        // hit enemy soldier, only visible soldiers are taken into account in
         // order to prevent cheating
         if (platoon_remote->check_for_hit(zd, xd, yd) && platoon_local->is_visible(zd / 12, xd / 16, yd / 16))
             break;
-        
+
         // hit local soldier (with a workaround preventing hit check for selected soldier)
-        if (platoon_local->check_for_hit(zd, xd, yd, sel_man)) 
+        if (platoon_local->check_for_hit(zd, xd, yd, sel_man))
             break;
     }
 
@@ -671,8 +668,8 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
     int xd, yd, zd;
-	int color = makecol(20,20,180);
-	double max_range = 18.0;
+    int color = makecol(20, 20, 180);
+    double max_range = 18.0;
 
     x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
     xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 0;
@@ -691,9 +688,9 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 
     while (z > 0) {
         if (i > max_range * 16)
-            color = makecol(0,0,80);       // out of range
+            color = makecol(0, 0, 80);     // out of range
         else
-            color = makecol(20,20,180);       // in range
+            color = makecol(20, 20, 180);     // in range
 
         x = (int)(x0 + i * cos(te) * sin(fi));
         y = (int)(y0 + i * sin(te) * sin(fi));
@@ -715,9 +712,9 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 
         if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
             if (throwable)
-				circle(screen2, xg, yg, 1, color);
+                circle(screen2, xg, yg, 1, color);
             else
-				putpixel(screen2, xg, yg, makecol(153,0,0)); //After obstacle, path is red
+                putpixel(screen2, xg, yg, makecol(153, 0, 0)); //After obstacle, path is red
         }
         i++;
     }
@@ -861,7 +858,7 @@ bool Bullet::Read(persist::Engine &archive)
     PersistReadBinary(archive, *this);
 
     PersistReadObject(archive, item);
-    
+
     affected = new std::vector<int>;
 
     return true;

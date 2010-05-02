@@ -24,22 +24,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class SPK
 {
 private:
-	unsigned char *m_dat;
-	int m_datlen;
+    unsigned char *m_dat;
+    int m_datlen;
 
-	BITMAP *spk2bmp(int _pal);
+    BITMAP *spk2bmp(int _pal);
 
 public:
-	SPK();
-	SPK(const char *fname);
-	~SPK();
+    SPK();
+    SPK(const char *fname);
+    ~SPK();
 
-	void load(const char *fname);
-	void show(BITMAP *_dest, int _x, int _y);
-	void show_pal2(BITMAP *_dest, int _x, int _y);
-	void show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h);
+    void load(const char *fname);
+    void show(BITMAP *_dest, int _x, int _y);
+    void show_pal2(BITMAP *_dest, int _x, int _y);
+    void show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h);
 
-	void show_pck(BITMAP *_dest, int _x, int _y);
+    void show_pck(BITMAP *_dest, int _x, int _y);
 };
 
 #endif

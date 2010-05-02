@@ -31,7 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 typedef struct {
 
-    char*  description;
+    char  *description;
     int    seconds;
 
 } GameTimeRate;
@@ -61,7 +61,8 @@ typedef enum {
  * Stores the instant in time that is current within a game (as opposed to the
  * current time in the real world).
  */
-class GameTime {
+class GameTime
+{
 
 private:
     time_t             m_game_time;
@@ -82,11 +83,11 @@ public:
      * Returns the current game time in human readable form (month, hours,
      * seconds, etc.)
      */
-    struct tm* human_readable();
+    struct tm *human_readable();
 
     GameTimeRateIndex get_rate();
 
-    void set_rate( GameTimeRateIndex new_rate );
+    void set_rate(GameTimeRateIndex new_rate);
 
 };
 

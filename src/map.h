@@ -30,14 +30,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "minimap.h"
 
 /**
- * Direction constant names can be not what you expected (in the whole, the 
- * game uses a rather strange coordinate system - non right-handed, a thing 
- * to change?). If you do not like these constant names and would like to 
- * change their names - be very CAREFUL not to break things in the game in 
+ * Direction constant names can be not what you expected (in the whole, the
+ * game uses a rather strange coordinate system - non right-handed, a thing
+ * to change?). If you do not like these constant names and would like to
+ * change their names - be very CAREFUL not to break things in the game in
  * the places where they are used
  */
-enum DIRECTION
-{
+enum DIRECTION {
 // The first 8 directions are plain directions, they mean a direction where soldier
 // looks to or a direction of movement
     DIR_EAST      = 0,
@@ -64,14 +63,14 @@ enum PF_MODE {PF_TRUE, PF_DISPLAY};
 
 //! x increment when moving specified direction
 #define DIR_DELTA_X(dir)  (dir < DIR_NULL ? dir2ofs[dir] : 0)
-//! y increment when moving specified direction 
+//! y increment when moving specified direction
 #define DIR_DELTA_Y(dir)  (dir < DIR_NULL ? dir2ofs[((dir)+6)%8] : 0)
 //! reverses specified plain direction
 inline int DIR_REVERSE(int dir)
 {
     ASSERT(dir >= 0 && dir < DIR_NUM);
     if (dir < DIR_NULL)
-        return (((dir)+4)%8);
+        return (((dir) + 4) % 8);
     if (dir > DIR_NULL)
         return DIR_NULL + (3 - (dir - DIR_NULL));
     return DIR_NULL;
@@ -86,7 +85,7 @@ inline int DIR_DIAGONAL(int dir)
 }
 
 /**
- * Battlescape map. It contains most of the information about the 
+ * Battlescape map. It contains most of the information about the
  * battlefield.
  *
  * @ingroup battlescape
@@ -96,7 +95,7 @@ inline int DIR_DIAGONAL(int dir)
 class Map: public persist::BaseObject
 {
     DECLARE_PERSISTENCE(Map)
-private: 
+private:
     static PCK *x1;
     static SPK *scanbord;
 
@@ -105,10 +104,10 @@ private:
     static int dir2ofs[8];
     static char ofs2dir[3][3];
 
-    Cell ****m_cell;
+    Cell ** **m_cell;
     TerraPCK *m_terrain;
-    
-    typedef struct { int lev, col, row, state, type; } effect;    //should it be used for fire and smoke? 
+
+    typedef struct { int lev, col, row, state, type; } effect;    //should it be used for fire and smoke?
     typedef std::vector<effect> effect_vector;
     effect_vector *explo_spr_list;
     std::vector<Position>* m_changed_visicells;
@@ -118,13 +117,13 @@ private:
 
     void create(int l, int w, int h);
 
-	int load_lua_map(const char *mapname, int _x, int _y);
+    int load_lua_map(const char *mapname, int _x, int _y);
     void loadmaps(unsigned char *_map);
-    int loadmap(const char *fname, int _x, int _y); 
+    int loadmap(const char *fname, int _x, int _y);
     void assign_type(int lev, int col, int row, int part, int type);
 
     static bool load_map_from_top_of_lua_stack(GEODATA *mapdata);
-    
+
     int m_level_offset;
     int m_width_offset;
     int m_height_offset;
@@ -186,16 +185,16 @@ public:
     int viewable_further(int vz, int vx, int vy);
 
     void cell_visibility_changed(int lev, int col, int row);
-    void update_vision_matrix(Soldier* watcher);
-    int32 update_vision_matrix(Platoon* platoon);
+    void update_vision_matrix(Soldier *watcher);
+    int32 update_vision_matrix(Platoon *platoon);
     void clear_vision_matrix(Soldier *watcher);
     void update_seen_item(Position p);
-    
+
     void build_visi();
-	
-	void build_lights();
-	void update_lights();
-	
+
+    void build_lights();
+    void update_lights();
+
     void rebuild_visi(int z, int x, int y);
     void build_visi_cell(int lev, int col, int row);
     int stopLOS_level(int dx, int dy, int lev, int col, int row);
@@ -216,7 +215,7 @@ public:
     void apply_hit(int _z, int _x, int _y, int _type);
 
     //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?
-    int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost, bool less_time);
+    int step_dest(int z1, int x1, int y1, int dir, int flying, int &z2, int &x2, int &y2, int &tu_cost, bool less_time);
 
     //!Can we stand here and not to fall down?
     int support_for_feet(int z, int x, int y);
@@ -238,14 +237,13 @@ public:
 
     int eot_save(char *buf, int &buf_size);
     int saveitems(char *txt);
-    
-    int size(){ return m_size; }
+
+    int size() { return m_size; }
     int level_offset() {return m_level_offset;}
     int width_offset() {return m_width_offset;}
-    int height_offset() {return m_height_offset;} 
+    int height_offset() {return m_height_offset;}
 
-    MCD *mcd(int lev, int col, int row, int type)
-    {
+    MCD *mcd(int lev, int col, int row, int type) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10) &&
@@ -254,8 +252,7 @@ public:
         return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
     }
 
-    Cell *cell(int lev, int col, int row)
-    {
+    Cell *cell(int lev, int col, int row) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
@@ -263,8 +260,7 @@ public:
         return m_cell[lev][col][row];
     }
 
-    Place *place(int lev, int col, int row)
-    {
+    Place *place(int lev, int col, int row) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
@@ -272,8 +268,7 @@ public:
         return m_cell[lev][col][row]->get_place();
     }
 
-    Soldier *man(int lev, int col, int row)
-    {
+    Soldier *man(int lev, int col, int row) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
@@ -281,14 +276,12 @@ public:
         return m_cell[lev][col][row]->get_soldier();
     }
 
-    Soldier *sel_man()
-    {
+    Soldier *sel_man() {
         return m_cell[sel_lev][sel_col][sel_row]->get_soldier();
     }
 
 
-    inline void set_man(int lev, int col, int row, Soldier *man)
-    {
+    inline void set_man(int lev, int col, int row, Soldier *man) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
@@ -296,80 +289,70 @@ public:
         if (man) {
             man->m_place[P_MAP] = m_cell[lev][col][row]->get_place();
             update_vision_matrix(man);
-			if (man->get_platoon() == platoon_local)
-				add_visi(lev,col,row,15);
-        }else {
-			remove_visi(lev,col,row,15);
-		}
-	}
+            if (man->get_platoon() == platoon_local)
+                add_visi(lev, col, row, 15);
+        } else {
+            remove_visi(lev, col, row, 15);
+        }
+    }
 
-    int fire_time(int lev, int col, int row) 
-    {
-        return m_cell[lev][col][row]->m_fire_time; 
+    int fire_time(int lev, int col, int row) {
+        return m_cell[lev][col][row]->m_fire_time;
     }
-    void set_fire_time(int lev, int col, int row, int value)
-    {
+    void set_fire_time(int lev, int col, int row, int value) {
         // Make sure that we are setting cell aflame for the first time
-        if (value > 0 && (fire_time(lev, col, row) == 0) )
+        if (value > 0 && (fire_time(lev, col, row) == 0))
             add_light_source(lev, col, row, FIRE_LIGHT);
-        
-        m_cell[lev][col][row]->m_fire_time = value; 
+
+        m_cell[lev][col][row]->m_fire_time = value;
     }
-    void dec_fire_time(int lev, int col, int row) 
-    { 
+    void dec_fire_time(int lev, int col, int row) {
         int fire_time = m_cell[lev][col][row]->m_fire_time--;
         if (fire_time <= 1)
             remove_light_source(lev, col, row, FIRE_LIGHT);
     }
 
-    int smog_time(int lev, int col, int row)
-    {
+    int smog_time(int lev, int col, int row) {
         return m_cell[lev][col][row]->m_smog_time;
     }
-    void set_smog_time(int lev, int col, int row, int value)
-    {
+    void set_smog_time(int lev, int col, int row, int value) {
         int old_value = m_cell[lev][col][row]->m_smog_time;
         if ((old_value == 0 && value != 0) || (old_value != 0 && value == 0))
             cell_visibility_changed(lev, col, row);
         m_cell[lev][col][row]->m_smog_time = value;
     }
-    void dec_smog_time(int lev, int col, int row)
-    {
+    void dec_smog_time(int lev, int col, int row) {
         if (--m_cell[lev][col][row]->m_smog_time <= 0)
             cell_visibility_changed(lev, col, row);
     }
-	
-	void Init_visi_platoon(Platoon* platoon);
+
+    void Init_visi_platoon(Platoon *platoon);
     void add_visi(int lev, int col, int row, int pow);
-	void remove_visi(int lev, int col, int row, int pow);
-	void reset_visi();
+    void remove_visi(int lev, int col, int row, int pow);
+    void reset_visi();
     void add_light_source(int lev, int col, int row, int power);
-	void show_light_source(int lev, int col, int row);
+    void show_light_source(int lev, int col, int row);
     void remove_light_source(int lev, int col, int row, int power);
-    
-    int isStairs(int lev, int col, int row)
-    {
+
+    int isStairs(int lev, int col, int row) {
         return (mcd(lev, col, row, 3)->T_Level < -15);
     }
-    
-    void clear_changed_cells()
-    {
+
+    void clear_changed_cells() {
         m_changed_visicells->clear();
     }
-    
-    int have_visicells_changed()
-    {
+
+    int have_visicells_changed() {
         return m_changed_visicells->size();
     }
 
-    void center(Soldier *s)
-    {
+    void center(Soldier *s) {
         ASSERT(s != NULL);
         sel_lev = s->z;
         center(s->z, s->x, s->y);
     }
     void unhide();
-                                          
+
     virtual bool Write(persist::Engine &archive) const;
     virtual bool Read(persist::Engine &archive);
 };
@@ -377,7 +360,7 @@ public:
 /**
  * Every map is constructed from several blocks which are different for
  * various terrain types. Each block has size divisible by 10 on X and Y
- * axes. There may be different number of such preconstructed blocks for 
+ * axes. There may be different number of such preconstructed blocks for
  * for different terrain types
  */
 class Terrain
@@ -387,7 +370,7 @@ class Terrain
     std::string             m_name;
     std::vector<block_info> m_blocks;
     int                     m_rand_weight;
-	int						m_max_levels; //Shrinks the number of levels back down
+    int						m_max_levels; //Shrinks the number of levels back down
 
     uint32                  m_crc32;
 
@@ -397,7 +380,7 @@ public:
     Terrain(const std::string &terrain_name);
     virtual ~Terrain();
 
-	int get_total_levels() { return m_max_levels; }
+    int get_total_levels() { return m_max_levels; }
     int get_rand_weight() { return m_rand_weight; }
     uint32 get_crc32() { return m_crc32; }
     const std::string &get_name() { return m_name; }
@@ -408,15 +391,14 @@ public:
 /**
  * Data about map cell used in pathfinding.
  */
-struct pathfinding_info
-{
+struct pathfinding_info {
     int x, y, z;
     // Have we found at least 1 path to this cell?
     int path_is_known;
     // TU cost and number of steps of the known path to this point
     int tu_cost, steps_num;
     // One step back in the known fastest way to this point
-    pathfinding_info* prev_point;
+    pathfinding_info *prev_point;
     int prev_dir;
 };
 
@@ -428,23 +410,22 @@ struct pathfinding_info
 class Pathfinding
 {
 private:
-    pathfinding_info ****m_pf;
-    std::list<pathfinding_info*> pathfinding_cell_list;
+    pathfinding_info ** **m_pf;
+    std::list<pathfinding_info *> pathfinding_cell_list;
     int level, width, height;
-    pathfinding_info *pf_info(int lev, int col, int row)
-    {
+    pathfinding_info *pf_info(int lev, int col, int row) {
         ASSERT((lev >= 0) && (lev < level) &&
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
 
         return m_pf[lev][col][row];
     }
-    Map* map;
+    Map *map;
     //! Prepate matrix m_pf for using with chosen map.
-    void SetMap(Map* _map);
+    void SetMap(Map *_map);
 public:
     //! Search a path and return it as the list of moving's directions in array "way".
-    int pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode = PF_TRUE);
+    int pathfind(Map *_map, int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode = PF_TRUE);
     Pathfinding();
     ~Pathfinding();
 };
@@ -469,22 +450,18 @@ public:
     TerrainSet();
     virtual ~TerrainSet();
 
-    const std::string &get_random_terrain_name()
-    {
+    const std::string &get_random_terrain_name() {
         return terrain[get_random_terrain_id()]->get_name();
     }
-    uint32 get_terrain_crc32(int index)
-    {
+    uint32 get_terrain_crc32(int index) {
         if (terrain.find(index) == terrain.end()) return 0;
         return terrain[index]->get_crc32();
     }
-    std::string get_terrain_name(int index)
-    {
+    std::string get_terrain_name(int index) {
         if (terrain.find(index) == terrain.end()) return "";
         return terrain[index]->get_name();
     }
-    int get_terrain_id(const std::string &name)
-    {
+    int get_terrain_id(const std::string &name) {
         std::map<int, Terrain *>::iterator it = terrain.begin();
         while (it != terrain.end()) {
             if (it->second->get_name() == name) return it->first;

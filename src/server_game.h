@@ -28,23 +28,23 @@ class Server_Game_UFO
 {
 public:
     //! Creating record about a new game between a chosen users.
-    static long int CreateGame(std::string playername1,std::string playername2);
+    static long int CreateGame(std::string playername1, std::string playername2);
     //! User tries to play in his unfinished game. If game is active (the opponent
     //! is active), method returns pointer to existing object, otherwise
     //! method creates a new object.
-    static void ActivatePlayer(int game_id,ServerClientUfo* player);
+    static void ActivatePlayer(int game_id, ServerClientUfo *player);
     //! The user is getting offline, if his opponent is offline, the game
     //! object can be deleted till a next user activation.
-    static void DeactivatePlayer(ServerClientUfo* player);
+    static void DeactivatePlayer(ServerClientUfo *player);
     //! Packet from user
-    void PacketToServer(ServerClientUfo* sender, int packet_type,const std::string &packet);
+    void PacketToServer(ServerClientUfo *sender, int packet_type, const std::string &packet);
     long int game_id;
 private:
     //! Pointers to clients, NULL if a client is not active
     ServerClientUfo *players[2];
     static std::map<long int, Server_Game_UFO *> active_games;
-    int PacketToClient(ServerClientUfo* recipient, int packet_type, const std::string &packet);
-	Server_Game_UFO(long int _game_id) : game_id(_game_id) {
+    int PacketToClient(ServerClientUfo *recipient, int packet_type, const std::string &packet);
+    Server_Game_UFO(long int _game_id) : game_id(_game_id) {
         players[0] = NULL;
         players[1] = NULL;
     }

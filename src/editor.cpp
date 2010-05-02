@@ -66,7 +66,7 @@ Editor::Editor()
     man = m_plt->captain();
 
     sel_item = NULL;
-    //dup_item = NULL;    
+    //dup_item = NULL;
     buffer.empty = true;
 }
 
@@ -85,14 +85,14 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-        _("Load squad (*.squad files)"), F("$(home)"), "squad");
-    
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2,
+                                           _("Load squad (*.squad files)"), F("$(home)"), "squad");
+
     if (filename.empty()) {
-        alert( "", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
+        alert("", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
         return;
     }
-    
+
     m_plt->load_FULLDATA(filename.c_str());
     lua_message(std::string("Squad loaded: ") + filename);
 }
@@ -103,9 +103,9 @@ void Editor::load()
  */
 void Editor::save()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-        _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
-    
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2,
+                                           _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
+
     if (!filename.empty()) {
         m_plt->save_FULLDATA(filename.c_str());
         lua_message(std::string("Squad saved: ") + filename);
@@ -115,7 +115,7 @@ void Editor::save()
 void Editor::export_weaponset()
 {
     std::string filename = "equipment.lua";
-    
+
     if (!filename.empty()) {
         m_armoury->export_as_weaponset(filename.c_str());
         g_console->printf(COLOR_RED04, _("Armoury layout exported as weapon set template to %s"), F(filename.c_str()));
@@ -124,7 +124,7 @@ void Editor::export_weaponset()
 
 int Editor::set_man(char *name)
 {
-    Soldier * ss = m_plt->findman(name);
+    Soldier *ss = m_plt->findman(name);
     if (ss == NULL)
         return 0;
     man = ss;
@@ -146,11 +146,11 @@ bool Editor::handle_mouse_leftclick()
         edit_soldier();
         return false;
     }
-    if (mouse_inside( 50, 50, 110, 142)) {  // Picture of soldier (Powerarmor)
+    if (mouse_inside(50, 50, 110, 142)) {   // Picture of soldier (Powerarmor)
         edit_soldier();
         return false;
-    } 
-    // Mouse click on text "ARMORY": change equipment dialog 
+    }
+    // Mouse click on text "ARMORY": change equipment dialog
     if (mouse_inside(0, 200, 105, 220)) {
         change_equipment();
         return false;
@@ -198,7 +198,7 @@ bool Editor::handle_mouse_leftclick()
 
                     if (sel_item_place == P_ARMOURY && (key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {
                         // While holding SHIFT key, the same item remains selected, so we don't
-                        // drop it to the soldier, but make a copy - useful for equipping with 
+                        // drop it to the soldier, but make a copy - useful for equipping with
                         // clips or grenades
                         sel_item = sel_item->create_duplicate();
                     } else {
@@ -219,8 +219,8 @@ bool Editor::handle_mouse_leftclick()
                 m_armoury->get_items_list(items);
                 int i;
                 for (i = 0; i < (int)items.size(); i++) {
-                    if (items[i] != sel_item && items[i]->m_place == m_armoury && 
-                        items[i]->m_type == sel_item->m_type) {
+                    if (items[i] != sel_item && items[i]->m_place == m_armoury &&
+                            items[i]->m_type == sel_item->m_type) {
                         // Do not delete item here as some pointers it items vector may
                         // become invalid (pointers to ammo in the case of deleted gun),
                         // so we just delete a single item and start the search for the
@@ -261,10 +261,10 @@ void Editor::show()
 {
     reset_video();
     destroy_bitmap(screen2);
-    screen2 = create_bitmap(640, 400); 
+    screen2 = create_bitmap(640, 400);
     clear(screen2);
 
-    // Prepare background picture for editor screen to improve 
+    // Prepare background picture for editor screen to improve
     // performance a bit (static image that is never changed)
     BITMAP *editor_bg = create_bitmap(640, 400);
     clear_to_color(editor_bg, COLOR_BLACK1);
@@ -277,7 +277,7 @@ void Editor::show()
     destroy_bitmap(b5);
     rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);    //hide unused "unload" button
     text_mode(-1);
-    textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 0, 364 + 22, COLOR_WHITE); 
+    textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 0, 364 + 22, COLOR_WHITE);
 
     position_mouse(320, 200);
     MouseRange temp_mouse_range(0, 0, 639, 400);
@@ -343,8 +343,8 @@ void Editor::show()
                     PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
                 }
                 PCK::showpck(sel_item->obdata_pInv(),
-                                mouse_x - sel_item->obdata_width()  * 16 / 2,
-                                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
+                             mouse_x - sel_item->obdata_width()  * 16 / 2,
+                             mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
             } else {
                 Item *it = m_armoury->item_under_mouse(0, 0);
                 if (it != NULL) {
@@ -378,11 +378,11 @@ void Editor::show()
             color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
             textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %2d/%2d"), wht, max_wht);
             char str1[64]; // to adjust position of translated string
-          //int x1 = 120;
+            //int x1 = 120;
             int x2 = 236;
-            sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost() );
+            sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost());
             int w1 = text_length(g_small_font, str1);  // right-justify string
-            textprintf(screen2, g_small_font, x2-w1, 20, COLOR_GRAY02, str1);
+            textprintf(screen2, g_small_font, x2 - w1, 20, COLOR_GRAY02, str1);
 
             draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
             blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
@@ -429,15 +429,15 @@ void Editor::show()
 
         if (keypressed()) {
             CHANGE = 1;
-          //int c = readkey();
-          //switch (c >> 8) {
-            int scancode; int keycode = ureadkey(&scancode); 
-            switch (scancode) { 
+            //int c = readkey();
+            //switch (c >> 8) {
+            int scancode; int keycode = ureadkey(&scancode);
+            switch (scancode) {
                 case KEY_F1:
-                    help( HELP_INVENTORY );
+                    help(HELP_INVENTORY);
                     break;
-                // Todo: Change from "Save&Load Team" to "Save&Load Soldier" 
-                // Todo: move "Save&Load Team" to Mission-planner (connect.cpp)
+                    // Todo: Change from "Save&Load Team" to "Save&Load Soldier"
+                    // Todo: move "Save&Load Team" to Mission-planner (connect.cpp)
                 case KEY_F2:
                     //if (askmenu("SAVE DATA")) {
                     save();
@@ -467,11 +467,11 @@ void Editor::show()
                 case KEY_F11:  // cycle thru apperances:
                     A1 = man->md.Appearance;
                     A2 = man->md.fFemale;
-                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F11: 
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {  // Shift-F11:
                         A2++;
                         if (A2 >= 2) A2 = 0;
                         man->md.fFemale    = A2;
-                    } else { // F11: 
+                    } else { // F11:
                         A1 = A1 + (A2 ? 4 : 0);
                         A1++;
                         if (A1 >= 8) A1 = 0;
@@ -482,7 +482,7 @@ void Editor::show()
                     break;
                 case KEY_F12:  // cycle thru armor-types:
                     A1 = man->md.SkinType;
-                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) // Shift-F12: Aliens
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]))  // Shift-F12: Aliens
                         man->skin()->next_alien();
                     else // F12: Human Armor
                         man->skin()->next_human();
@@ -500,9 +500,9 @@ void Editor::show()
                     }
                     break;
                 case KEY_DEL:  // Todo: store the deleted items (where?) for KEY_INSERT
-                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-DEL:
-                      // Drop all carried items:   // Todo: drop to common pool
-                        Item * it;
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {  // Shift-DEL:
+                        // Drop all carried items:   // Todo: drop to common pool
+                        Item *it;
                         for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
                             it = man->item(i);
                             if (it != NULL)
@@ -515,7 +515,7 @@ void Editor::show()
                     break;
 
                 case KEY_TAB:   // jump to next/prev. soldier
-                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-TAB:
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {  // Shift-TAB:
                         man = man->prevman();
                     } else { // TAB:
                         man = man->nextman();
@@ -526,12 +526,12 @@ void Editor::show()
                     break;
                 case KEY_RIGHT:
                     man = man->nextman();
-                    break;     
+                    break;
 
-                 case KEY_PGUP:
+                case KEY_PGUP:
                     scroll_equipment(-1);
                     break;
-                 case KEY_PGDN:
+                case KEY_PGDN:
                     scroll_equipment(+1);
                     break;
                 case KEY_PRTSCR:
@@ -542,7 +542,7 @@ void Editor::show()
                 case KEY_ESC:
                     DONE = 1;
                     break;
-                default: 
+                default:
                     if (g_console->process_keyboard_input(keycode, scancode))
                         net->send_message((char *)g_console->get_text());
             }
@@ -597,7 +597,7 @@ int Editor::load_clip()
 #define STW 105
 #define SH  20
 
-#define D_NAME         3 
+#define D_NAME         3
 #define D_POINTS       4
 #define D_RACE         6
 #define D_ARMOUR       8
@@ -629,7 +629,7 @@ static int get_list_size(const char **list)
 static void fixup_unit_info();
 
 // Todo: gettext ??
-static const char *race_names[] = { 
+static const char *race_names[] = {
     "human",
     "sectoid",
     "muton",
@@ -641,7 +641,7 @@ static const char *race_names[] = {
     NULL
 };
 
-static const char *armour_names_human[] = { 
+static const char *armour_names_human[] = {
     "none",
     "standard",
     "power",
@@ -649,32 +649,32 @@ static const char *armour_names_human[] = {
     NULL
 };
 
-static const char *armour_names_alien[] = { 
+static const char *armour_names_alien[] = {
     "standard",
     NULL
 };
 
-static const char *armour_names_chameleon[] = { 
+static const char *armour_names_chameleon[] = {
     "standard",
     NULL
 };
 
 static const char **armour_names;
 
-static const char *appearance_names_human[] = { 
-    "blonde guy", 
-    "hispanic guy", 
+static const char *appearance_names_human[] = {
+    "blonde guy",
+    "hispanic guy",
     "oriental guy",
     "black guy",
-    "blonde girl", 
-    "brunette girl", 
+    "blonde girl",
+    "brunette girl",
     "oriental girl",
     "black girl",
     NULL
 };
 
-static const char *appearance_names_alien[] = { 
-    "standard", 
+static const char *appearance_names_alien[] = {
+    "standard",
     NULL
 };
 
@@ -714,8 +714,8 @@ static void init_chameleon_appearances()
 }
 
 static int common_change_button_proc(
-    const char *title, 
-    const char **names, 
+    const char *title,
+    const char **names,
     int msg, DIALOG *d, int c)
 {
     int result = d_button_proc(msg, d, c);
@@ -735,17 +735,17 @@ static int common_change_button_proc(
 
 static int race_change_button_proc(int msg, DIALOG *d, int c)
 {
-    return common_change_button_proc( _("Select unit race"), race_names, msg, d, c);
+    return common_change_button_proc(_("Select unit race"), race_names, msg, d, c);
 }
 
 static int armour_change_button_proc(int msg, DIALOG *d, int c)
 {
-    return common_change_button_proc( _("Select unit armour"), armour_names, msg, d, c);
+    return common_change_button_proc(_("Select unit armour"), armour_names, msg, d, c);
 }
 
 static int appearance_change_button_proc(int msg, DIALOG *d, int c)
 {
-    return common_change_button_proc( _("Select unit appearance"), appearance_names, msg, d, c);
+    return common_change_button_proc(_("Select unit appearance"), appearance_names, msg, d, c);
 }
 
 
@@ -754,7 +754,7 @@ static int appearance_change_button_proc(int msg, DIALOG *d, int c)
  */
 static DIALOG *sol_dialog = NULL;
 
-static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
+static int d_agup_slider_pro2(int msg, DIALOG *d, int c)
 {
     char s[100];
     int v;
@@ -767,13 +767,10 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
             break;
         case MSG_CLICK:
         case MSG_CHAR:
-            if (d == &sol_dialog[D_STRENGTH])
-            {
+            if (d == &sol_dialog[D_STRENGTH]) {
                 if (d->d2 > 40) d->d2 = 40;
                 if (d->d2 < 25) d->d2 = 25;
-            }
-            else
-            {
+            } else {
                 if (d->d2 > 80) d->d2 = 80;
                 if (d->d2 < 50) d->d2 = 50;
             }
@@ -811,7 +808,7 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 }
 
 /**
- * Sets correct value ranges in GUI controls 
+ * Sets correct value ranges in GUI controls
  * after the user changes information related to skins
  */
 static void fixup_unit_info()
@@ -844,7 +841,7 @@ static void fixup_unit_info()
 }
 
 /**
- * Shows unit-stats edit-dialog and allows to edit unit stats, 
+ * Shows unit-stats edit-dialog and allows to edit unit stats,
  * change name, and armour (=skin)
  */
 void Editor::edit_soldier()
@@ -853,36 +850,36 @@ void Editor::edit_soldier()
     DIALOG sol_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-        { d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
-        { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
-        { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
-        { d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
+        { d_agup_button_proc,     DX + 200,     DY + SSY + SH * 13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
+        { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH * 1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
+        { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH * 1 - 4, 23 * 8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
+        { d_agup_text_proc,       DX + 100,     DY + SSY + SH * 12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
 
-        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Race:"), NULL, NULL},
-        { race_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH * 0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Race:"), NULL, NULL},
+        { race_change_button_proc, DX + SSX,     DY + SSY + SH * 0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Armour:"), NULL, NULL},
-        { armour_change_button_proc,DX + SSX,     DY + SSY + SH*1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH * 1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Armour:"), NULL, NULL},
+        { armour_change_button_proc, DX + SSX,     DY + SSY + SH * 1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Appearance:"), NULL, NULL},
-        { appearance_change_button_proc,DX + SSX,     DY + SSY + SH*2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+        { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH * 2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Appearance:"), NULL, NULL},
+        { appearance_change_button_proc, DX + SSX,     DY + SSY + SH * 2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*3,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Time Units"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*3,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*4,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Stamina"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*4,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*5,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Health"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*5,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*6,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Bravery"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*6,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*7,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Reactions"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*7,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*8,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Firing"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*8,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*9,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Throwing"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
-        { d_agup_rtext_proc,  DX + STX, DY + STY + SH*10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Strength"), NULL, NULL},
-        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 3,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Time Units"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 3,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 4,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Stamina"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 4,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 5,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Health"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 5,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 6,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Bravery"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 6,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 7,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Reactions"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 7,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 8,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Firing"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 8,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 9,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Throwing"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_rtext_proc,  DX + STX, DY + STY + SH * 10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Strength"), NULL, NULL},
+        { d_agup_slider_pro2, DX + SSX, DY + SSY + SH * 10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
         { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
     };
@@ -912,10 +909,10 @@ void Editor::edit_soldier()
 
     while (mouse_b & 3) rest(1);
 
-    if (man->md.SkinType == S_XCOM_0 || 
-        man->md.SkinType == S_XCOM_1 || 
-        man->md.SkinType == S_XCOM_2 || 
-        man->md.SkinType == S_XCOM_3) {
+    if (man->md.SkinType == S_XCOM_0 ||
+            man->md.SkinType == S_XCOM_1 ||
+            man->md.SkinType == S_XCOM_2 ||
+            man->md.SkinType == S_XCOM_3) {
         appearance_names = appearance_names_human;
         armour_names     = armour_names_human;
         if (man->md.Appearance >= 4) man->md.Appearance = 0;
@@ -925,23 +922,18 @@ void Editor::edit_soldier()
         armour_names     = armour_names_alien;
         if (man->md.SkinType == S_SECTOID)
             sol_dialog[D_RACE].d1 = 1;
-        else
-        if (man->md.SkinType == S_MUTON)
+        else if (man->md.SkinType == S_MUTON)
             sol_dialog[D_RACE].d1 = 2;
-        else
-        if (man->md.SkinType == S_SNAKEMAN)
+        else if (man->md.SkinType == S_SNAKEMAN)
             sol_dialog[D_RACE].d1 = 3;
-        else
-        if (man->md.SkinType == S_ETHEREAL)
+        else if (man->md.SkinType == S_ETHEREAL)
             sol_dialog[D_RACE].d1 = 4;
-        else
-        if (man->md.SkinType == S_FLOATER)
+        else if (man->md.SkinType == S_FLOATER)
             sol_dialog[D_RACE].d1 = 5;
-        else
-        if (man->md.SkinType == S_CHRYS)
+        else if (man->md.SkinType == S_CHRYS)
             sol_dialog[D_RACE].d1 = 6;
         else
-			sol_dialog[D_RACE].d1 = 7;
+            sol_dialog[D_RACE].d1 = 7;
         man->md.fFemale = 0;
         if (man->md.SkinType != S_CHAMELEON)
             man->md.Appearance = 0;
@@ -969,31 +961,31 @@ void Editor::edit_soldier()
     popup_dialog(sol_dialog, -1);
 
     switch (sol_dialog[D_RACE].d1) {
-        case  0: 
+        case  0:
             man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
             man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;
-            man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; 
+            man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1;
             break;
-        case  1: 
-            man->md.SkinType = S_SECTOID; 
+        case  1:
+            man->md.SkinType = S_SECTOID;
             break;
-        case  2: 
-            man->md.SkinType = S_MUTON; 
+        case  2:
+            man->md.SkinType = S_MUTON;
             break;
-        case  3: 
+        case  3:
             man->md.SkinType = S_SNAKEMAN; //LAWYER:  Snakeman!!
             break;
-        case  4: 
+        case  4:
             man->md.SkinType = S_ETHEREAL; //LAWYER:  Ethereal!!
             break;
         case 5:
             man->md.SkinType = S_FLOATER; //LAWYER:  Floater!!
-            break;      
+            break;
         case 6:
             man->md.SkinType = S_CHRYS; //Kratos: Chryssalid
             break;
-        default: 
-            man->md.SkinType = S_CHAMELEON; 
+        default:
+            man->md.SkinType = S_CHAMELEON;
             man->md.Appearance = sol_dialog[D_APPEARANCE].d1;
             break;
     }
@@ -1015,9 +1007,9 @@ void Editor::edit_soldier()
 void Editor::copy_soldier(Soldier *src)
 {
     buffer.empty = false;
-    
+
     src->build_ITEMDATA();
-    
+
     buffer.md = src->md;
     buffer.id = src->id;
 }
@@ -1025,20 +1017,20 @@ void Editor::copy_soldier(Soldier *src)
 void Editor::paste_soldier(Soldier *dest)
 {
     if (buffer.empty) return;
-    
+
     std::string prev_name = dest->md.Name;
-    
+
     dest->md = buffer.md;
     dest->id = buffer.id;
-    
+
     strcpy(dest->md.Name, prev_name.c_str());
-    
+
     dest->process_MANDATA();
     dest->process_ITEMDATA();
 }
-         
+
 /**
- * Let the user select a set of equipment available in the armory, 
+ * Let the user select a set of equipment available in the armory,
  * e.g. "standard", "no explosives", "no alien weapons" etc.
  *
  * Query which sets are defined in ./init-scripts/standard-equipment.lua,
@@ -1050,14 +1042,14 @@ void Editor::change_equipment()
     int index = query_equipment_sets(eqsets);
     if (eqsets.size() > 0) {
         int result = gui_select_from_list(
-            300, 200, _("Select equipment set"), 
-            eqsets, index != -1 ? index : 0);
+                         300, 200, _("Select equipment set"),
+                         eqsets, index != -1 ? index : 0);
 
         if (set_current_equipment_name(eqsets[result].c_str()))
             net->send_equipment_choice();
 
     } else {
-        alert( "", _("Remote player does not have any of your weaponsets"), "", _("OK"), NULL, 0, 0);
+        alert("", _("Remote player does not have any of your weaponsets"), "", _("OK"), NULL, 0, 0);
     }
 }
 

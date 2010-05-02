@@ -73,8 +73,7 @@ SERVER_CONFIG_VARIABLE(keep_log_time,           7);
 // Daemonize or not (on unixen)
 SERVER_CONFIG_VARIABLE(daemonize,           1);
 
-struct ip_info
-{
+struct ip_info {
     NLuint ip;
     NLuint mask;
     ip_info(): ip(0), mask(0xFFFFFFFF) { }
@@ -117,11 +116,11 @@ static bool check_ip_match(NLuint ip, const ip_info &info)
  * Parses text line and extracts variable name + value from it
  */
 static bool get_variable(
-    const std::string & str,
-    std::string       & var,
-    std::string       & val,
+    const std::string &str,
+    std::string        &var,
+    std::string        &val,
     char                comment_char,
-    std::string       & comment_string)
+    std::string        &comment_string)
 {
     std::string::size_type comment_pos = str.find(comment_char);
     if (comment_pos == std::string::npos) {
@@ -130,7 +129,7 @@ static bool get_variable(
     } else {
         if (&comment_string != NULL) {
             comment_string = str.substr(
-                comment_pos, str.find_last_not_of(" \t\n\r") - comment_pos + 1);
+                                 comment_pos, str.find_last_not_of(" \t\n\r") - comment_pos + 1);
         }
     }
 
@@ -236,7 +235,7 @@ bool validate_ip(const std::string &ip_string)
 void server_log(const char *fmt, ...)
 {
     time_t now = time(NULL);
-    struct tm * t = localtime(&now);
+    struct tm *t = localtime(&now);
     char timebuf[1000];
     strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
 #ifndef WIN32

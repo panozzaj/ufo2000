@@ -45,7 +45,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * Synchronizing of client versions for network game
  *
- * @todo remove all the unneeded stuff here, this function does not need 
+ * @todo remove all the unneeded stuff here, this function does not need
  *       displaying any graphics at all
  */
 int Connect::do_chat()
@@ -85,8 +85,8 @@ int Connect::do_chat()
     g_net_allowed_terrains.clear();
 
     remote_win->printstr("\n");
-    remote_win->printstr( _("Comparing local and remote UFO2000 versions...") );
-    remote_win->printstr( _("Press ESC to cancel") );
+    remote_win->printstr(_("Comparing local and remote UFO2000 versions..."));
+    remote_win->printstr(_("Press ESC to cancel"));
 
     char version_check_packet[128];
     sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
@@ -107,8 +107,8 @@ int Connect::do_chat()
                         remote_win->printstr("unable to play until he upgrades\n");
                     } else {
                         char tmp[128];
-                        sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
-                            UFO_VERSION_STRING, remote_revision);
+                        sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer",
+                                UFO_VERSION_STRING, remote_revision);
                         remote_win->printstr("\nUnfortunately you have an older UFO2000\n");
                         remote_win->printstr("version than your opponent has.\n");
                         remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
@@ -138,7 +138,7 @@ int Connect::do_chat()
         }
 
         if (!net->SEND) {
-            info_win->printstr( _("connection closed") );
+            info_win->printstr(_("connection closed"));
             readkey();
             DONE = 1;
         }
@@ -181,7 +181,7 @@ int Connect::do_chat()
 Units local;
 Units remote;
 // Pointers to "Units" in order of their positions (HOST/JOIN), not local/remote choice.
-Units* target_uints[2];
+Units *target_uints[2];
 
 // uds ??
 void Connect::reset_uds()
@@ -206,11 +206,11 @@ int FINISH_PLANNER = 0;
  */
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
-    lua_message( "Enter: Connect::do_planner" );
+    lua_message("Enter: Connect::do_planner");
     MODE = PLANNER;
     int mouse_leftr = 1, mouse_rightr = 1;
     int DONE = 0;
-	int REMOTE_LEFT = 0;
+    int REMOTE_LEFT = 0;
     //HOST = 0;
     FINISH_PLANNER = 0;
 
@@ -226,12 +226,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     g_console->set_full_redraw();
     g_console->redraw(screen, 0, SCREEN2H);
 
-    g_console->printf( COLOR_SYS_HEADER, "%s", _("Welcome to the mission-planner !") );
+    g_console->printf(COLOR_SYS_HEADER, "%s", _("Welcome to the mission-planner !"));
 
     Map *map = new Map(mapdata);
     BITMAP *map2d = map->create_bitmap_of_map(0);
     int map2d_x = (640 - map2d->w) / 2;
-	
+
     if (HOST) {
         target_uints[1] = &remote;
         target_uints[0] = &local;
@@ -276,39 +276,39 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
         }
         net->send_terrain_crc32("", 0);
 #define map g_map
-		
+
         // Wait until a complete list of remote terrains is received
         while ((g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) && (!REMOTE_LEFT)) {
             net->check();
             rest(1);
-			
-			process_keyswitch();
 
-			if (keypressed()) {
-				CHANGE = 1;
+            process_keyswitch();
 
-				int scancode;
-				int keycode = ureadkey(&scancode);
+            if (keypressed()) {
+                CHANGE = 1;
 
-				switch (scancode) {
-					case KEY_ESC:
-						if (askmenu( _("EXIT MISSION-PLANNER") )) {
-							net->send_quit();
-							net->SEND = 0;
-							REMOTE_LEFT = 1;
-						}
-						break;
-					default:
-						if (g_console->process_keyboard_input(keycode, scancode))
-							net->send_message((char *)g_console->get_text());
-				}
-			}
+                int scancode;
+                int keycode = ureadkey(&scancode);
+
+                switch (scancode) {
+                    case KEY_ESC:
+                        if (askmenu(_("EXIT MISSION-PLANNER"))) {
+                            net->send_quit();
+                            net->SEND = 0;
+                            REMOTE_LEFT = 1;
+                        }
+                        break;
+                    default:
+                        if (g_console->process_keyboard_input(keycode, scancode))
+                            net->send_message((char *)g_console->get_text());
+                }
+            }
         }
         // Remove end marker
         g_net_allowed_terrains.erase("");
 
-		if (REMOTE_LEFT) {
-		    delete map;
+        if (REMOTE_LEFT) {
+            delete map;
             SCREEN2H = old_SCREEN2H;
             destroy_bitmap(screen2);
             screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
@@ -316,11 +316,11 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
             g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
             g_console->set_full_redraw();
             return 0;
-		}
-		
+        }
+
         if (g_net_allowed_terrains.size() == 0) {
-            alert( "", _("Remote player does not have any of your maps"), "",
-                   _("OK"), NULL, 0, 0);
+            alert("", _("Remote player does not have any of your maps"), "",
+                  _("OK"), NULL, 0, 0);
             delete map;
 
             SCREEN2H = old_SCREEN2H;
@@ -360,20 +360,18 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
         for (i = 0; i < SCENARIO_NUMBER; i++)
             for (int j = 0; j < 3; j++)
                 net->send_options(i, j, scenario->options[i][j]->value);
-    }
-    else //send start_sit info now
-    {
-        net->send_p2_start_sit((FLAGS & F_SECONDSIT)?1:0);
+    } else { //send start_sit info now
+        net->send_p2_start_sit((FLAGS & F_SECONDSIT) ? 1 : 0);
     }
 
     if (map_change_allowed)
-        g_console->printf( COLOR_SYS_OK,   _("You can select a map and change the match-settings.") );
+        g_console->printf(COLOR_SYS_OK,   _("You can select a map and change the match-settings."));
     else
-        g_console->printf( COLOR_SYS_FAIL, _("The map is already set for this game, and cannot be changed.") );
-    g_console->printf( COLOR_SYS_INFO1,    _("To edit a soldier, CTRL-click on his name.") );
-    g_console->printf( COLOR_SYS_INFO1,    _("Left-click to place a soldier on the map, right-click to remove him.") );
-    g_console->printf( COLOR_SYS_PROMPT,   _("When finished, click SEND, then START.  Press ESC to quit, F1 for help.") ); 
-	
+        g_console->printf(COLOR_SYS_FAIL, _("The map is already set for this game, and cannot be changed."));
+    g_console->printf(COLOR_SYS_INFO1,    _("To edit a soldier, CTRL-click on his name."));
+    g_console->printf(COLOR_SYS_INFO1,    _("Left-click to place a soldier on the map, right-click to remove him."));
+    g_console->printf(COLOR_SYS_PROMPT,   _("When finished, click SEND, then START.  Press ESC to quit, F1 for help."));
+
     while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
@@ -415,28 +413,26 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
             //map->show2d(0, 0);
             blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
-            if(!g_game_receiving) {
+            if (!g_game_receiving) {
                 remote.print_simple(COLOR_WHITE);
                 local.print(COLOR_WHITE);
             }
-            
+
             draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
             blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 
             CHANGE = 0;
         }
 
-        if ((mouse_b & 1) && (mouse_leftr)) //left
-        {
+        if ((mouse_b & 1) && (mouse_leftr)) { //left
             mouse_leftr = 0;
             CHANGE = 1;
             local.execute(map, map_change_allowed);
             // Calls Editor::show() via Units::execute and execute_main()
 
             //  "START"
-            if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
-            {
-                if (F10ALLOWED && local.SEND && askmenu( _("PREPARATIONS FOR MISSION FINISHED") ))
+            if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5)) {
+                if (F10ALLOWED && local.SEND && askmenu(_("PREPARATIONS FOR MISSION FINISHED")))
                     DONE = 1;
             }
         }
@@ -465,21 +461,21 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
             switch (scancode) {
                 case KEY_F1:
-                    help( HELP_PLANNER );
+                    help(HELP_PLANNER);
                     break;
-                // Todo: Save+Load for teams
-                case KEY_F2: 
-                  //Editor::save();
+                    // Todo: Save+Load for teams
+                case KEY_F2:
+                    //Editor::save();
                     break;
-                case KEY_F3: 
-                  //Editor::load();
+                case KEY_F3:
+                    //Editor::load();
                     break;
-                case KEY_F4: 
+                case KEY_F4:
                     local.edit_unit(0);
                     break;
                 case KEY_F5: // Toggle F_RAWMESSAGES
                     FLAGS ^= F_RAWMESSAGES;
-                    g_console->printf( COLOR_SYS_INFO1, "%s: %lu", "RAWMESSAGES:", (FLAGS & F_RAWMESSAGES) );
+                    g_console->printf(COLOR_SYS_INFO1, "%s: %lu", "RAWMESSAGES:", (FLAGS & F_RAWMESSAGES));
                     break;
                 case KEY_F9:
                     keyswitch(0);
@@ -494,10 +490,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                     break;
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
+                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF"));
                     break;
                 case KEY_ESC:
-                    if (askmenu( _("EXIT MISSION-PLANNER") )) {
+                    if (askmenu(_("EXIT MISSION-PLANNER"))) {
                         net->send_quit();
                         net->SEND = 0;
                         DONE = 1;

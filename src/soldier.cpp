@@ -45,8 +45,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 int Soldier::dir2ofs[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 //                    y  x     -1  0  1
 char Soldier::ofs2dir[3][3] = {{5, 6, 7},
-                               {4, 8, 0},
-                               {3, 2, 1}};
+    {4, 8, 0},
+    {3, 2, 1}
+};
 
 IMPLEMENT_PERSISTENCE(Soldier, "Soldier");
 
@@ -70,15 +71,15 @@ Soldier::Soldier(Platoon *platoon, int _NID)
     m_skin = new Skin(this, md.SkinType, md.fFemale);
 
     m_bullet = new Bullet(this);
-    m_place[P_SHL_RIGHT] = new Place( 16,  40,  2, 1);
+    m_place[P_SHL_RIGHT] = new Place(16,  40,  2, 1);
     m_place[P_SHL_LEFT]  = new Place(112,  40,  2, 1);
-    m_place[P_ARM_RIGHT] = new Place(  0,  64,  2, 3);
+    m_place[P_ARM_RIGHT] = new Place(0,  64,  2, 3);
     m_place[P_ARM_LEFT]  = new Place(128,  64,  2, 3);
-    m_place[P_LEG_RIGHT] = new Place(  0, 120,  2, 1);
+    m_place[P_LEG_RIGHT] = new Place(0, 120,  2, 1);
     m_place[P_LEG_LEFT]  = new Place(128, 120,  2, 1);
     m_place[P_BACK]      = new Place(192,  40,  3, 3);
     m_place[P_BELT]      = new Place(192, 104,  4, 2);
-    m_place[P_MAP]       = new Place(  0, 152, 20 * 10, 3);      //as map
+    m_place[P_MAP]       = new Place(0, 152, 20 * 10, 3);        //as map
     m_p_map_allocated = true;
 
     curway = -1; waylen = 0;
@@ -89,7 +90,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
     m_ReserveTimeMode = RESERVE_FREE;
 }
 
-Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask)
+Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type, int32 vision_mask)
 {
     memset(&ud, 0, sizeof(ud));
     memcpy(&md, mdat, sizeof(md));
@@ -98,7 +99,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     NID = _NID; z = _z; x = _x; y = _y;
     dir = 0; move_dir = 0;
     m_vision_mask = vision_mask;
-    
+
     //  Face the enemy depending on what the deployment is
     int ang, dest_col, dest_row;
     fixed ox, oy;
@@ -125,7 +126,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
                 ang = (ang + 16) % 256;
                 dir = ang >> 5;
             }
-            dir = DIR_REVERSE (dir);
+            dir = DIR_REVERSE(dir);
             break;
         case DEP_SURROUND:
             //  Face to the center of the map
@@ -143,7 +144,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
             }
             break;
         case DEP_ALL:
-            // Face the outside if closer to center, face the center if closer to outside 
+            // Face the outside if closer to center, face the center if closer to outside
             dest_col = map->width * 10 - 1;
             dest_row = map->height * 10 - 1;
             ox = itofix(dest_col - x * 2);
@@ -157,8 +158,8 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
                 dir = ang >> 5;
             }
             if ((x * 4 > dest_col) && (x * 4 < dest_col * 3) && (y * 4 > dest_row) && (y * 4 < dest_row * 3)) {
-               dir = DIR_REVERSE (dir);
-               }
+                dir = DIR_REVERSE(dir);
+            }
             break;
     }
 
@@ -169,11 +170,11 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     m_skin = new Skin(this, md.SkinType, md.fFemale);
 
     m_bullet = new Bullet(this);
-    m_place[P_SHL_RIGHT] = new Place( 16,  40, 2, 1);
+    m_place[P_SHL_RIGHT] = new Place(16,  40, 2, 1);
     m_place[P_SHL_LEFT]  = new Place(112,  40, 2, 1);
-    m_place[P_ARM_RIGHT] = new Place(  0,  64, 2, 3);
+    m_place[P_ARM_RIGHT] = new Place(0,  64, 2, 3);
     m_place[P_ARM_LEFT]  = new Place(128,  64, 2, 3);
-    m_place[P_LEG_RIGHT] = new Place(  0, 120, 2, 1);
+    m_place[P_LEG_RIGHT] = new Place(0, 120, 2, 1);
     m_place[P_LEG_LEFT]  = new Place(128, 120, 2, 1);
     m_place[P_BACK]      = new Place(192,  40, 3, 3);
     m_place[P_BELT]      = new Place(192, 104, 4, 2);
@@ -317,10 +318,9 @@ void Soldier::process_ITEMDATA()
 {
     destroy_all_items();
 
-    Item * it = NULL;
+    Item *it = NULL;
     for (int i = 0; i < id.num; i++) {
-        if (id.place[i] == 0xFF) //clip
-        {
+        if (id.place[i] == 0xFF) { //clip
             ASSERT(it != NULL);
             Item *clip = new Item(intel_uint32(id.item_type[i]));
             int v = it->loadclip(clip);
@@ -367,7 +367,7 @@ void Soldier::reset_stats()
     md.Strength = 0;
     md.Firing = 0;
     md.Throwing = 0;
-    
+
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         m_place[i]->destroy_all_items();
     }
@@ -429,9 +429,9 @@ Place *Soldier::find_place(const char *place_name)
 void Soldier::save_to_string(std::string &str)
 {
     str.clear();
-    
+
     std::string inv;
-    
+
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         inv += "[\"" + lua_escape_string(place_name_id[i]) + "\"] = {\n";
         std::string place_str;
@@ -439,7 +439,7 @@ void Soldier::save_to_string(std::string &str)
         inv += indent(place_str);
         inv += "},\n";
     }
-    
+
     char tmp[512];
     str += "Name = \"" + lua_escape_string(md.Name) + "\",\n";
 
@@ -471,7 +471,7 @@ void Soldier::destroy_all_items()
 
 /**
  * Calculate point-cost of soldiers attributes and armor
- */ 
+ */
 int Soldier::calc_mandata_cost(MANDATA _md)
 {
     // TUs with stamina as they determine how far you go in a turn.
@@ -484,7 +484,7 @@ int Soldier::calc_mandata_cost(MANDATA _md)
             (_md.Reactions * 2) +
             ((_md.Firing + _md.Throwing) / 2) +
             (_md.Strength * 2);
-            
+
     p += Skin::get_armour_cost(_md.SkinType, _md.fFemale);
 
     return p;
@@ -493,10 +493,10 @@ int Soldier::calc_mandata_cost(MANDATA _md)
 int Soldier::calc_full_ammunition_cost()
 {
     int p = calc_mandata_cost(md);
-    
+
     std::vector<Item *> items;
     get_inventory_list(items);
-    
+
     for (int i = 0; i < (int)items.size(); i++) {
         p += items[i]->get_cost();
     }
@@ -510,7 +510,7 @@ void Soldier::build_items_stats(char *buf, int &len)
     }
 }
 
-   
+
 
 /**
  * Get list of pointer to all the items owned by this soldier
@@ -550,8 +550,7 @@ void Soldier::restore()
 
     panicking = false;
 
-    if (ud.CurStun > 0) // Do we have stun damage?
-    {
+    if (ud.CurStun > 0) { // Do we have stun damage?
         int i = 5; //(int)randval(1, 11);
 
         // Are we currently stunned?
@@ -569,10 +568,9 @@ void Soldier::restore()
             int z0 = -1, x0 = -1, y0 = -1, found = 0;
             Place *target = m_stunned_body->get_place();
             for (z0 = 0; z0 < map->level; z0++) {
-                for (x0 = 0; x0 < map->width*10; x0++) {
-                    for (y0 = 0; y0 < map->height*10; y0++) {
-                        if (target == map->place(z0, x0, y0))
-                        {
+                for (x0 = 0; x0 < map->width * 10; x0++) {
+                    for (y0 = 0; y0 < map->height * 10; y0++) {
+                        if (target == map->place(z0, x0, y0)) {
                             found = 1;
                             break;
                         }
@@ -585,7 +583,7 @@ void Soldier::restore()
                 if (found)
                     break;
             }
-            // Body found on map (not in someone's backback) 
+            // Body found on map (not in someone's backback)
             // and also nobody is standing at this place.
             if (found && g_map->man(z0, x0, y0) == NULL) {
                 z = z0;
@@ -641,7 +639,7 @@ void Soldier::draw_inventory(BITMAP *dest)
 // New: display weight and health:
     int wht     = count_weight();
     int max_wht = md.Strength;
-    int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02; 
+    int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
     textprintf(dest, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
 
     color = COLOR_ORANGE;
@@ -656,25 +654,25 @@ void Soldier::draw_inventory(BITMAP *dest)
 
     color = COLOR_ORANGE;
     if ((ud.CurFront < ud.MaxFront) ||  // Armor damaged
-        (ud.CurLeft  < ud.MaxLeft)  ||
-        (ud.CurRight < ud.MaxRight) ||
-        (ud.CurRear  < ud.MaxRear)  ||
-        (ud.CurUnder < ud.MaxUnder)) 
-        color = COLOR_GRAY03; 
+            (ud.CurLeft  < ud.MaxLeft)  ||
+            (ud.CurRight < ud.MaxRight) ||
+            (ud.CurRear  < ud.MaxRear)  ||
+            (ud.CurUnder < ud.MaxUnder))
+        color = COLOR_GRAY03;
     if ((ud.CurFront == 0) ||           // one side of armor is gone
-        (ud.CurLeft  == 0) ||
-        (ud.CurRight == 0) ||
-        (ud.CurRear  == 0) ||
-        (ud.CurUnder == 0))
-        color = COLOR_WHITE; 
+            (ud.CurLeft  == 0) ||
+            (ud.CurRight == 0) ||
+            (ud.CurRear  == 0) ||
+            (ud.CurUnder == 0))
+        color = COLOR_WHITE;
     if (ud.CurHealth < ud.MaxHealth)    // Soldier wounded
-        color = COLOR_RED03; 
+        color = COLOR_RED03;
     int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
-             ud.LArmWound + ud.RLegWound  + ud.LLegWound;   
-    if (fw > 0) 
+             ud.LArmWound + ud.RLegWound  + ud.LLegWound;
+    if (fw > 0)
         color = COLOR_RED07;        // Fatal Wounds
     textout(dest,    g_small_font, _("Health>"), 245, 34, COLOR_LT_OLIVE);
-    textprintf(dest, g_small_font,               276, 34, color, "%d", ud.CurHealth); 
+    textprintf(dest, g_small_font,               276, 34, color, "%d", ud.CurHealth);
 //
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
         m_place[i]->drawgrid(dest, i);
@@ -688,7 +686,7 @@ inline int graycol(int c)
 }
 
 /**
- * Display soldiers attributes, with numbers and barcharts 
+ * Display soldiers attributes, with numbers and barcharts
  */
 void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 {
@@ -705,29 +703,29 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
         int col;
     }
     param[row_num] = {
-        { (char*)_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
-        { (char*)_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
-        { (char*)_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
-        { (char*)_("FATAL WOUNDS"),      fw,              fw,            36},
-        { (char*)_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
-        { (char*)_("MORALE"),            ud.Morale,       100,          197},
-        { (char*)_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
-        { (char*)_("FIRING ACCURACY"),   eff_FAccuracy(), ud.MaxFA,     132},
-        { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
-        { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
+        { (char *)_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
+        { (char *)_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
+        { (char *)_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
+        { (char *)_("FATAL WOUNDS"),      fw,              fw,            36},
+        { (char *)_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
+        { (char *)_("MORALE"),            ud.Morale,       100,          197},
+        { (char *)_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
+        { (char *)_("FIRING ACCURACY"),   eff_FAccuracy(), ud.MaxFA,     132},
+        { (char *)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
+        { (char *)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
         {NULL, 0, 0, 0},
-        { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
-        { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
-        { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
-        { (char*)_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    87},
-        { (char*)_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   87}
+        { (char *)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
+        { (char *)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
+        { (char *)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
+        { (char *)_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    87},
+        { (char *)_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   87}
     };
-    
+
     int width = 320;
-    
+
     int name_h = text_height(name_f) + 2, row_h = text_height(row_f) + 1;
     int height = name_h + 8 + row_h * row_num;
-    
+
     BITMAP *temp = create_bitmap(width, height);
     clear_to_color(temp, makecol(255, 255, 255));
 
@@ -749,8 +747,8 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
     line(temp, 1, name_h + 6, width - 2, name_h + 6, graycol(192));
     for (int i = 0; i < row_num; i++) {
         for (int j = 0; j < col_num; j++)
-            rectfill(temp, sx[j], name_h + 6 + row_h * i + 1, sx[j + 1] - 1, name_h + 6 + row_h * (i + 1), graycol(255 - (16 * (s++ % 2))));
-            
+            rectfill(temp, sx[j], name_h + 6 + row_h * i + 1, sx[j + 1] - 1, name_h + 6 + row_h *(i + 1), graycol(255 - (16 *(s++ % 2))));
+
         if (param[i].str != NULL) {
             textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 2, COLOR_GREEN00);
             textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
@@ -763,8 +761,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 
             // special case for the health bar
             if (i == 2) // draw stun damage
-                if (ud.CurStun > 0)
-                {
+                if (ud.CurStun > 0) {
                     if (ud.CurStun < ud.CurHealth)
                         rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
                     else
@@ -772,7 +769,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
                 }
         }
     }
-    
+
     set_trans_blender(0, 0, 0, 192);
     if (abs_pos)
         draw_trans_sprite(screen2, temp, posx, posy);
@@ -793,7 +790,7 @@ void Soldier::draw_selector(int select_y)
     int num = 0;
     num ^= (m_state == SIT);
     num ^= (map->place(z, x, y)->item() != NULL) * 2;
-    
+
     int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 16 - selector[num]->w / 2;
     int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - CELL_SCR_Z * z - 20 - selector[num]->h;
 
@@ -828,8 +825,8 @@ int Soldier::ismoving()
         return true;
 
     if ((z != -1) && ((FIRE_num > 0) || (m_reaction_chances > 0) || (curway != -1) || (waylen != 0)))
-            return true;
-        
+        return true;
+
     return false;
 }
 
@@ -841,9 +838,9 @@ int Soldier::move(int ISLOCAL)
         if (!map->isStairs(z - 1, x, y)) {
             map->set_man(z, x, y, NULL);
             z--;
-            if(map->man(z, x, y)) {
+            if (map->man(z, x, y)) {
                 map->man(z, x, y)->fall_stun();
-                }
+            }
             map->set_man(z, x, y, this);
             if (this == sel_man) {
                 //map->center(this);
@@ -878,14 +875,13 @@ int Soldier::move(int ISLOCAL)
 
     // Vertical movements
     if (m_state == MARCH) {
-        if(move_dir > DIR_NULL) {
+        if (move_dir > DIR_NULL) {
             int tu_cost;
             int zd, xd, yd;
             map->step_dest(z, x, y, move_dir, can_fly(), zd, xd, yd, tu_cost, panicking);
             if (time_reserve(tu_cost, ISLOCAL) != OK)
                 finish_march(ISLOCAL);
-            else
-            {
+            else {
                 map->set_man(z, x, y, NULL);
                 z = zd;
                 x = xd;
@@ -900,7 +896,7 @@ int Soldier::move(int ISLOCAL)
                 }
 
 //                map->update_vision_matrix(this);
-                
+
                 curway++;
                 if (curway >= waylen) {
                     move_dir = dir;
@@ -910,8 +906,8 @@ int Soldier::move(int ISLOCAL)
                         finish_march(ISLOCAL);
                     else
                         move_dir = way[curway];
-                        if( way[curway] < 8)
-                            dir = way[curway];
+                    if (way[curway] < 8)
+                        dir = way[curway];
                 }
             }
             return 1;
@@ -951,16 +947,16 @@ int Soldier::move(int ISLOCAL)
             map->set_man(z, x, y, NULL);
             x += DIR_DELTA_X(dir);
             y += DIR_DELTA_Y(dir);
-            
-            // If we're moving along a diagonal, use 1.5 times the cost, as 
-            // in the original game itself. Please note that walktime(-1) 
+
+            // If we're moving along a diagonal, use 1.5 times the cost, as
+            // in the original game itself. Please note that walktime(-1)
             // returns the time of a horizontal move, whereas walktime(dir)
             // factors in the diagonal move multiplier.
             int time = walktime(-1);
             if (DIR_DIAGONAL(dir)) time = time * 3 / 2;
             if (panicking) time = time * 3 / 4;
             spend_time(time, 1);
-            
+
             map->set_man(z, x, y, this);
 //            m_place[P_MAP] = map->place(z, x, y);
 
@@ -970,7 +966,7 @@ int Soldier::move(int ISLOCAL)
         if (phase >= 8) {
             // We have just come to another map cell
             phase = 0;
-            
+
             // Check for proximity grenades
             if (map->check_mine(z, x, y)) {
                 finish_march(ISLOCAL);
@@ -987,9 +983,9 @@ int Soldier::move(int ISLOCAL)
             } else {
                 platoon_local->soldier_moved(this);
             }
-            
+
             if (m_state == MARCH) {
-                // We haven't stopped because of proximity mines and reaction 
+                // We haven't stopped because of proximity mines and reaction
                 // fire, so continue marching until we reach final destination
                 curway++;
                 if (curway >= waylen) {
@@ -999,7 +995,7 @@ int Soldier::move(int ISLOCAL)
                         finish_march(ISLOCAL);
                     else {
                         move_dir = way[curway];
-                        if( way[curway] < 8)
+                        if (way[curway] < 8)
                             dir = way[curway];
                     }
                 }
@@ -1048,7 +1044,7 @@ int Soldier::move(int ISLOCAL)
 /*
 * The unit is stunned with a stun damage value of 2, armor is left as is and undamaged.
 */
-void Soldier::fall_stun() 
+void Soldier::fall_stun()
 {
     ud.CurStun = ud.CurHealth + 2;
     this->stun();
@@ -1059,41 +1055,41 @@ int Soldier::tus_reserved(std::string *error)
     int time = 0;
 
     Item *it = rhand_item();
-    if(!it) it = lhand_item();  //no item in right hand - use item in left hand
-    
-    if(it) {                    //if soldier has got at least one item in hands
-        switch(m_ReserveTimeMode) {
+    if (!it) it = lhand_item(); //no item in right hand - use item in left hand
+
+    if (it) {                   //if soldier has got at least one item in hands
+        switch (m_ReserveTimeMode) {
             case RESERVE_FREE:
-            break;
-        
+                break;
+
             case RESERVE_SNAP:
-            if (it->obdata_accuracy(1)) {
-                time = required(it->obdata_time(1));
-                if (error) *error = _("Time units are reserved for snap shot.");
-            }
-            break;
-        
+                if (it->obdata_accuracy(1)) {
+                    time = required(it->obdata_time(1));
+                    if (error) *error = _("Time units are reserved for snap shot.");
+                }
+                break;
+
             case RESERVE_AIM:
-            if (it->obdata_accuracy(2)) {
-                time = required(it->obdata_time(2));
-                if (error) *error = _("Time units are reserved for aimed shot.");
-            }
-            break;
-        
+                if (it->obdata_accuracy(2)) {
+                    time = required(it->obdata_time(2));
+                    if (error) *error = _("Time units are reserved for aimed shot.");
+                }
+                break;
+
             case RESERVE_AUTO:
-            if (it->obdata_accuracy(0)) {
-                time = required(it->obdata_time(0)) * it->obdata_autoShots();
-                if (error) *error = _("Time units are reserved for auto shot.");
-            }
-            break;
+                if (it->obdata_accuracy(0)) {
+                    time = required(it->obdata_time(0)) * it->obdata_autoShots();
+                    if (error) *error = _("Time units are reserved for auto shot.");
+                }
+                break;
         }
-        
-        if(it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
+
+        if (it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
             time = required(25);
             if (error) *error = _("Time units are reserved for grenade throw.");
         }
     }
-    
+
     return time;
 }
 
@@ -1103,14 +1099,14 @@ int Soldier::tus_reserved(std::string *error)
  */
 int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
-    if(!ISLOCAL)            // during enemy turn: don't check for reserved time
+    if (!ISLOCAL)           // during enemy turn: don't check for reserved time
         return havetime(walk_time, use_energy);
 
     std::string error = "";
     int time = tus_reserved(&error);
-    
-    if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
-        if(error != "")
+
+    if ((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
+        if (error != "")
             g_console->printf(COLOR_SYS_INFO1, error.c_str());
         return havetime(walk_time + time, 0);
     } else {
@@ -1157,16 +1153,16 @@ bool Soldier::use_elevator(int dz)
     // Check that nobody blocks the way
     if (map->man(z + dz, x, y))
         return false;
-    
+
     // Spend time units
     spend_time(10);
     m_reaction_chances++;
-    
+
     // Change map location
     map->set_man(z, x, y, NULL);
     z += dz;
     map->set_man(z, x, y, this);
-    
+
     // Sent action to remote player
     if (platoon_local->belong(this))
         net->send_use_elevator(NID, dz);
@@ -1259,7 +1255,7 @@ int Soldier::do_armour_check(int &pierce, int damdir)
 {
     int hitloc;
     unsigned char *armor;
-  
+
     // It is still a bit broken, but less than before.
     // The problem is that right now there are 8 directions and 4 armor sections
     // Dividing diagonal hits equaly between neighbouring sections was more of
@@ -1303,7 +1299,7 @@ int Soldier::do_armour_check(int &pierce, int damdir)
             armor = &ud.CurUnder;
             hitloc = HITLOC_TORSO;
     }
-    
+
     if (*armor >= pierce) {
         *armor -= pierce;
         return -1;
@@ -1311,38 +1307,37 @@ int Soldier::do_armour_check(int &pierce, int damdir)
 
     pierce -= *armor;
     *armor = 0;
-  
+
     return hitloc;
 }
 
 void Soldier::apply_wound(int hitloc)
 {
     // This SHOULD apply from 1-3 wounds, but random values can't be transmitted at the moment.
-    switch(hitloc)
-    {
-    case HITLOC_HEAD:
-        ud.HeadWound++;
-        break;
-    case HITLOC_TORSO:
-    default:
-        ud.TorsoWound++;
-        break;
-    case HITLOC_LEFTARM:
-        ud.LArmWound++;
-        break;
-    case HITLOC_RIGHTARM:
-        ud.RArmWound++;
-        break;
-    case HITLOC_LEFTLEG:
-        ud.LLegWound++;
-        break;
-    case HITLOC_RIGHTLEG:
-        ud.RLegWound++;
-        break;
+    switch (hitloc) {
+        case HITLOC_HEAD:
+            ud.HeadWound++;
+            break;
+        case HITLOC_TORSO:
+        default:
+            ud.TorsoWound++;
+            break;
+        case HITLOC_LEFTARM:
+            ud.LArmWound++;
+            break;
+        case HITLOC_RIGHTARM:
+            ud.RArmWound++;
+            break;
+        case HITLOC_LEFTLEG:
+            ud.LLegWound++;
+            break;
+        case HITLOC_RIGHTLEG:
+            ud.RLegWound++;
+            break;
     }
-    
+
     change_morale(-10);
-    
+
     return;
 }
 
@@ -1358,19 +1353,18 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
         pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
-    if (sniper && (type != DT_STUN))
-    {
+    if (sniper && (type != DT_STUN)) {
         StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
         if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
         if (stat) stat->inc_damage_inflicted(pierce);
-        
+
         //morale penalty for friendly fire
         if (m_platoon->findman(sniper)) {
             change_morale(-10);
             m_platoon->findman(sniper)->change_morale(-20);
         }
     }
-    
+
     // Record that we took damage.
     this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
@@ -1385,21 +1379,19 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
         return;
     }
 
-    if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
-    {
-        if (sniper)
-        {
+    if (ud.CurHealth <= pierce) { // ud.CurHealth is unsigned
+        if (sniper) {
             // Credit the sniper for getting a kill
             StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
             if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
             if (stat) stat->inc_kills();
-            
+
             // Change the morale of enemy squad
             /*if (platoon_local->belong(this))
                 platoon_remote->change_morale(10, false);
             else if (platoon_remote->belong(this))
                 platoon_local->change_morale(10, false);*/
-                
+
             // Change the morale of the sniper
             /*if (m_platoon->findman(sniper) != NULL)
                 m_platoon->findman(sniper)->change_morale(-20);
@@ -1417,10 +1409,8 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
         // Record that we died
         this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
         ud.CurHealth = 0;
-        if (m_state != FALL)
-        {
-            switch (md.SkinType)
-            {
+        if (m_state != FALL) {
+            switch (md.SkinType) {
                 case S_SECTOID:
                     soundSystem::getInstance()->play(SS_SECTOID_DEATH);
                     break;
@@ -1452,8 +1442,7 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
     } else {
         apply_wound(hitloc);
         ud.CurHealth -= pierce;
-        switch (md.SkinType)
-        {
+        switch (md.SkinType) {
             case S_SECTOID:
                 soundSystem::getInstance()->play(SS_SECTOID_WOUND);
                 break;
@@ -1479,8 +1468,7 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                     soundSystem::getInstance()->play(SS_MALE_WOUND);
         }
 
-        if (is_stunned())
-        {
+        if (is_stunned()) {
             m_state = FALL;
             phase = 0;
         }
@@ -1492,51 +1480,46 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
     // TODO del this
     // int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
     // int damagedir = hitdir;
-  
+
     int hitloc;
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
-    if (sniper && (type != DT_STUN))
-    {
+    if (sniper && (type != DT_STUN)) {
         StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
         if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
-    // Todo: to avoid counting the same kill several times 
-    // (e.g. when several High-Explosives go off at once),
-    // we should check if victim is still alive / only credit remaining damage
+        // Todo: to avoid counting the same kill several times
+        // (e.g. when several High-Explosives go off at once),
+        // we should check if victim is still alive / only credit remaining damage
         if (stat) stat->inc_damage_inflicted(pierce);
     }
-    
+
     // Record that we took damage.
     this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
     if (type != DT_STUN)
         damage_items(pierce / 3);
-    // Items are OUTSIDE the armour, after all; 
+    // Items are OUTSIDE the armour, after all;
     // but in order not to leave a soldier without his items, damage is seriously reduced
-  
+
     // TODO del this
     // If minimal range, hit under armour. Otherwise, hit armour normally.
     //if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
     //else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
-  
+
     if ((hitloc = do_armour_check(pierce, hitdir)) == -1) return;
-    
-    if (type == DT_STUN) // Did we get stunned?
-    {
+
+    if (type == DT_STUN) { // Did we get stunned?
         ud.CurStun += pierce;
-        if (is_stunned())
-        {
+        if (is_stunned()) {
             m_state = FALL;
             phase = 0;
         }
         return;
     }
 
-    if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
-    {
+    if (ud.CurHealth <= pierce) { // ud.CurHealth is unsigned
         // Credit the sniper for getting a kill
-        if (sniper)
-        {
+        if (sniper) {
             StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
             if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
             if (stat) stat->inc_kills();
@@ -1544,10 +1527,8 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
         // Record that we died
         this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
         ud.CurHealth = 0;
-        if (m_state != FALL)
-        {
-            switch(md.SkinType)
-            {
+        if (m_state != FALL) {
+            switch (md.SkinType) {
                 case S_SECTOID:
                     soundSystem::getInstance()->play(SS_SECTOID_DEATH);
                     break;
@@ -1563,14 +1544,11 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
             m_state = FALL;
             phase = 0;
         }
-    }
-    else
-    {
+    } else {
         apply_wound(hitloc);
         ud.CurHealth -= pierce;
 
-        if (is_stunned())
-        {
+        if (is_stunned()) {
             m_state = FALL;
             phase = 0;
         }
@@ -1579,7 +1557,7 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
 
 
 void Soldier::die()
-{   
+{
     unlink();
 
     if (m_stunned_body == NULL) {
@@ -1614,7 +1592,7 @@ void Soldier::die()
         ASSERT(it);
         g_map->place(z, x, y)->put(it);
     } else {
-        // A death of an already stunned soldier (because his body got hit 
+        // A death of an already stunned soldier (because his body got hit
         // or probably because of a fatal wound once it gets implemented)
         m_stunned_body = NULL;
     }
@@ -1623,7 +1601,7 @@ void Soldier::die()
 
     g_console->printf(COLOR_BLUE, _("%s killed."), md.Name);
     battle_report(_("killed: %s\n"), md.Name);
-  // Todo: With-what-weapon, By-whom ?
+    // Todo: With-what-weapon, By-whom ?
 }
 
 
@@ -1689,7 +1667,7 @@ void Soldier::unlink()
 
 /**
  * Show TUs needed to move item in hand to a place like belt, backpack etc.
- */ 
+ */
 void Soldier::draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place)
 {
     int time = 0;
@@ -1716,12 +1694,12 @@ void Soldier::damage_items(int damage)
 }
 
 /**
- * When soldier panics: 
+ * When soldier panics:
  * action == 0 - run randomly;
  *        == 1 - "berserk" mode.
  */
 void Soldier::panic(int action)
-{   
+{
     /*switch(action) {
         case 0:
         m_place[P_ARM_LEFT]->dropall(z, x, y);
@@ -1730,63 +1708,63 @@ void Soldier::panic(int action)
         ud.CurTU = 0;
         g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
         break;
-        
+
         case 1:
         if(platoon_local->belong(this))     //shots will be sent to the remote player - so don't double them
-            berserk_fire();              
+            berserk_fire();
         g_console->printf(COLOR_ROSE, "%s has gone berserk.", md.Name);
         break;
     }*/
-    
+
     panicking = true;
     m_place[P_ARM_LEFT]->dropall(z, x, y);
     m_place[P_ARM_RIGHT]->dropall(z, x, y);
 
     change_morale(20);
-    
+
     g_console->printf(COLOR_ROSE, _("%s has panicked."), md.Name);
     if (platoon_local->belong(this))
         g_console->printf(COLOR_ROSE, _("(can't access inventory but moves faster)"));
-                                         
-    battle_report( "%s: %s\n", _("Panicked"), md.Name);
+
+    battle_report("%s: %s\n", _("Panicked"), md.Name);
 }
 
 void Soldier::berserk_fire()
 {
     Item *it = rhand_item();
     int iplace = P_ARM_RIGHT;
-    
+
     //no item in right hand or it cannot fire - use item in left hand
-    if(!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2))) {
+    if (!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2))) {
         it = lhand_item();
         iplace = P_ARM_LEFT;
     }
-    
-    //no item in both hands or neither of them can fire - do nothing    
-    if(!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2)))
+
+    //no item in both hands or neither of them can fire - do nothing
+    if (!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2)))
         return;
-    
+
     target.item = it;
     target.place = iplace;
-    
+
     FIRE_z = z * 12 + 6;
     FIRE_x = (x + (DIR_DELTA_X(dir) * 10)) * 16 + 8;
-    FIRE_y = (y + (DIR_DELTA_Y(dir) * 10)) * 16 + 8;    
-    
-    if(it->obdata_accuracy(0)) {
+    FIRE_y = (y + (DIR_DELTA_Y(dir) * 10)) * 16 + 8;
+
+    if (it->obdata_accuracy(0)) {
         target.accur = FAccuracy(it->obdata_accuracy(0), it->obdata_twoHanded()) / 2;
         target.time = required(it->obdata_time(0)) * it->obdata_autoShots();
         target.action = AUTOSHOT;
-    } else if(it->obdata_accuracy(1)) {
+    } else if (it->obdata_accuracy(1)) {
         target.accur = FAccuracy(it->obdata_accuracy(1), it->obdata_twoHanded()) / 2;
         target.time = required(it->obdata_time(1));
         target.action = SNAPSHOT;
-    } else if(it->obdata_accuracy(2)) {
+    } else if (it->obdata_accuracy(2)) {
         target.accur = FAccuracy(it->obdata_accuracy(2), it->obdata_twoHanded()) / 2;
         target.time = required(it->obdata_time(2));
         target.action = AIMEDSHOT;
     }
-    
+
     FIRE_num = ud.CurTU / target.time;
 }
 
@@ -1796,16 +1774,16 @@ void Soldier::berserk_fire()
 void Soldier::change_morale(int delta)
 {
     int new_morale = ud.Morale + delta;
-    
+
     //double the morale penalty if there are no team-mates near
     if (delta < 0 && m_platoon->dist_to_nearest(this) > 9)
         new_morale += delta;
-    
+
     if (new_morale > 100)
         new_morale = 100;
     if (new_morale < 1)
         new_morale = 1;
-        
+
     ud.Morale = new_morale;
 }
 
@@ -1829,7 +1807,7 @@ int Soldier::calctime(int src, int dst)
 
     if (((src == 2) && (dst == 3)) || ((src == 3) && (dst == 2)))
         return 4;
-                           // shl    arm   leg   bk bl map
+    // shl    arm   leg   bk bl map
     static int tohand[]   = { 3,  3, 0, 0, 4, 4,  8, 4, 8};
     static int fromhand[] = {10, 10, 0, 0, 8, 8, 14, 8, 2};
 
@@ -2006,7 +1984,7 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
     ASSERT((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 
     if (havetime(req_time) == OK) {
-        Item * it = item(iplace);
+        Item *it = item(iplace);
         ASSERT(it != NULL);
 
         elist->add(this, it, delay_time);
@@ -2021,16 +1999,16 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 
 
 /**
- * Try to unload clip from item.  
+ * Try to unload clip from item.
  * Check if it is a weapon, hands are free, soldier has enough time, etc.
  * Return 1 on success, 0 on failure.
  */
-int Soldier::unload_ammo(Item * it)
+int Soldier::unload_ammo(Item *it)
 {
     if ((it == NULL) || (!it->haveclip()))
         return 0;
-    if ((rhand_item() != NULL && rhand_item() != it) || 
-        (lhand_item() != NULL && lhand_item() != it))
+    if ((rhand_item() != NULL && rhand_item() != it) ||
+            (lhand_item() != NULL && lhand_item() != it))
         return 0;
 
     int ISLOCAL = platoon_local->belong(this);
@@ -2041,7 +2019,7 @@ int Soldier::unload_ammo(Item * it)
             elist->remove(it);
             it->set_delay_time(0);
             spend_time(8);
-                
+
             net->send_unload_ammo(NID);
             return 1;
         } else return 0;
@@ -2049,7 +2027,7 @@ int Soldier::unload_ammo(Item * it)
         if (time_reserve(10, ISLOCAL, false) == OK) {
             putitem(it, P_ARM_RIGHT);
             putitem(it->unload(), P_MAP);
-            spend_time(10);           
+            spend_time(10);
             elist->remove(it);
             it->set_delay_time(0);
             net->send_unload_ammo(NID);
@@ -2086,11 +2064,11 @@ int Soldier::load_ammo(int iplace, int srcplace, Item *&it)
 
 /**
  * Function that decrements soldier time units and energy for some action.
- * The soldier must have enough time units and energy before calling 
+ * The soldier must have enough time units and energy before calling
  * this function.
- * 
+ *
  * @param tm          time required to perform an action
- * @param use_energy  flag which shows whether the action requires energy 
+ * @param use_energy  flag which shows whether the action requires energy
  *                    to perform
  */
 void Soldier::spend_time(int tm, int use_energy)
@@ -2113,7 +2091,7 @@ void Soldier::spend_time(int tm, int use_energy)
  * to do something. For actions that require energy, use_energy should be 1.
  *
  * @param ntime       time required to perform an action
- * @param use_energy  flag which shows whether the action requires energy 
+ * @param use_energy  flag which shows whether the action requires energy
  *                    to perform
  * @result            Error code from GameErrorCodes.
  * @sa                GameErrorCodes
@@ -2129,10 +2107,10 @@ int Soldier::havetime(int ntime, int use_energy)
 }
 
 /**
- * Function that returns the time needed to move from current location to 
+ * Function that returns the time needed to move from current location to
  * specified direction.
  *
- * @param _dir  walk direction (-1 in the case when the time to get to 
+ * @param _dir  walk direction (-1 in the case when the time to get to
  *              the current map location is needed)
  */
 int Soldier::walktime(int _dir)
@@ -2153,7 +2131,7 @@ int Soldier::walktime(int _dir)
 
 
 /**
- * Calculate how many TUs are required for an action 
+ * Calculate how many TUs are required for an action
  * that needs a percentage of the MaxTU.
  * (e.g. Autoshot needs 30% of max. TU)
  */
@@ -2165,7 +2143,7 @@ int Soldier::required(int pertime)
 }
 
 /**
- * Calculate effective firing accuracy, 
+ * Calculate effective firing accuracy,
  * with wound/stun/morale/physical condition modifiers applied.
  * For displaying in unit-stats-screen, e.g. Soldier::draw_unibord()
  */
@@ -2182,7 +2160,7 @@ int Soldier::eff_FAccuracy()
 
 /**
  * Calculate firing accuracy.
- * Accuracy gets better for sitting/kneeling, 
+ * Accuracy gets better for sitting/kneeling,
  * and for using a two-handed weapon with an empty free hand.
  */
 int Soldier::FAccuracy(int peraccur, int TWOHAND)
@@ -2216,7 +2194,7 @@ int Soldier::TAccuracy(int peraccur)
  * Calculate random deviation for a shot
  * based on firing accuracy of soldier.
  */
-void Soldier::apply_accuracy(REAL & fi, REAL & te)
+void Soldier::apply_accuracy(REAL &fi, REAL &te)
 {
     REAL TE_STEP = (PI * 2.0 / (double)(cfg_get_base_accuracy()));
     REAL FI_STEP = (PI * 0.5 / (double)(cfg_get_base_accuracy()));
@@ -2233,7 +2211,7 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
 }
 
 /**
- * Calculate random deviation for a grenade-throw 
+ * Calculate random deviation for a grenade-throw
  * based on throwing accuracy of soldier.
  */
 void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
@@ -2285,67 +2263,67 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 /**
  * Healing the HP of a soldier (HP% of his max, up to max_HP% of his max)
  */
-void Soldier::heal_wounds(int HP, int max_HP) 
+void Soldier::heal_wounds(int HP, int max_HP)
 {
-	//! Delta is the amount you heal, limit is the maximum that can be healed.
-	int delta;
-	int limit;
-	//!Possible problematic CRC formula
-	limit = ud.MaxHealth * max_HP / 100;
-	delta = ud.MaxHealth * HP / 100;
-	if (ud.CurHealth != 0) {
-		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
-		if ((ud.CurTU - HEAL_COST) >= 0) {
-			ud.CurTU -= HEAL_COST;
-		}else {
-			ud.CurTU = 0;
-		}
-		if (ud.CurHealth < limit) {
-			if (ud.CurHealth + delta > limit) {
-				ud.CurHealth = limit;
-			}else {
-				ud.CurHealth += delta;
-			}
-		}
-	}
+    //! Delta is the amount you heal, limit is the maximum that can be healed.
+    int delta;
+    int limit;
+    //!Possible problematic CRC formula
+    limit = ud.MaxHealth * max_HP / 100;
+    delta = ud.MaxHealth * HP / 100;
+    if (ud.CurHealth != 0) {
+        //!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
+        if ((ud.CurTU - HEAL_COST) >= 0) {
+            ud.CurTU -= HEAL_COST;
+        } else {
+            ud.CurTU = 0;
+        }
+        if (ud.CurHealth < limit) {
+            if (ud.CurHealth + delta > limit) {
+                ud.CurHealth = limit;
+            } else {
+                ud.CurHealth += delta;
+            }
+        }
+    }
 }
 /**
  * Healing the Stun and Energy of a soldier (Stun/Energy% of his max, up to max_Stun/Energy% of his max)
  */
-void Soldier::heal_energy_stun(int stun, int energy, int max_stun, int max_energy) 
+void Soldier::heal_energy_stun(int stun, int energy, int max_stun, int max_energy)
 {
-	//! Delta is the amount you heal, limit is the maximum that can be healed.
-	int deltaStun;
-	int limitStun;
-	int deltaEnergy;
-	int limitEnergy;
-	//!Possible problematic CRC formula
-	deltaStun = ud.MaxHealth * stun / 100;
-	limitStun = ud.MaxHealth * (100 - max_stun) / 100; //Minimum
-	deltaEnergy = ud.MaxEnergy * energy / 100;
-	limitEnergy = ud.MaxEnergy * max_energy / 100;
-	if (ud.CurHealth != 0) {
-		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs	
-		if ((ud.CurTU - HEAL_COST) >= 0) {
-			ud.CurTU -= HEAL_COST;
-		}else {
-			ud.CurTU = 0;
-		}
-		if (ud.CurStun > limitStun) {		
-			if (ud.CurStun - deltaStun < limitStun) {
-				ud.CurStun = limitStun;
-			}else {
-				ud.CurStun -= deltaStun;
-			}
-		}
-		if (ud.CurEnergy < limitEnergy) {
-			if (ud.CurEnergy + deltaEnergy > limitEnergy) {
-				ud.CurEnergy = limitEnergy;
-			}else {
-				ud.CurEnergy += deltaEnergy;
-			}
-		}
-	}
+    //! Delta is the amount you heal, limit is the maximum that can be healed.
+    int deltaStun;
+    int limitStun;
+    int deltaEnergy;
+    int limitEnergy;
+    //!Possible problematic CRC formula
+    deltaStun = ud.MaxHealth * stun / 100;
+    limitStun = ud.MaxHealth * (100 - max_stun) / 100; //Minimum
+    deltaEnergy = ud.MaxEnergy * energy / 100;
+    limitEnergy = ud.MaxEnergy * max_energy / 100;
+    if (ud.CurHealth != 0) {
+        //!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
+        if ((ud.CurTU - HEAL_COST) >= 0) {
+            ud.CurTU -= HEAL_COST;
+        } else {
+            ud.CurTU = 0;
+        }
+        if (ud.CurStun > limitStun) {
+            if (ud.CurStun - deltaStun < limitStun) {
+                ud.CurStun = limitStun;
+            } else {
+                ud.CurStun -= deltaStun;
+            }
+        }
+        if (ud.CurEnergy < limitEnergy) {
+            if (ud.CurEnergy + deltaEnergy > limitEnergy) {
+                ud.CurEnergy = limitEnergy;
+            } else {
+                ud.CurEnergy += deltaEnergy;
+            }
+        }
+    }
 }
 
 /**
@@ -2353,27 +2331,27 @@ void Soldier::heal_energy_stun(int stun, int energy, int max_stun, int max_energ
  */
 void Soldier::heal_morale(int morale, int max_morale)
 {
-	//! Delta is the amount you heal, limit is the maximum that can be healed.
-	int delta;
-	int limit;
-	//! MaxMorale is Always 100.
-	delta = morale;
-	limit = max_morale;
-	if ((ud.CurHealth != 0)) {
-		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
-		if ((ud.CurTU - HEAL_COST) >= 0) {
-			ud.CurTU -= HEAL_COST;
-		}else {
-			ud.CurTU = 0;
-		}
-		if (ud.Morale < limit) {
-			if (ud.Morale + delta > limit) {
-				ud.Morale = limit;
-			}else {
-				ud.Morale += delta;
-			}		
-		}
-	}
+    //! Delta is the amount you heal, limit is the maximum that can be healed.
+    int delta;
+    int limit;
+    //! MaxMorale is Always 100.
+    delta = morale;
+    limit = max_morale;
+    if ((ud.CurHealth != 0)) {
+        //!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
+        if ((ud.CurTU - HEAL_COST) >= 0) {
+            ud.CurTU -= HEAL_COST;
+        } else {
+            ud.CurTU = 0;
+        }
+        if (ud.Morale < limit) {
+            if (ud.Morale + delta > limit) {
+                ud.Morale = limit;
+            } else {
+                ud.Morale += delta;
+            }
+        }
+    }
 }
 
 /**
@@ -2382,16 +2360,16 @@ void Soldier::heal_morale(int morale, int max_morale)
 void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
     if (check_for_hit(_z, _x, _y)) {
-		if(target.action == HEAL_WOUNDS) 
-			heal_wounds(Item::obdata_heal(_wtype, 0),Item::obdata_heal_max(_wtype, 0));
-		else if(target.action == HEAL_ENERGY_STUN) 
-			heal_energy_stun(Item::obdata_heal(_wtype, 1), Item::obdata_heal(_wtype, 2), Item::obdata_heal_max(_wtype, 1), Item::obdata_heal_max(_wtype, 2));
-		else if(target.action == HEAL_MORALE) 
-			heal_morale(Item::obdata_heal(_wtype, 3),Item::obdata_heal_max(_wtype, 3));
-		else  
-			hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir, Item::obdata_dDeviation(_wtype));
-		
-	}
+        if (target.action == HEAL_WOUNDS)
+            heal_wounds(Item::obdata_heal(_wtype, 0), Item::obdata_heal_max(_wtype, 0));
+        else if (target.action == HEAL_ENERGY_STUN)
+            heal_energy_stun(Item::obdata_heal(_wtype, 1), Item::obdata_heal(_wtype, 2), Item::obdata_heal_max(_wtype, 1), Item::obdata_heal_max(_wtype, 2));
+        else if (target.action == HEAL_MORALE)
+            heal_morale(Item::obdata_heal(_wtype, 3), Item::obdata_heal_max(_wtype, 3));
+        else
+            hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir, Item::obdata_dDeviation(_wtype));
+
+    }
 }
 
 /**
@@ -2430,12 +2408,12 @@ void Soldier::precise_aiming(int za, int xa, int ya)
     if (!(mouse_b & 1)) mouse_leftr   = 1;
     if (!(mouse_b & 2)) mouse_rightr  = 1;
 
-    MouseRange temp_mouse_range(mx + 1, my + 1, mx + bmp->w -1, my + bmp->h - 1);
+    MouseRange temp_mouse_range(mx + 1, my + 1, mx + bmp->w - 1, my + bmp->h - 1);
     show_mouse(screen);
     text_mode(0);
     while (!keypressed()) {
         if (CHANGE) {
-            int sx =     (mouse_x - mx) / 20;
+            int sx = (mouse_x - mx) / 20;
             int sy = 2 - (mouse_y - my) / 20;
             z = sx * 3 + sy;
 
@@ -2498,8 +2476,8 @@ void Soldier::try_shoot()
     if ((key[KEY_LSHIFT]) && (target.action != THROW)) precise_aiming(map->sel_lev, map->sel_col, map->sel_row);
     else standard_aiming(map->sel_lev, map->sel_col, map->sel_row);
 
-    // Perform some checks to determine if we can keep targeting mode after 
-    // this shot. So we need to check if TWO shots can be made (one right now 
+    // Perform some checks to determine if we can keep targeting mode after
+    // this shot. So we need to check if TWO shots can be made (one right now
     // and another one after left clicking mouse in a targeting mode again)
 
     if (havetime(target.time * 2 * FIRE_num) != OK) {
@@ -2517,7 +2495,7 @@ void Soldier::try_shoot()
     }
 
     // Face to target
-    if(!faceto(map->sel_col, map->sel_row)) {
+    if (!faceto(map->sel_col, map->sel_row)) {
         FIRE_num = 0;
     }
 }
@@ -2572,7 +2550,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
     return;
 }
 
-void Soldier::calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr)
+void Soldier::calc_bullet_start(int xs, int ys, int zs, int *xr, int *yr, int *zr)
 {
     *zr = zs * 12 + 8; if (m_state == SIT) *zr -= 3;
     *xr = xs * 16 + 8 + DIR_DELTA_X(dir) * 4;
@@ -2588,24 +2566,23 @@ void Soldier::calc_shot_stat(int zd, int xd, int yd)
 
     int shoot_cnt = 0;
 
-    for(int cic = 0; cic < 1000; cic++)
-    {
+    for (int cic = 0; cic < 1000; cic++) {
         REAL fi = acos((REAL)(zd - z0) / ro);
         REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
         apply_accuracy(fi, te);
 
-        for(int i = 3; 1; i++) {
+        for (int i = 3; 1; i++) {
             int x = (int)(x0 + i * cos(te) * sin(fi));
             int y = (int)(y0 + i * sin(te) * sin(fi));
             int z = (int)(z0 + i * cos(fi));
-    
+
             if (!map->inside(z, x, y))          break;
             if (!map->pass_lof_cell(z, x, y))   break;
             if (platoon_remote->check_for_hit(z, x, y) ||
-                platoon_local->check_for_hit(z, x, y)) {
-                    shoot_cnt++;
-                    break;
-                }
+                    platoon_local->check_for_hit(z, x, y)) {
+                shoot_cnt++;
+                break;
+            }
         }
     }
     g_console->printf(COLOR_SYS_INFO1, "ToShoot = %d%%", shoot_cnt / 10);
@@ -2632,8 +2609,7 @@ int Soldier::assign_target(Action action, int iplace)
 {
     Item *it = item(iplace);
     if (it == NULL) return ERR_NO_ITEM;
-    switch (action)
-    {
+    switch (action) {
         case THROW:
             target.accur = 100;
             target.time = required(25);
@@ -2660,18 +2636,18 @@ int Soldier::assign_target(Action action, int iplace)
             target.time = required(50);
             break;
         case HEAL_WOUNDS:
-			target.accur = 100;
-			target.time = required(it->obdata_useTime());
-			break;
-		case HEAL_ENERGY_STUN:
-			target.accur = 100;
-			target.time = required(it->obdata_useTime());
-			break;
-		case HEAL_MORALE:
-			target.accur = 100;
-			target.time = required(it->obdata_useTime());
-			break;
-		default: ASSERT(false);
+            target.accur = 100;
+            target.time = required(it->obdata_useTime());
+            break;
+        case HEAL_ENERGY_STUN:
+            target.accur = 100;
+            target.time = required(it->obdata_useTime());
+            break;
+        case HEAL_MORALE:
+            target.accur = 100;
+            target.time = required(it->obdata_useTime());
+            break;
+        default: ASSERT(false);
     }
     target.item = it;
     target.place = iplace;
@@ -2684,8 +2660,7 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
     int chk;
     chk = assign_target(action, iplace);
     if (chk != OK) return chk;
-    switch (action)
-    {
+    switch (action) {
         case THROW:
             chk = thru(z0, x0, y0, zd, xd, yd, target.place, target.time);
             break;
@@ -2693,10 +2668,10 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
         case AIMEDSHOT:
         case AUTOSHOT:
             if (target.item->is_laser()) {
-            	/* laser beam with no ammo */
+                /* laser beam with no ammo */
                 chk = beam(z0, x0, y0, zd, xd, yd, target.place, target.time);
             } else {
-            	/* fire a bullet or plasma */
+                /* fire a bullet or plasma */
                 chk = fire(z0, x0, y0, zd, xd, yd, target.place, target.time);
             }
             break;
@@ -2707,15 +2682,15 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
             chk = aimedthrow(z0, x0, y0, zd, xd, yd, target.place, target.time);
             break;
         case HEAL_WOUNDS:
-			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
-			break;
-		case HEAL_ENERGY_STUN:
-			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
-			break;
-		case HEAL_MORALE:
-			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
-			break;
-		default: ASSERT(false);
+            chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        case HEAL_ENERGY_STUN:
+            chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        case HEAL_MORALE:
+            chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        default: ASSERT(false);
     }
     return chk;
 }
@@ -2862,50 +2837,50 @@ void Soldier::draw_bullet_way()
 
 void Soldier::showspk(BITMAP *dest)
 {
-	int stack_top = lua_gettop(L);
-	ALPHA_SPRITE *alien_pic = NULL;
-	BITMAP *alien_bg = create_bitmap(160, 200);
-	clear_to_color(alien_bg, makecol(0,0,0));
-	//NACHTWOLF : The following switch avoids massive copy/paste - it is used to create inventory picture from UFOpaedia images
-	switch (md.SkinType) {
-		case S_SECTOID:
-		case S_MUTON:
+    int stack_top = lua_gettop(L);
+    ALPHA_SPRITE *alien_pic = NULL;
+    BITMAP *alien_bg = create_bitmap(160, 200);
+    clear_to_color(alien_bg, makecol(0, 0, 0));
+    //NACHTWOLF : The following switch avoids massive copy/paste - it is used to create inventory picture from UFOpaedia images
+    switch (md.SkinType) {
+        case S_SECTOID:
+        case S_MUTON:
         case S_SNAKEMAN:
         case S_ETHEREAL:
         case S_FLOATER:
         case S_CHRYS:
-			lua_pushstring(L, "ImageTable");
+            lua_pushstring(L, "ImageTable");
             lua_gettable(L, LUA_GLOBALSINDEX);
             ASSERT(lua_istable(L, -1));
-			switch (md.SkinType) {
-				case S_SECTOID:
-					lua_pushstring(L, "Sectoid");
-					break;
-				case S_MUTON:
-					lua_pushstring(L, "Muton");
-					break;
-				case S_SNAKEMAN:
-					lua_pushstring(L, "Snakeman");
-					break;
-				case S_ETHEREAL:
-					lua_pushstring(L, "Etheral");
-					break;
-				case S_FLOATER:
-					lua_pushstring(L, "Floater");
-					break;
-				case S_CHRYS:
-					lua_pushstring(L, "Chrys");
-					break;
-			}
+            switch (md.SkinType) {
+                case S_SECTOID:
+                    lua_pushstring(L, "Sectoid");
+                    break;
+                case S_MUTON:
+                    lua_pushstring(L, "Muton");
+                    break;
+                case S_SNAKEMAN:
+                    lua_pushstring(L, "Snakeman");
+                    break;
+                case S_ETHEREAL:
+                    lua_pushstring(L, "Etheral");
+                    break;
+                case S_FLOATER:
+                    lua_pushstring(L, "Floater");
+                    break;
+                case S_CHRYS:
+                    lua_pushstring(L, "Chrys");
+                    break;
+            }
             lua_gettable(L, -2);
             if (lua_isuserdata(L, -1)) {
                 ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
                 alien_pic = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
-			}
+            }
             break;
-		default:
-			break;
-	}
+        default:
+            break;
+    }
     // Why did these have "% 4" before? They prevented the flying suit from displaying.
     switch (md.SkinType) {
         case S_XCOM_0:
@@ -2917,47 +2892,47 @@ void Soldier::showspk(BITMAP *dest)
             Skin::m_spk[(md.SkinType - 1) % 4][0][0]->show(dest, 0, 0);
             break;
         case S_SECTOID:
-			//Generate sprite
+            //Generate sprite
             Skin::m_spk[4][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_MUTON:
             Skin::m_spk[5][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_SNAKEMAN: //LAWYER:  Added Snakeman
             Skin::m_spk[6][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_ETHEREAL: //LAWYER:  Added Ethereal
             Skin::m_spk[7][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_FLOATER: //LAWYER:  Added Floater
             Skin::m_spk[8][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_CHRYS:
             Skin::m_spk[9][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
-				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+                draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }
-			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_CHAMELEON: {
             lua_pushstring(L, "UnitsTable");
@@ -2990,7 +2965,7 @@ void Soldier::showspk(BITMAP *dest)
 
 /**
  * Draw soldier-infos into the control-panel on the battlescape:
- * items in hand, current stats with barcharts 
+ * items in hand, current stats with barcharts
  */
 void Soldier::drawinfo(int x, int y)
 {
@@ -3002,7 +2977,7 @@ void Soldier::drawinfo(int x, int y)
         else if (rhand_item()->is_grenade() && rhand_item()->is_proximity_grenade() && rhand_item()->delay_time() < 0)
             icon->draw_item(I_RIGHT, rhand_item(), -1, -1, true);
         else
-            icon->draw_item(I_RIGHT, rhand_item(), -1, -1, false);  
+            icon->draw_item(I_RIGHT, rhand_item(), -1, -1, false);
     }
     if (lhand_item() != NULL) {
         if (lhand_item()->clip() != NULL)
@@ -3012,7 +2987,7 @@ void Soldier::drawinfo(int x, int y)
         else if (lhand_item()->is_grenade() && lhand_item()->is_proximity_grenade() && lhand_item()->delay_time() < 0)
             icon->draw_item(I_LEFT, lhand_item(), -1, -1, true);
         else
-            icon->draw_item(I_LEFT, lhand_item(), -1, -1, false);   
+            icon->draw_item(I_LEFT, lhand_item(), -1, -1, false);
     }
 
     icon->draw_text(T_MAN_NAME, md.Name);
@@ -3022,8 +2997,7 @@ void Soldier::drawinfo(int x, int y)
     icon->draw_attribute(A_HEALTH,     ud.CurHealth, ud.MaxHealth);
     icon->draw_attribute(A_MORALE,     ud.Morale, 100);
 
-    if (ud.CurStun > 0) // draw stun bar
-    {
+    if (ud.CurStun > 0) { // draw stun bar
         if (ud.CurStun < ud.CurHealth)
             icon->draw_stun_bar(x, y, ud.CurStun,   ud.MaxHealth);
         else
@@ -3031,12 +3005,12 @@ void Soldier::drawinfo(int x, int y)
     }
 }
 
-void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
-{   
+void Soldier::draw_stats(BITMAP *bitmap, int x, int y, bool selected)
+{
     int dx = 15;
     int color = COLOR_WHITE;
-    if(m_visible_enemies>0) color = COLOR_RED;
-    if(selected) color = COLOR_BLUE02;
+    if (m_visible_enemies > 0) color = COLOR_RED;
+    if (selected) color = COLOR_BLUE02;
     textprintf(bitmap, g_small_font, x, y, color, "%s", md.Name); x += 70;
     textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", ud.CurTU); x += dx;
     //textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", m_vision_mask); x += dx;
@@ -3058,12 +3032,12 @@ int Soldier::check_reaction_fire(Soldier *the_target)
     // Ok, check for reaction fire.
     // Compare the reaction figures.
     REAL total_reactions = ud.CurReactions;
-    REAL tu_ratio; 
+    REAL tu_ratio;
     if (the_target->ud.CurTU > 0) tu_ratio = (REAL)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
     else tu_ratio = 999;
 
     ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
-    
+
     if (((REAL)ud.CurReactions / (REAL)the_target->ud.CurReactions) < total_reactions)
         total_reactions = ((REAL)ud.CurReactions / (REAL)the_target->ud.CurReactions);
 
@@ -3073,32 +3047,31 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 
     if (tu_ratio < 1) total_reactions *= tu_ratio;
 
-    if(FLAGS & F_REACTINFO)
+    if (FLAGS & F_REACTINFO)
         g_console->printf(COLOR_SYS_INFO1, "ToReact = %5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
-    
-    if (randval(0, 1) < total_reactions)
-    {
+
+    if (randval(0, 1) < total_reactions) {
         // We can make a reaction shot.
         // Try the weapon in right hand first
         // Act differently on different "reserve tu for xxx shot" button pressed
         for (int arm = P_ARM_RIGHT; arm <= P_ARM_LEFT; arm++) {
             switch (m_ReserveTimeMode) {
-            case RESERVE_FREE:
-                if (do_reaction_fire(the_target, arm, AUTO)) return 1;
-                if (do_reaction_fire(the_target, arm, AIMED)) return 1;
-                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
-                break;
-            case RESERVE_SNAP:
-                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
-                break;
-            case RESERVE_AIM:
-                if (do_reaction_fire(the_target, arm, AIMED)) return 1;
-                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
-                break;
-            case RESERVE_AUTO:
-                if (do_reaction_fire(the_target, arm, AUTO)) return 1;
-                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
-                break;
+                case RESERVE_FREE:
+                    if (do_reaction_fire(the_target, arm, AUTO)) return 1;
+                    if (do_reaction_fire(the_target, arm, AIMED)) return 1;
+                    if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                    break;
+                case RESERVE_SNAP:
+                    if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                    break;
+                case RESERVE_AIM:
+                    if (do_reaction_fire(the_target, arm, AIMED)) return 1;
+                    if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                    break;
+                case RESERVE_AUTO:
+                    if (do_reaction_fire(the_target, arm, AUTO)) return 1;
+                    if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                    break;
             }
         }
 
@@ -3146,9 +3119,8 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
         target.item = it;
         target.place = place;
         try_reaction_shot(the_target);
-        if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
-        {
-            if(FLAGS & F_REACTINFO) g_console->printf(COLOR_SYS_INFO1,"Reaction fire with %s!",type_str);
+        if (FIRE_num > 0) { // If FIRE_num is set, we're firing shots, so...
+            if (FLAGS & F_REACTINFO) g_console->printf(COLOR_SYS_INFO1, "Reaction fire with %s!", type_str);
             return 1;
         }
     }
@@ -3164,8 +3136,8 @@ int Soldier::eot_save(char *txt)
 {
     int len = 0;
     len += sprintf(txt + len,
-        "\r\n%s:\r\nNID=%d z=%d x=%d y=%d dir=%d state=%d ud.MaxTU=%d ud.MaxHealth=%d ud.MaxEnergy=%d ud.CurFAccuracy=%d ud.CurTAccuracy=%d ud.CurTU=%d ud.CurHealth=%d ud.CurEnergy=%d ud.Morale=%d\r\n",
-        md.Name, NID, z, x, y, dir, (int)m_state, ud.MaxTU, ud.MaxHealth, ud.MaxEnergy, ud.CurFAccuracy, ud.CurTAccuracy, ud.CurTU, ud.CurHealth, ud.CurEnergy, ud.Morale);
+                   "\r\n%s:\r\nNID=%d z=%d x=%d y=%d dir=%d state=%d ud.MaxTU=%d ud.MaxHealth=%d ud.MaxEnergy=%d ud.CurFAccuracy=%d ud.CurTAccuracy=%d ud.CurTU=%d ud.CurHealth=%d ud.CurEnergy=%d ud.Morale=%d\r\n",
+                   md.Name, NID, z, x, y, dir, (int)m_state, ud.MaxTU, ud.MaxHealth, ud.MaxEnergy, ud.CurFAccuracy, ud.CurTAccuracy, ud.CurTU, ud.CurHealth, ud.CurEnergy, ud.Morale);
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
         len += m_place[i]->eot_save(i, txt + len);
     }
@@ -3242,16 +3214,13 @@ bool Soldier::Read(persist::Engine &archive)
 
 void Soldier::set_reserve_type(int type)
 {
-    if(type == RESERVE_AUTO)
-        if((rhand_item() && rhand_item()->obdata_accuracy(AUTO)) || (lhand_item() && lhand_item()->obdata_accuracy(AUTO)))
-        {
+    if (type == RESERVE_AUTO)
+        if ((rhand_item() && rhand_item()->obdata_accuracy(AUTO)) || (lhand_item() && lhand_item()->obdata_accuracy(AUTO))) {
             m_ReserveTimeMode = type;
             net->send_reserve_time(NID, type);
             return;
-        }
-        else return;
-    if(type == RESERVE_FREE || rhand_item() || lhand_item())
-    {
+        } else return;
+    if (type == RESERVE_FREE || rhand_item() || lhand_item()) {
         m_ReserveTimeMode = type;
         net->send_reserve_time(NID, type);
     }

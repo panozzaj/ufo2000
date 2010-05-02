@@ -54,7 +54,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
         lua_settable(L, -3); \
         lua_settable(L, LUA_GLOBALSINDEX); \
     }
-    
+
 #define LUA_REGISTER_CLASS_METHOD(L, classname, methodname) \
     { \
         classname *dummy; \
@@ -80,7 +80,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
     lua_pushstring(L, #functionname); \
     lua_pushdirectclosure(L, functionname, 0); \
     lua_settable(L, LUA_GLOBALSINDEX); \
-
+ 
 int lua_safe_call(lua_State *L, int narg, int nret);
 int lua_safe_dofile(lua_State *L, const char *name, const char *env_name = NULL);
 int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name);
@@ -113,8 +113,8 @@ inline uint16 intel_uint16(uint16 x)
 inline uint32 intel_uint32(uint32 x)
 {
 #ifdef ALLEGRO_BIG_ENDIAN
-    return (uint32)(((((uint32)x) & 0x000000ff) << 24) | ((((uint32)x) & 0x0000ff00) << 8) | 
-        ((((uint32)x) & 0x00ff0000) >> 8) | ((((uint32)x) & 0xff000000) >> 24));
+    return (uint32)(((((uint32)x) & 0x000000ff) << 24) | ((((uint32)x) & 0x0000ff00) << 8) |
+                    ((((uint32)x) & 0x00ff0000) >> 8) | ((((uint32)x) & 0xff000000) >> 24));
 #else
     return x;
 #endif
@@ -152,11 +152,11 @@ template<class TYPE> void PersistReadObject(persist::Engine &archive, TYPE &obje
 
 /**
  * Function that saves object data (as a piece of binary data)
- * 
+ *
  * @param archive persistence support object
  * @param object  object to be saved
  *
- * @todo now uses i386 only and also compiler specific skip of VTBL pointer, 
+ * @todo now uses i386 only and also compiler specific skip of VTBL pointer,
  * needs to be fixed in the future
  */
 template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &object)
@@ -167,11 +167,11 @@ template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &obj
 
 /**
  * Function that restores object data (as a piece of binary data)
- * 
+ *
  * @param archive persistence support object
  * @param object  object to be restored
  *
- * @todo now uses i386 only and also compiler specific skip of VTBL pointer, 
+ * @todo now uses i386 only and also compiler specific skip of VTBL pointer,
  * needs to be fixed in the future
  */
 template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &object)
@@ -184,8 +184,7 @@ template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &obje
 //  Data types from original UFO:EU                                         //
 //////////////////////////////////////////////////////////////////////////////
 
-struct GEODATA
-{
+struct GEODATA {
     int    terrain;      //!< Terrain set index
     int    x_size;       //!< Distance e/w in tens of tiles
     int    y_size;       //!< Distance n/s in tens of tiles
@@ -195,8 +194,7 @@ struct GEODATA
 };
 
 #pragma pack(1)
-struct MANDATA
-{
+struct MANDATA {
 #define MAN_NAME_LEN 22
     char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
     unsigned char TimeUnits;    //!< TU each turn for actions
@@ -218,8 +216,7 @@ __attribute__((packed))
 #pragma pack()
 
 #pragma pack(1)
-struct ITEMDATA
-{
+struct ITEMDATA {
     uint8  num;
     uint32 item_type[100];
     uint8  place[100];
@@ -233,8 +230,7 @@ __attribute__((packed))
 #pragma pack()
 
 #pragma pack(1)
-struct PLAYERDATA
-{
+struct PLAYERDATA {
     uint8    size;
     MANDATA  md[20];
     ITEMDATA id[20];
@@ -276,10 +272,10 @@ enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND, DEP_ALL};
 
 //! possible Stati for reserve-time - buttons
 // extern int ReserveTimeMode;
- #define RESERVE_FREE 0
- #define RESERVE_AIM  1
- #define RESERVE_SNAP 2
- #define RESERVE_AUTO 3
+#define RESERVE_FREE 0
+#define RESERVE_AIM  1
+#define RESERVE_SNAP 2
+#define RESERVE_AUTO 3
 // TODO: ReserveTime should be platoon- or soldier-specific
 
 extern volatile int CHANGE;
@@ -420,7 +416,7 @@ bool check_filename_case_consistency(const char *filename);
  */
 
 /**
- * @defgroup battlescape Battlescape 
+ * @defgroup battlescape Battlescape
  */
- 
+
 #endif

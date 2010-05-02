@@ -21,30 +21,29 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef DIRTY_H
 #define DIRTY_H
 
-struct Rect
-{
-	int x, y;
-	int w, h;
+struct Rect {
+    int x, y;
+    int w, h;
 };
 
 class DirtyList
 {
-	Rect *rect;
-	int size;
-	int count;
+    Rect *rect;
+    int size;
+    int count;
 
 public:
-	DirtyList(int sz);
-	~DirtyList();
+    DirtyList(int sz);
+    ~DirtyList();
 
-	void add(int x, int y, int w, int h);
-	void sort();
-	void clear();
-	void apply(BITMAP *src, BITMAP *dst);
-	void apply(BITMAP *src, BITMAP *dst, int src_x, int src_y);
+    void add(int x, int y, int w, int h);
+    void sort();
+    void clear();
+    void apply(BITMAP *src, BITMAP *dst);
+    void apply(BITMAP *src, BITMAP *dst, int src_x, int src_y);
 
-	void copy(DirtyList *src);
-	void add(DirtyList *src);
+    void copy(DirtyList *src);
+    void add(DirtyList *src);
 };
 
 

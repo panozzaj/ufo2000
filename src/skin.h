@@ -59,32 +59,32 @@ class Skin: public persist::BaseObject
 {
     DECLARE_PERSISTENCE(Skin);
 public:
-    static char *****m_bof;
+    static char ** ***m_bof;
     static PCK **m_pck;
     static PCK *m_add1;
     static BITMAP *m_image;
     static SPK *m_spk[10][2][4];
 private:
     SKIN_INFO skin_info;
-    
+
     Soldier *m_soldier;
-    
+
     void draw_head(int Appearance, int head_frame, int dir, BITMAP *image, int delta);
     void draw_common();
     void draw_snakeman(); //LAWYER:  Alien specific
-    void draw_ethereal(); 
+    void draw_ethereal();
     void draw_floater();
     void draw_chrys(); //Kratos: Chryssalid
-    
+
     void draw_lua();
 
     static void initbof();
 public:
     Skin(Soldier *soldier, int skin_type, int female_flag);
-    
+
     static void initpck();
     static void freepck();
-    
+
     void update(int skin_type, int female_flag);
     void next_human();
     void next_alien();
@@ -93,17 +93,16 @@ public:
     int get_fFemale() { return skin_info.fFemale; }
     int get_fFlying() { return skin_info.fFlying; }
     int get_armour_value(int side) { return skin_info.armour_values[side]; }
-    
+
     static int get_armour_cost(int skin_type, int female_flag) { return g_skins[get_skin_index(skin_type, female_flag)].cost; }
     int get_armour_cost() { return get_armour_cost(skin_info.SkinType, skin_info.fFemale); }
-    
-    bool check_for_hit(int sit, int dir, int lev, int col, int row)
-    {
+
+    bool check_for_hit(int sit, int dir, int lev, int col, int row) {
         return m_bof[sit][dir][lev][col][row];
     }
-    
+
     void draw();
-    
+
     virtual bool Write(persist::Engine &archive) const;
     virtual bool Read(persist::Engine &archive);
 };

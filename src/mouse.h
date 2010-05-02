@@ -25,12 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 class MouseRange
 {
-friend void reset_mouse_range();
-friend void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
+    friend void reset_mouse_range();
+    friend void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
 private:
     int m_x_min, m_y_min, m_x_max, m_y_max;
     static MouseRange *m_cur_mouse_range;
-    MouseRange * m_prev_mouse_range;
+    MouseRange *m_prev_mouse_range;
     void set_mouse_range();
     void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
 public:
@@ -43,7 +43,7 @@ void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
 
 inline int mouse_inside(int x1, int y1, int x2, int y2)
 {
-	return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));
+    return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));
 }
 
 inline void set_mouse_sens(int sens)

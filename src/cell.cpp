@@ -27,22 +27,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Cell, "Cell");
 
-Cell::Cell( Position p )
+Cell::Cell(Position p)
     : m_position(p)
 {
     m_soldier = NULL;
     m_soldier_aux = NULL;
     MOUSE = 0;
-    m_place = new Place(0, 152, 20 * 10, 3 ,this);
+    m_place = new Place(0, 152, 20 * 10, 3 , this);
 
     type[0] = 0; type[1] = 0; type[2] = 0; type[3] = 0;
 
     m_smog_time = 0;
     m_fire_time = 0;
     m_light = scenario->rules[0];
-	m_visi = m_light;
+    m_visi = m_light;
     memset(visi, 0, sizeof(visi));
-	islight = 0;
+    islight = 0;
 }
 
 Cell::~Cell()
@@ -50,17 +50,18 @@ Cell::~Cell()
     delete m_place;
 }
 
-void Cell::set_soldier(Soldier *soldier) {
+void Cell::set_soldier(Soldier *soldier)
+{
     if (soldier != NULL) {
         if (m_soldier == NULL) {
             m_soldier = soldier;
-        }else {
+        } else {
             m_soldier_aux = soldier;
         }
     } else {
-        if(m_soldier_aux == NULL){
+        if (m_soldier_aux == NULL) {
             m_soldier = NULL;
-        }else {
+        } else {
             m_soldier = m_soldier_aux;
             m_soldier_aux = NULL;
         }
@@ -73,7 +74,7 @@ bool Cell::Write(persist::Engine &archive) const
 
     PersistWriteObject(archive, m_soldier);
     PersistWriteObject(archive, m_place);
-        
+
     return true;
 }
 
@@ -83,6 +84,6 @@ bool Cell::Read(persist::Engine &archive)
 
     PersistReadObject(archive, m_soldier);
     PersistReadObject(archive, m_place);
-        
+
     return true;
 }

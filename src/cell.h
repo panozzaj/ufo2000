@@ -28,9 +28,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
 /**
- * Minimal part of map. It can contain a soldier, stack of items, 
+ * Minimal part of map. It can contain a soldier, stack of items,
  * and also describes terrain objects (floor, object, two walls)
- * 
+ *
  * @ingroup battlescape
  */
 class Cell: public persist::BaseObject
@@ -40,8 +40,8 @@ private:
     int m_smog_time;
     int m_fire_time;
     int m_light;
-	int m_visi;
-	int islight; //!< 0 if not a light, otherwise set to power.
+    int m_visi;
+    int islight; //!< 0 if not a light, otherwise set to power.
     Position m_position;
 
     int MOUSE;
@@ -51,8 +51,8 @@ private:
     Place *m_place;     //!< Stack of items here
 public:
     //! Indexes of MCD records for floor, walls and object
-	unsigned int type[4]; 
-	
+    unsigned int type[4];
+
     Soldier *get_soldier() { return m_soldier; }
     Place *get_place() { return m_place; }
     void set_soldier(Soldier *soldier);

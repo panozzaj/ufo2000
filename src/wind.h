@@ -33,36 +33,35 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 class VisualObject
 {
-	int m_switch_in_counter;
+    int m_switch_in_counter;
 protected:
-	int m_width, m_height;
+    int m_width, m_height;
 public:
-	VisualObject() : m_switch_in_counter(-1), m_width(0), m_height(0) { }
-	virtual ~VisualObject()	{ }
+    VisualObject() : m_switch_in_counter(-1), m_width(0), m_height(0) { }
+    virtual ~VisualObject()	{ }
 
 //!	Draws complete object image
-	virtual void redraw_full(BITMAP *bmp, int x, int y) = 0;
+    virtual void redraw_full(BITMAP *bmp, int x, int y) = 0;
 //!	Draws only changes since last draw (default implementation just calls draw_full)
-	virtual void redraw_fast(BITMAP *bmp, int x, int y) { }
+    virtual void redraw_fast(BITMAP *bmp, int x, int y) { }
 //!	Gets the width of object
-	virtual int get_width() const { return m_width; }
+    virtual int get_width() const { return m_width; }
 //!	Gets the height of object
-	virtual int get_height() const { return m_height; }
+    virtual int get_height() const { return m_height; }
 //!	Changes object size if possible, returns true if anything has changed
-	virtual bool resize(int width, int height) { return false; }
+    virtual bool resize(int width, int height) { return false; }
 
 //!	Sets internal variable so that the next redraw will be full redraw
-	void set_full_redraw() { m_switch_in_counter = -1; }
+    void set_full_redraw() { m_switch_in_counter = -1; }
 //!	Function that determines whether full redraw is needed and calls proper function
-	void redraw(BITMAP *bmp, int x, int y)
-	{
-		if (m_switch_in_counter != g_switch_in_counter) {
-			m_switch_in_counter = g_switch_in_counter;
-			redraw_full(bmp, x, y);
-		} else {
-			redraw_fast(bmp, x, y);
-		}
-	}
+    void redraw(BITMAP *bmp, int x, int y) {
+        if (m_switch_in_counter != g_switch_in_counter) {
+            m_switch_in_counter = g_switch_in_counter;
+            redraw_full(bmp, x, y);
+        } else {
+            redraw_fast(bmp, x, y);
+        }
+    }
 };
 
 /**
@@ -73,71 +72,71 @@ public:
  */
 class ConsoleStatusLine : public VisualObject
 {
-	std::string m_text;
-	FONT *m_font;
-	int m_color;
+    std::string m_text;
+    FONT *m_font;
+    int m_color;
 
-	bool backspace();
+    bool backspace();
 
 public:
-	ConsoleStatusLine(int width, FONT *font = g_console_font, int color = COLOR_WHITE);
-	virtual ~ConsoleStatusLine();
+    ConsoleStatusLine(int width, FONT *font = g_console_font, int color = COLOR_WHITE);
+    virtual ~ConsoleStatusLine();
 
-	virtual void redraw_full(BITMAP *bmp, int x, int y);
-	virtual bool resize(int width, int height);
+    virtual void redraw_full(BITMAP *bmp, int x, int y);
+    virtual bool resize(int width, int height);
 
-	bool process_keyboard_input(int keycode, int scancode);
+    bool process_keyboard_input(int keycode, int scancode);
 
-	const std::string &get_text() const { return m_text; }
-	void set_text(const std::string & text) { m_text = text; }
+    const std::string &get_text() const { return m_text; }
+    void set_text(const std::string &text) { m_text = text; }
 };
 
 /**
- * Visual object for rectangular area with chat console. 
- * It provides log window for previous text messages and 
+ * Visual object for rectangular area with chat console.
+ * It provides log window for previous text messages and
  * also incorporates status line for editing new text.
  *
  * @ingroup gui
  */
 class ConsoleWindow : public VisualObject
 {
-	std::vector<std::string>  m_lines_text;
-	std::vector<int>          m_lines_color;
-	ConsoleStatusLine        *m_status_line;
-	FONT                     *m_font;
-	bool                      m_need_redraw;
+    std::vector<std::string>  m_lines_text;
+    std::vector<int>          m_lines_color;
+    ConsoleStatusLine        *m_status_line;
+    FONT                     *m_font;
+    bool                      m_need_redraw;
 public:
-	ConsoleWindow(int width, int height, FONT *font = g_console_font);
-	virtual ~ConsoleWindow();
+    ConsoleWindow(int width, int height, FONT *font = g_console_font);
+    virtual ~ConsoleWindow();
 
-	virtual void redraw_full(BITMAP *bmp, int x, int y);
-	virtual void redraw_fast(BITMAP *bmp, int x, int y);
+    virtual void redraw_full(BITMAP *bmp, int x, int y);
+    virtual void redraw_fast(BITMAP *bmp, int x, int y);
 
-	void print(const char *text, int color = COLOR_GREEN00);
-/*
-gcc undocumented feature: 'this' pointer is counted in the
-__attribute__ __format__ for non-static member functions.
-*/
-	void vprintf(int color, const char *fmt, va_list arglist)
+    void print(const char *text, int color = COLOR_GREEN00);
+    /*
+    gcc undocumented feature: 'this' pointer is counted in the
+    __attribute__ __format__ for non-static member functions.
+    */
+    void vprintf(int color, const char *fmt, va_list arglist)
 #if defined(__GNUC__)
-        __attribute__((__format__(__printf__,3,0)))
+    __attribute__((__format__(__printf__, 3, 0)))
 #endif
     ;
-	void printf(int color, const char *fmt, ...)
+    void printf(int color, const char *fmt, ...)
 #if defined(__GNUC__)
-        __attribute__((__format__(__printf__,3,4)))
+    __attribute__((__format__(__printf__, 3, 4)))
 #endif
     ;
-	void printf(const char *fmt, ...)
+    void printf(const char *fmt, ...)
 #if defined(__GNUC__)
-        __attribute__((__format__(__printf__,2,3)))
+    __attribute__((__format__(__printf__, 2, 3)))
 #endif
     ;
 
-	bool process_keyboard_input(int keycode, int scancode);
+    bool process_keyboard_input(int keycode, int scancode);
 
-	const char *get_text();
-	virtual bool resize(int width, int height);
+    const char *get_text();
+    virtual bool resize(int width, int height);
 };
 
 class DirtyList;
@@ -152,50 +151,50 @@ class DirtyList;
  */
 class Wind
 {
-	int m_x, m_y, m_w, m_h;
-	int m_charw, m_charh;
+    int m_x, m_y, m_w, m_h;
+    int m_charw, m_charh;
 
-	char **m_txt;
-	int *m_txtcolor;
-	int m_txtw, m_txth;
-	int m_txtbeg, m_txtend;
-	int m_txtvis;
+    char **m_txt;
+    int *m_txtcolor;
+    int m_txtw, m_txth;
+    int m_txtbeg, m_txtend;
+    int m_txtvis;
 
-	int m_scrw, m_scrh;
-	int m_scrcol;
-	int m_curx, m_cury;
+    int m_scrw, m_scrh;
+    int m_scrcol;
+    int m_curx, m_cury;
 
-	DirtyList *m_dirty, *m_dirty2;
-	BITMAP *m_backscr, *m_screen;
-	FONT *m_font;
+    DirtyList *m_dirty, *m_dirty2;
+    BITMAP *m_backscr, *m_screen;
+    FONT *m_font;
 
-	void writechr(BITMAP *_bmp, int _x, int _y, int c);
-	void writestr(BITMAP *_bmp, int _x, int _y, const char *str);
-	void writechr(BITMAP *_bmp, int _x, int _y, int c, int color);
-	void writestr(BITMAP *_bmp, int _x, int _y, const char *str, int color);
+    void writechr(BITMAP *_bmp, int _x, int _y, int c);
+    void writestr(BITMAP *_bmp, int _x, int _y, const char *str);
+    void writechr(BITMAP *_bmp, int _x, int _y, int c, int color);
+    void writestr(BITMAP *_bmp, int _x, int _y, const char *str, int color);
 
-	void showcursor();
-	void hidecursor();
-	void newline();
-	void scroll();
+    void showcursor();
+    void hidecursor();
+    void newline();
+    void scroll();
 
-	void info(int _x, int _y);
+    void info(int _x, int _y);
 
-	void setfont(FONT *f);
+    void setfont(FONT *f);
 
 public:
-	Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f = NULL);
-	~Wind();
+    Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f = NULL);
+    ~Wind();
 
-	void redraw();
-	void redraw_full();
+    void redraw();
+    void redraw_full();
 
-	void printchr(int c);
-	void printstr(const char *str);
-	void printstr(const char *str, int color);
-	void writestr(int x, int y, const char *str);
+    void printchr(int c);
+    void printstr(const char *str);
+    void printstr(const char *str, int color);
+    void writestr(int x, int y, const char *str);
 
-	void dump();
+    void dump();
 };
 
 #endif

@@ -41,7 +41,7 @@ int Item::obdata_get_int(uint32 item_index, const char *property_name)
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -61,7 +61,7 @@ ALPHA_SPRITE *Item::obdata_get_bitmap(uint32 item_index, const char *property_na
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -88,7 +88,7 @@ SAMPLE *Item::obdata_get_sound_sample(uint32 item_index, const char *property_na
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -115,7 +115,7 @@ int Item::obdata_get_array_int(uint32 item_index, const char *property_name, int
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -144,7 +144,7 @@ std::string Item::obdata_get_string(uint32 item_index, const char *property_name
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushnumber(L, item_index);
     lua_gettable(L, -2);
@@ -172,7 +172,7 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_index] table
     lua_pushstring(L, item_name.c_str());
     lua_gettable(L, -2);
@@ -208,7 +208,7 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
  */
 std::string Item::name()
 {
-    return m_stunned_body_owner ? m_stunned_body_owner->get_name() : obdata_name(m_type); 
+    return m_stunned_body_owner ? m_stunned_body_owner->get_name() : obdata_name(m_type);
 }
 
 /**
@@ -216,20 +216,20 @@ std::string Item::name()
  */
 void Item::od_info(int gx, int gy, int gcol)
 {
-	int type = m_type;
+    int type = m_type;
     text_mode(-1);
 
     textprintf(screen2, font, gx, gy, gcol, "%s", obdata_name(type).c_str());
     gy += 15;
 
     if (obdata_wayPoints(type) || obdata_isGun(type)) {
-      //textprintf(screen2, font, gx + 5, gy, gcol, "%13s %-8s %s",
+        //textprintf(screen2, font, gx + 5, gy, gcol, "%13s %-8s %s",
         textprintf(screen2, font, gx + 0, gy, gcol, "%13s %-8s %10s",
-                       _("Firing-Type"), _("Accuracy"), _("TU cost") );
+                   _("Firing-Type"), _("Accuracy"), _("TU cost"));
         gy += 10;
         if (obdata_accuracy(type, 0)) {
             textprintf(screen2, font, gx, gy, gcol, "%10s(%d)     %3d%%    %5d%%",
-                       _("Auto"), obdata_autoShots(type), obdata_accuracy(type, 0), 
+                       _("Auto"), obdata_autoShots(type), obdata_accuracy(type, 0),
                        obdata_time(type, 0) * obdata_autoShots(type));
             gy += 10;
         }
@@ -250,88 +250,88 @@ void Item::od_info(int gx, int gy, int gcol)
 
     if (obdata_isHandToHand(type) || obdata_twoHanded(type)) {
         if (obdata_isHandToHand(type)) {
-            textprintf(screen2, font, gx, gy, gcol, _("Hand-to-hand weapon") );
+            textprintf(screen2, font, gx, gy, gcol, _("Hand-to-hand weapon"));
             gy += 10;
         }
 
         if (obdata_twoHanded(type)) {
-            textprintf(screen2, font, gx, gy, gcol, _("Two-handed weapon") );
+            textprintf(screen2, font, gx, gy, gcol, _("Two-handed weapon"));
             gy += 10;
-       }
-       
-       gy += 5;
+        }
+
+        gy += 5;
     }
-    
-	//! Print medical device data 
-	if (obdata_isMed(type)) {
-		textprintf(screen2, font, gx, gy, gcol, _("Medical item") );
+
+    //! Print medical device data
+    if (obdata_isMed(type)) {
+        textprintf(screen2, font, gx, gy, gcol, _("Medical item"));
         gy += 10;
 
-		if (obdata_heal(type, 0) && obdata_heal_max(type, 0)) {
-			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Health"), obdata_heal(type, 0), obdata_heal_max(type, 0));
-			gy += 10;
-		}
-		if (obdata_heal(type, 1) && obdata_heal_max(type, 1)) {
-			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Stun"), obdata_heal(type, 1), obdata_heal_max(type, 1));
-			gy += 10;
-		}
-		if (obdata_heal(type, 2) && obdata_heal_max(type, 2)) {
-			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Energy"), obdata_heal(type, 2), obdata_heal_max(type, 2));
-			gy += 10;
-		}
-		if (obdata_heal(type, 3) && obdata_heal_max(type, 3)) {
-			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Morale"), obdata_heal(type, 3), obdata_heal_max(type, 3));
-			gy += 10;
-		}
-	}
-	//! End print medical device data
-	
+        if (obdata_heal(type, 0) && obdata_heal_max(type, 0)) {
+            textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%", _("Health"), obdata_heal(type, 0), obdata_heal_max(type, 0));
+            gy += 10;
+        }
+        if (obdata_heal(type, 1) && obdata_heal_max(type, 1)) {
+            textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%", _("Stun"), obdata_heal(type, 1), obdata_heal_max(type, 1));
+            gy += 10;
+        }
+        if (obdata_heal(type, 2) && obdata_heal_max(type, 2)) {
+            textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%", _("Energy"), obdata_heal(type, 2), obdata_heal_max(type, 2));
+            gy += 10;
+        }
+        if (obdata_heal(type, 3) && obdata_heal_max(type, 3)) {
+            textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%", _("Morale"), obdata_heal(type, 3), obdata_heal_max(type, 3));
+            gy += 10;
+        }
+    }
+    //! End print medical device data
+
     if (obdata_useTime(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
-                    _("Usage TU cost"), obdata_useTime(type));
+                   _("Usage TU cost"), obdata_useTime(type));
         gy += 10;
     }
-    
+
     if (obdata_primeTime(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
-                    _("Prime TU cost"), obdata_primeTime(type));
+                   _("Prime TU cost"), obdata_primeTime(type));
         gy += 10;
     }
-    
+
     if (obdata_throwTime(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
-                    _("Throw TU cost"), obdata_throwTime(type));
+                   _("Throw TU cost"), obdata_throwTime(type));
         gy += 10;
     }
 
     if (obdata_damage(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%)",
                    _("Damage"),     obdata_damage(type), obdata_dDeviation(type));
-		gy += 10;
-		
+        gy += 10;
+
         textprintf(screen2, font, gx, gy, gcol, "%13s: %s",
                    _("Ammo-Type"), _(get_damage_description()));
         gy += 10;
     }
 
     if (obdata_isAmmo(type)) {
-        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                    _("Rounds"), obdata_rounds(type));
         gy += 10;
     }
-    
+
     if (obdata_exploRange(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                    _("Blast range"), obdata_exploRange(type));
         gy += 10;
     }
-    
+
     if (obdata_smokeRange(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                    _("Smoke range"), obdata_smokeRange(type));
         gy += 10;
     }
-    
+
     if (obdata_smokeTime(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                    _("Smoke time"), obdata_smokeTime(type));
@@ -342,15 +342,15 @@ void Item::od_info(int gx, int gy, int gcol)
     get_ammo_list(obdata_name(type), ammo);
 
     for (int i = 0; i < (int)ammo.size(); i++) {
-        textprintf(screen2, font, gx, gy, gcol, "%12s%d: %s", 
+        textprintf(screen2, font, gx, gy, gcol, "%12s%d: %s",
                    _("Ammo#"), i + 1, ammo[i].c_str());
         gy += 10;
     }
 
-    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                _("Weight"), obdata_weight(type));
     gy += 10;
-    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
                _("Cost"), obdata_cost(type));
     gy += 10;
 }
@@ -377,13 +377,13 @@ Item::Item(int _type, Soldier *stunned_body_owner)
         m_pHeld[i] = obdata_get_bitmap(m_type, "pHeld", i + 1);
         ASSERT(m_pHeld[i]);
     }
-    
+
     std::string sound = obdata_get_string(m_type, "sound");
     m_sound = getSymCode(sound.c_str());
     if (!sound.empty() && m_sound == SS_UNKNOWN) {
-        lua_safe_dostring(L, 
-            (std::string("Warning([[%s]], [[Invalid sound effect identifier - '") + 
-            sound + std::string("']])")).c_str());
+        lua_safe_dostring(L,
+                          (std::string("Warning([[%s]], [[Invalid sound effect identifier - '") +
+                           sound + std::string("']])")).c_str());
     }
 }
 
@@ -455,7 +455,7 @@ int Item::haveclip()
  */
 void Item::shot()
 {
-	ASSERT (m_ammo != NULL);
+    ASSERT(m_ammo != NULL);
     if (m_ammo->m_rounds > 0)
         m_ammo->m_rounds--;
     if (m_ammo->m_rounds == 0 && m_ammo->obdata_disappear()) {
@@ -513,12 +513,12 @@ int Item::damage(int dam)
 /**
  * Return two letter damage name.
  */
-const char* Item::get_damage_name()
+const char *Item::get_damage_name()
 {
-	static const char* damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST"};
-	ASSERT (m_ammo != NULL);
+    static const char *damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST"};
+    ASSERT(m_ammo != NULL);
     int damage_type = m_ammo->obdata_damageType();
-    
+
     if (haveclip() && damage_type >= 0 && damage_type < 6)
         return damage_names[damage_type];
     return "";
@@ -527,25 +527,26 @@ const char* Item::get_damage_name()
 /**
  * Return long damage name.
  */
-const char* Item::get_damage_description()
+const char *Item::get_damage_description()
 {
-	static const char* damage_longnames[7] = {N_("Armour piercing"), N_("Incendiary"),
-		N_("High explosive"), N_("Laser"), N_("Plasma"), N_("Stun")};
-    
+    static const char *damage_longnames[7] = {N_("Armour piercing"), N_("Incendiary"),
+            N_("High explosive"), N_("Laser"), N_("Plasma"), N_("Stun")
+                                             };
+
     if (haveclip()) {
-    	if (m_ammo == NULL)
-    		return "";
-	    int damage_type = m_ammo->obdata_damageType();
-    	if (damage_type >= 0 && damage_type < 6)
-			return damage_longnames[damage_type];
-		return "";
-	} else {
-		int damage_type = obdata_damageType();
-    	if (damage_type >= 0 && damage_type < 6)
-			return damage_longnames[damage_type];
-		return "";
-	}
-	return "";
+        if (m_ammo == NULL)
+            return "";
+        int damage_type = m_ammo->obdata_damageType();
+        if (damage_type >= 0 && damage_type < 6)
+            return damage_longnames[damage_type];
+        return "";
+    } else {
+        int damage_type = obdata_damageType();
+        if (damage_type >= 0 && damage_type < 6)
+            return damage_longnames[damage_type];
+        return "";
+    }
+    return "";
 }
 
 /**
@@ -574,7 +575,7 @@ Item *create_item(const char *item_name, Soldier *stunned_body_owner)
     // Enter 'ItemsTable' table
     lua_pushstring(L, "ItemsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [item_name] table
     lua_pushstring(L, item_name);
     lua_gettable(L, -2);
@@ -589,31 +590,31 @@ Item *create_item(const char *item_name, Soldier *stunned_body_owner)
 }
 /**
  * Returns a custom color for bullets
- * 
+ *
  * @param int : 0 or 1 or 2
  */
 int Item::get_color(int index, int n)
 {
     int cr = 0, cg = 0, cb = 0;
     int _type = index;
-    switch (n){
+    switch (n) {
         case 0:
             cr = obdata_get_array_int(_type, "bulletRGB", 0);
             cg = obdata_get_array_int(_type, "bulletRGB", 1);
             cb = obdata_get_array_int(_type, "bulletRGB", 2);
-        break;
+            break;
         case 1:
             cr = obdata_get_array_int(_type, "glowRGB", 0);
             cg = obdata_get_array_int(_type, "glowRGB", 1);
             cb = obdata_get_array_int(_type, "glowRGB", 2);
-        break;
+            break;
         case 2:
             cr = obdata_get_array_int(_type, "trailRGB", 0);
             cg = obdata_get_array_int(_type, "trailRGB", 1);
             cb = obdata_get_array_int(_type, "trailRGB", 2);
-        break;
-        }
-    return makecol(cr,cg,cb);
+            break;
+    }
+    return makecol(cr, cg, cb);
 }
 /**
  * Checks if given item has custom colors for bullets
@@ -622,15 +623,15 @@ bool Item::can_set_color(int index)
 {
     int _type = index;
     bool ans = true;
-    if ((!obdata_get_array_int(_type, "bulletRGB", 0) && !obdata_get_array_int(_type, "bulletRGB", 1) && !obdata_get_array_int(_type, "bulletRGB", 2)) && !(obdata_damageType(_type) == DT_LAS)&& obdata_isGun(_type)) {
+    if ((!obdata_get_array_int(_type, "bulletRGB", 0) && !obdata_get_array_int(_type, "bulletRGB", 1) && !obdata_get_array_int(_type, "bulletRGB", 2)) && !(obdata_damageType(_type) == DT_LAS) && obdata_isGun(_type)) {
         ans = false;
-        }
+    }
     if (!obdata_get_array_int(_type, "glowRGB", 0) && !obdata_get_array_int(_type, "glowRGB", 1) && !obdata_get_array_int(_type, "glowRGB", 2)) {
         ans = false;
-        }
+    }
     if ((!obdata_get_array_int(_type, "trailRGB", 0) && !obdata_get_array_int(_type, "trailRGB", 1) && !obdata_get_array_int(_type, "trailRGB", 2)) && !(obdata_damageType(_type) == DT_LAS) && obdata_isGun(_type)) {
         ans = false;
-        }
+    }
     return ans;
 }
 

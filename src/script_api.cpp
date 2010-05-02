@@ -23,7 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * @file script_api.h
  * @brief Bindings for calling lua functions from C++ and vice versa
  *
- * This file contains all the "black magic" involved in using lua stack 
+ * This file contains all the "black magic" involved in using lua stack
  * based api and makes other parts of the game simplier
  */
 
@@ -73,7 +73,7 @@ int query_equipment_sets(std::vector<std::string> &eqsets)
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "EquipmentTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
 
     lua_pushnil(L);
     while (lua_next(L, -2) != 0) {
@@ -107,7 +107,7 @@ int query_languages(std::vector<std::string> &languages)
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "LanguagesList");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     lua_pushnil(L);
     while (lua_next(L, -2) != 0) {
         ASSERT(lua_isstring(L, -2));
@@ -133,7 +133,7 @@ ALPHA_SPRITE *lua_table_image(const char *name)
     ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
     ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
     lua_settop(L, stack_top);
-    
+
     return spr;
 }
 
@@ -148,7 +148,7 @@ std::vector<ALPHA_SPRITE *> lua_table_image_vector(const char *name)
     lua_pushstring(L, name);
     lua_gettable(L, -2);
     ASSERT(lua_istable(L, -1));
-    
+
     int i = 1;
     while (true) {
         lua_pushnumber(L, i);

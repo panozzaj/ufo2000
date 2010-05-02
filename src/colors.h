@@ -183,7 +183,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define COLOR_GRAYBLUE04      xcom1_color(228)
 #define COLOR_GRAYBLUE10      xcom1_color(234)
 
-// 240-255 : DARKGRAY: 38% Gray, 44% Gray, 48% Gray, 52% Gray .. 
+// 240-255 : DARKGRAY: 38% Gray, 44% Gray, 48% Gray, 52% Gray ..
 //                     96% Gray, Black (again)
 #define COLOR_DARKGRAY00      xcom1_color(240)
 #define COLOR_DARKGRAY01      xcom1_color(241)

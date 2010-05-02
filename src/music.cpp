@@ -42,138 +42,138 @@ static NLmutex mutex;
 
 void *ThreadFunc(void *data)
 {
-	while (!thread_exit_flag) {
-		nlMutexLock(&mutex);
-		if (dp) {
-			if (al_poll_duh(dp)) {
-				al_stop_duh(dp);
-				dp = al_start_duh(duh, 2, 0, 1.0f, 4096, 44100);
-				DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
-				DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
-				dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
-				dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
-			}
-		}
-		nlMutexUnlock(&mutex);
-		usleep(10000);
-	}
-	nlMutexDestroy(&mutex);
-	return NULL;
+    while (!thread_exit_flag) {
+        nlMutexLock(&mutex);
+        if (dp) {
+            if (al_poll_duh(dp)) {
+                al_stop_duh(dp);
+                dp = al_start_duh(duh, 2, 0, 1.0f, 4096, 44100);
+                DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
+                DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
+                dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
+                dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
+            }
+        }
+        nlMutexUnlock(&mutex);
+        usleep(10000);
+    }
+    nlMutexDestroy(&mutex);
+    return NULL;
 }
 #endif
 
 bool FS_MusicInit()
 {
 #ifdef HAVE_DUMBOGG
-	dumb_register_stdfiles();
-	nlMutexInit(&mutex);
-	tid = nlThreadCreate(ThreadFunc, NULL, NL_FALSE);
+    dumb_register_stdfiles();
+    nlMutexInit(&mutex);
+    tid = nlThreadCreate(ThreadFunc, NULL, NL_FALSE);
 #endif
-	return true;
+    return true;
 }
 
 void FS_MusicClose()
 {
 #ifdef HAVE_DUMBOGG
-	nlMutexLock(&mutex);
-	if (dp) {
-		al_stop_duh(dp);
-		dp = NULL;
-	}
+    nlMutexLock(&mutex);
+    if (dp) {
+        al_stop_duh(dp);
+        dp = NULL;
+    }
 
-	if (duh) {
-		unload_duh(duh);
-		duh = NULL;
-	}
-	nlMutexUnlock(&mutex);
-	thread_exit_flag = 1;
-	dumb_exit();
+    if (duh) {
+        unload_duh(duh);
+        duh = NULL;
+    }
+    nlMutexUnlock(&mutex);
+    thread_exit_flag = 1;
+    dumb_exit();
 #endif
 }
 
 bool FS_MusicPlay(const char *filename)
 {
 #ifdef HAVE_DUMBOGG
-	nlMutexLock(&mutex);
-	if (dp) {
-		al_stop_duh(dp);
-		dp = NULL;
-	}
-	if (duh) {
-		unload_duh(duh);
-		duh = NULL;
-	}
-	nlMutexUnlock(&mutex);
+    nlMutexLock(&mutex);
+    if (dp) {
+        al_stop_duh(dp);
+        dp = NULL;
+    }
+    if (duh) {
+        unload_duh(duh);
+        duh = NULL;
+    }
+    nlMutexUnlock(&mutex);
 #endif
 
-	play_midi(NULL, 0);
-	if (allegro_midi) {
-		destroy_midi(allegro_midi);
-		allegro_midi = NULL;
-	}
+    play_midi(NULL, 0);
+    if (allegro_midi) {
+        destroy_midi(allegro_midi);
+        allegro_midi = NULL;
+    }
 
-	if (filename == NULL)
-		return true;
+    if (filename == NULL)
+        return true;
 
-	allegro_midi = load_midi(filename);
-	if (allegro_midi) {
-		play_midi(allegro_midi, 1);
-		return true;
-	}
+    allegro_midi = load_midi(filename);
+    if (allegro_midi) {
+        play_midi(allegro_midi, 1);
+        return true;
+    }
 
 #ifdef HAVE_DUMBOGG
-	nlMutexLock(&mutex);
-	if (dp) {
-		al_stop_duh(dp);
-		dp = NULL;
-	}
-	if (duh) {
-		unload_duh(duh);
-		duh = NULL;
-	}
-	duh = dumb_load_ogg(filename, 1);
-	if (!duh) duh = dumb_load_xm(filename);
-	if (!duh) duh = dumb_load_s3m(filename);
-	if (!duh) duh = dumb_load_mod(filename);
-	if (!duh) duh = dumb_load_it(filename);
-	if (duh) dp = al_start_duh(duh, 2, 0, (float)music_volume / 255.0, 4096, 44100);
+    nlMutexLock(&mutex);
+    if (dp) {
+        al_stop_duh(dp);
+        dp = NULL;
+    }
+    if (duh) {
+        unload_duh(duh);
+        duh = NULL;
+    }
+    duh = dumb_load_ogg(filename, 1);
+    if (!duh) duh = dumb_load_xm(filename);
+    if (!duh) duh = dumb_load_s3m(filename);
+    if (!duh) duh = dumb_load_mod(filename);
+    if (!duh) duh = dumb_load_it(filename);
+    if (duh) dp = al_start_duh(duh, 2, 0, (float)music_volume / 255.0, 4096, 44100);
 
-	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
-	DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
-	dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
-	dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
+    DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
+    DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
+    dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
+    dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
 
-	nlMutexUnlock(&mutex);
+    nlMutexUnlock(&mutex);
 #endif
-	return true;
+    return true;
 }
 
 int FS_GetMusicVolume()
 {
-	return music_volume;
+    return music_volume;
 }
 
 int FS_IncMusicVolume()
 {
-	FS_SetMusicVolume(music_volume + 16);
-	return music_volume;
+    FS_SetMusicVolume(music_volume + 16);
+    return music_volume;
 }
 
 int FS_DecMusicVolume()
 {
-	FS_SetMusicVolume(music_volume - 16);
-	return music_volume;
+    FS_SetMusicVolume(music_volume - 16);
+    return music_volume;
 }
 
 void FS_SetMusicVolume(int volume)
 {
-	if (volume < 0) volume = 0;
-	if (volume > 255) volume = 255;
+    if (volume < 0) volume = 0;
+    if (volume > 255) volume = 255;
 #ifdef HAVE_DUMBOGG
-	nlMutexLock(&mutex);
-	music_volume = volume;
-	if (dp) al_duh_set_volume(dp, (float)music_volume / 255.0);
-	nlMutexUnlock(&mutex);
+    nlMutexLock(&mutex);
+    music_volume = volume;
+    if (dp) al_duh_set_volume(dp, (float)music_volume / 255.0);
+    nlMutexUnlock(&mutex);
 #endif
-	set_volume(-1, volume);
+    set_volume(-1, volume);
 }

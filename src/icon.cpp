@@ -60,7 +60,7 @@ Icon::Icon()
     //names in .lua file - do not translate !
     item[I_LEFT].name            = "LeftItem";
     item[I_RIGHT].name           = "RightItem";
-    
+
     button[B_MAN_UP].name        = "ManUp";
     button[B_MAN_DOWN].name      = "ManDown";
     button[B_VIEW_UP].name       = "ViewUp";
@@ -76,17 +76,17 @@ Icon::Icon()
     button[B_DONE].name          = "Done";
     button[B_EXIT].name          = "Exit";
 
-    button[B_MAN_STATS].name     = "ManStats"; 
+    button[B_MAN_STATS].name     = "ManStats";
     button[B_BARCHART].name      = "BarChart";
 
     text[T_TURN_NUMBER].name     = "TurnNumber";
     text[T_MAN_NAME].name        = "ManName";
-    
+
     attribute[A_TIME_UNITS].name = "TimeUnits";
     attribute[A_ENERGY].name     = "Energy";
     attribute[A_HEALTH].name     = "Health";
     attribute[A_MORALE].name     = "Morale";
-        
+
     reserve[R_TIME_FREE].name    = "ResTimeFree";
     reserve[R_TIME_AIM].name     = "ResTimeAim";
     reserve[R_TIME_SNAP].name    = "ResTimeSnap";
@@ -95,14 +95,14 @@ Icon::Icon()
     int nc[4];
     const char *nd;
     bool custom_icons = false;
-    
+
     int stack_top = lua_gettop(L);
-    
+
     if (exists(F("$(ufo2000)/init-scripts/icons.lua")))
         lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
     else
-        lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));    
-    
+        lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));
+
     //image
     lua_pushstring(L, "Image");
     lua_gettable(L, -2);
@@ -113,7 +113,7 @@ Icon::Icon()
         ASSERT(lua_isstring(L, -1));
         filename = (std::string)lua_tostring(L, -1);
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "HighlightFile");
         lua_gettable(L, -2);
         if (lua_isstring(L, -1))
@@ -121,7 +121,7 @@ Icon::Icon()
         else
             highl_filename = "";
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "Transparency");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
@@ -139,7 +139,7 @@ Icon::Icon()
         lua_pushstring(L, "Button");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 4; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -147,15 +147,15 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-        
-        item[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);     
-    
+
+        item[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);
+
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "Image");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 2; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -163,16 +163,16 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         item[i].ImageX = nc[0];
         item[i].ImageY = nc[1];
-    
+
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "DigitsCoords");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 2; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -180,37 +180,37 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         item[i].DigitsX = nc[0];
         item[i].DigitsY = nc[1];
-    
+
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "DigitsRoundsColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-        
+
         item[i].DigitsRoundsColor = nc[0];
-                
+
         lua_pushstring(L, "DigitsPrimeColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-        
+
         item[i].DigitsPrimeColor = nc[0];
-        
+
         lua_pop(L, 1);
     }
-    
+
     //buttons
     for (i = 0; i < BUTTON_NUMBER; i++) {
         lua_pushstring(L, button[i].name);
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (int j = 1; j <= 4; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -218,22 +218,22 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         button[i].set_coords(nc[0], nc[1], nc[2], nc[3]);
-    
+
         lua_pop(L, 1);
     }
-    
+
     //texts
     for (i = 0; i < TEXT_NUMBER; i++) {
         lua_pushstring(L, text[i].name);
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         lua_pushstring(L, "Coords");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 2; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -241,48 +241,48 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         text[i].x = nc[0];
         text[i].y = nc[1];
-        
+
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "Color");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         text[i].color = nc[0];
-        
+
         lua_pushstring(L, "Font");
         lua_gettable(L, -2);
         ASSERT(lua_isstring(L, -1));
         nd = lua_tostring(L, -1);
         lua_pop(L, 1);
-    
+
         if (nd == (std::string)"small")
             text[i].font = g_small_font;
         else if (nd == (std::string)"normal")
             text[i].font = font;
         else if (nd == (std::string)"large")
             text[i].font = large;
-        else 
+        else
             ASSERT(false);
-    
+
         lua_pop(L, 1);
     }
-    
-    //attributes    
+
+    //attributes
     for (i = 0; i < ATTRIBUTE_NUMBER; i++) {
         lua_pushstring(L, attribute[i].name);
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-        
+
         lua_pushstring(L, "BarZeroCoords");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 2; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -290,45 +290,45 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         attribute[i].BarX = nc[0];
         attribute[i].BarY = nc[1];
-    
+
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "BarDirection");
         lua_gettable(L, -2);
         ASSERT(lua_isstring(L, -1));
         nd = lua_tostring(L, -1);
         lua_pop(L, 1);
-    
+
         if (nd == (std::string)"horizontal")
             attribute[i].BarDirection = dir_hor;
         else if (nd == (std::string)"vertical")
             attribute[i].BarDirection = dir_vert;
-        else 
+        else
             ASSERT(false);
-        
+
         lua_pushstring(L, "FColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         attribute[i].FColor = nc[0];
-    
+
         lua_pushstring(L, "BColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         attribute[i].BColor = nc[0];
-    
+
         lua_pushstring(L, "DigitsCoords");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 2; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -336,40 +336,40 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         attribute[i].DigitsX = nc[0];
         attribute[i].DigitsY = nc[1];
-    
+
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "DigitsColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-        
+
         attribute[i].DigitsColor = nc[0];
-        
+
         lua_pop(L, 1);
     }
 
-    //stun bar color    
+    //stun bar color
     lua_pushstring(L, "StunColor");
     lua_gettable(L, -2);
     ASSERT(lua_isnumber(L, -1));
     nc[0] = (int)lua_tonumber(L, -1);
     lua_pop(L, 1);
-    
+
     //reserve time buttons
-        for (i = 0; i < RESERVE_NUMBER; i++) {
+    for (i = 0; i < RESERVE_NUMBER; i++) {
         lua_pushstring(L, reserve[i].name);
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         lua_pushstring(L, "Button");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 4; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -377,15 +377,15 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         reserve[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);
-        
+
         lua_pop(L, 1);
-        
+
         lua_pushstring(L, "BorderCoords");
         lua_gettable(L, -2);
         ASSERT(lua_istable(L, -1));
-    
+
         for (j = 1; j <= 4; j++) {
             lua_pushnumber(L, j);
             lua_gettable(L, -2);
@@ -393,27 +393,27 @@ Icon::Icon()
             nc[j - 1] = (int)lua_tonumber(L, -1);
             lua_pop(L, 1);
         }
-    
+
         reserve[i].BorderX1 = nc[0];
         reserve[i].BorderY1 = nc[1];
         reserve[i].BorderX2 = nc[2];
         reserve[i].BorderY2 = nc[3];
-        
+
         lua_pop(L, 1);
-    
+
         lua_pushstring(L, "BorderColor");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
         nc[0] = (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
-    
+
         reserve[i].BorderColor = nc[0];
-        
+
         lua_pop(L, 1);
     }
-    
+
     stun_color = nc[0];
-            
+
     lua_settop(L, stack_top);
 
     if (custom_icons) {
@@ -422,7 +422,7 @@ Icon::Icon()
         ASSERT(custom_image);
         width  = custom_image->w;
         height = custom_image->h;
-        
+
         iconsbmp = create_bitmap(width, height);
         blit(custom_image, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
         destroy_bitmap(custom_image);
@@ -431,17 +431,17 @@ Icon::Icon()
         BITMAP *image = create_bitmap(320, 200); clear(image);
         spk->show(image, 0, 0);
         delete(spk);
-        
+
         width  = 320;
         height =  57;
 
         iconsbmp = create_bitmap(width, height);
-        blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
+        blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h);
         destroy_bitmap(image);
-        
+
         trans_level = 255;
     }
-    
+
     if (highl_filename != "") {
         BITMAP *highl_image;
         highl_image = load_bitmap(F(highl_filename.c_str()), NULL);
@@ -450,10 +450,10 @@ Icon::Icon()
         blit(highl_image, highlbmp, 0, 0, 0, 0, highlbmp->w, highlbmp->h);
         destroy_bitmap(highl_image);
     } else highlbmp = NULL;
-    
+
     clearbmp = create_bitmap(iconsbmp->w, iconsbmp->h);
     blit(iconsbmp, clearbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
-        
+
     x = (SCREEN2W - width) / 2;
     y = SCREEN2H - height;
 }
@@ -469,7 +469,7 @@ Icon::~Icon()
 }
 
 /**
- * Draw plain control-panel / icon-area, 
+ * Draw plain control-panel / icon-area,
  * then add infos about currently active soldier
  *
  * @todo add some more optimizations as looks like this function
@@ -493,7 +493,7 @@ void Icon::draw()
 
 bool firemenu_dialog_proc_exit = 0;
 
-int firemenu_dialog_proc(int msg, DIALOG * d, int c)
+int firemenu_dialog_proc(int msg, DIALOG *d, int c)
 {
     if (mouse_b & 2) {
         while (mouse_b & 2) yield_timeslice();
@@ -504,7 +504,7 @@ int firemenu_dialog_proc(int msg, DIALOG * d, int c)
 }
 
 /**
- * Menu to select firing-mode (aimed, snapshot, auto) for weapon in hand, 
+ * Menu to select firing-mode (aimed, snapshot, auto) for weapon in hand,
  * or throwing
  */
 void Icon::firemenu(int iplace)
@@ -523,7 +523,7 @@ void Icon::firemenu(int iplace)
     static char dstr[5][100];
 
     static DIALOG the_dialog[] = {
-        //         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3  
+        //         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
         { firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
         { firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
         { firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
@@ -543,20 +543,20 @@ void Icon::firemenu(int iplace)
 
     if (it != NULL && scenario->can_use(sel_man, it)) {
         int i = 0;
-        sprintf(dstr[i], _("CANCEL") );
+        sprintf(dstr[i], _("CANCEL"));
         the_dialog[i].proc = firemenu_dialog_proc;
         i++;
 
         waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
-        wtime[i] = sel_man->required(it->obdata_throwTime()); 
-        if (!wtime[i]) wtime[i] = sel_man->required(25); // Restore default value if neccesary // 
+        wtime[i] = sel_man->required(it->obdata_throwTime());
+        if (!wtime[i]) wtime[i] = sel_man->required(25); // Restore default value if neccesary //
         if (sel_man->havetime(wtime[i]) == OK) {
             sprintf(dstr[i], _("THROW       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
             the_dialog[i].proc = firemenu_dialog_proc;
             waction[i] = THROW;
             i++;
         }
-        
+
         if (it->is_hand_to_hand()) {
             waccur[i] = 100;
             wtime[i]  = sel_man->required(it->obdata_useTime());
@@ -571,92 +571,91 @@ void Icon::firemenu(int iplace)
                 waction[i] = PUNCH;
                 i++;
             }
-        } else
-            if (it->is_grenade()) {
-                wtime[i] = sel_man->required(it->obdata_primeTime()); 
-                if (!wtime[i]) wtime[i] = sel_man->required(50); // Restore default value if neccesary // 
-                if (sel_man->havetime(wtime[i]) == OK) {
-                    if (it->is_high_explosive()) {
-                        if (it->delay_time() == 0) {
-                            sprintf(dstr[i], _("PRIME EXPLOSIVE     TUs>%02d"), wtime[i]);
-                            the_dialog[i].proc = firemenu_dialog_proc;
-                            waction[i] = PRIME;
-                            i++;
-                        }
-                    } else {
-                        if (it->delay_time() == 0) {
-                            sprintf(dstr[i], _("PRIME GRENADE       TUs>%02d"), wtime[i]);
-                            the_dialog[i].proc = firemenu_dialog_proc;
-                            waction[i] = PRIME;
-                            i++;
-                        }
+        } else if (it->is_grenade()) {
+            wtime[i] = sel_man->required(it->obdata_primeTime());
+            if (!wtime[i]) wtime[i] = sel_man->required(50); // Restore default value if neccesary //
+            if (sel_man->havetime(wtime[i]) == OK) {
+                if (it->is_high_explosive()) {
+                    if (it->delay_time() == 0) {
+                        sprintf(dstr[i], _("PRIME EXPLOSIVE     TUs>%02d"), wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = PRIME;
+                        i++;
+                    }
+                } else {
+                    if (it->delay_time() == 0) {
+                        sprintf(dstr[i], _("PRIME GRENADE       TUs>%02d"), wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = PRIME;
+                        i++;
+                    }
+                }
+            }
+        } else {
+            if ((it->obdata_isGun() && it->haveclip()) || it->is_laser()) {
+                if (it->obdata_accuracy(AUTO)) {
+                    waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
+                    wtime[i] = sel_man->required(it->obdata_time(AUTO));
+                    if (sel_man->havetime(wtime[i] * it->obdata_autoShots()) == OK) {
+                        sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i] * it->obdata_autoShots());
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = AUTOSHOT;
+                        i++;
+                    }
+                }
+                if (it->obdata_accuracy(SNAP)) {
+                    waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
+                    wtime[i] = sel_man->required(it->obdata_time(SNAP));
+                    if (sel_man->havetime(wtime[i]) == OK) {
+                        sprintf(dstr[i], _("SNAP SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = SNAPSHOT;
+                        i++;
+                    }
+                }
+                if (it->obdata_accuracy(AIMED)) {
+                    waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
+                    wtime[i] = sel_man->required(it->obdata_time(AIMED));
+                    if (sel_man->havetime(wtime[i]) == OK) {
+                        sprintf(dstr[i], _("AIMED SHOT  ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = AIMEDSHOT;
+                        i++;
                     }
                 }
             } else {
-                if ((it->obdata_isGun() && it->haveclip()) || it->is_laser()) {
-                    if (it->obdata_accuracy(AUTO)) {
-                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-                        wtime[i] = sel_man->required(it->obdata_time(AUTO));
-                        if (sel_man->havetime(wtime[i] * it->obdata_autoShots()) == OK) {
-                            sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i] * it->obdata_autoShots());
-                            the_dialog[i].proc = firemenu_dialog_proc;
-                            waction[i] = AUTOSHOT;
-                            i++;
-                        }
+                //! We are dealing with a medical kit
+                if (it->is_healing_item()) {
+                    waccur[i] = 100;
+                    wtime[i]  = sel_man->required(it->obdata_useTime());
+                    if (!wtime[i]) wtime[i] = sel_man->required(25);
+                    if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_HEALTH))) {
+                        sprintf(dstr[i], _("HEAL WOUNDS         TUs>%02d"), wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = HEAL_WOUNDS;
+                        i++;
                     }
-                    if (it->obdata_accuracy(SNAP)) {
-                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
-                        wtime[i] = sel_man->required(it->obdata_time(SNAP));
-                        if (sel_man->havetime(wtime[i]) == OK) {
-                            sprintf(dstr[i], _("SNAP SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-                            the_dialog[i].proc = firemenu_dialog_proc;
-                            waction[i] = SNAPSHOT;
-                            i++;
-                        }
+                    waccur[i] = 100;
+                    wtime[i]  = sel_man->required(it->obdata_useTime());
+                    if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_STUN) || it->obdata_heal(HEAL_TYPE_ENERGY))) {
+                        sprintf(dstr[i], _("INJECT STIMULANTS   TUs>%02d"), wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = HEAL_ENERGY_STUN;
+                        i++;
                     }
-                    if (it->obdata_accuracy(AIMED)) {
-                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
-                        wtime[i] = sel_man->required(it->obdata_time(AIMED));
-                        if (sel_man->havetime(wtime[i]) == OK) {
-                            sprintf(dstr[i], _("AIMED SHOT  ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-                            the_dialog[i].proc = firemenu_dialog_proc;
-                            waction[i] = AIMEDSHOT;
-                            i++;
-                        }
+                    waccur[i] = 100;
+                    wtime[i]  = sel_man->required(it->obdata_useTime());
+                    if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_MORALE))) {
+                        sprintf(dstr[i], _("INJECT PAINKILLERS  TUs>%02d"), wtime[i]);
+                        the_dialog[i].proc = firemenu_dialog_proc;
+                        waction[i] = HEAL_MORALE;
+                        i++;
                     }
-                } else {
-					//! We are dealing with a medical kit
-					if (it->is_healing_item()) {
-						waccur[i] = 100;
-						wtime[i]  = sel_man->required(it->obdata_useTime());
-						if (!wtime[i]) wtime[i] = sel_man->required(25);
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_HEALTH))) {
-							sprintf(dstr[i], _("HEAL WOUNDS         TUs>%02d"), wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = HEAL_WOUNDS;
-							i++;
-						}
-						waccur[i] = 100;
-						wtime[i]  = sel_man->required(it->obdata_useTime());
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_STUN) || it->obdata_heal(HEAL_TYPE_ENERGY))){
-							sprintf(dstr[i], _("INJECT STIMULANTS   TUs>%02d"), wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = HEAL_ENERGY_STUN;
-							i++;
-						}
-						waccur[i] = 100;
-						wtime[i]  = sel_man->required(it->obdata_useTime());
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_MORALE))) {
-							sprintf(dstr[i], _("INJECT PAINKILLERS  TUs>%02d"), wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = HEAL_MORALE;
-							i++;
-						}
-					}
-				}
-            } 
-            
-        if (i > 1) {                  
+                }
+            }
+        }
+
+        if (i > 1) {
             the_dialog[i].proc = NULL;
             //set_mouse_sprite(mouser);
             firemenu_dialog_proc_exit = 0;
@@ -741,24 +740,24 @@ int Icon::identify(int mx, int my)
     mx -= x; my -= y;
     int i;
 
-    for (i = B_MAN_UP; i <= BUTTON_NUMBER; i++) { 
-        if (button[ i ].is_inside(mx, my)) { 
-            icon_nr = i; 
+    for (i = B_MAN_UP; i <= BUTTON_NUMBER; i++) {
+        if (button[ i ].is_inside(mx, my)) {
+            icon_nr = i;
             return icon_nr;
-        } 
-    } 
+        }
+    }
     // Reserve-time-buttons are a separate class:
-    for (i = R_TIME_FREE; i <= RESERVE_NUMBER; i++) { 
+    for (i = R_TIME_FREE; i <= RESERVE_NUMBER; i++) {
         if (reserve[ i ].button.is_inside(mx, my)) {
-            icon_nr = i + BUTTON_NUMBER; 
+            icon_nr = i + BUTTON_NUMBER;
             return icon_nr;
-        } 
-    } 
+        }
+    }
     return -1;
 }
 
 /**
- * If a button in the control-panel / icon-area was clicked, 
+ * If a button in the control-panel / icon-area was clicked,
  * execute its command
  */
 void Icon::execute(int mx, int my)
@@ -767,92 +766,78 @@ void Icon::execute(int mx, int my)
     if (item[I_LEFT].button.is_inside(mx, my)) {
         if (MODE != WATCH)
             firemenu(P_ARM_LEFT);
-    } else
-    if (item[I_RIGHT].button.is_inside(mx, my)) {
+    } else if (item[I_RIGHT].button.is_inside(mx, my)) {
         if (MODE != WATCH)
             firemenu(P_ARM_RIGHT);
-    } else
-    if (button[B_MAN_UP].is_inside(mx, my)) {
+    } else if (button[B_MAN_UP].is_inside(mx, my)) {
         if (MODE != WATCH) {
             //Pathfinding version 2:
             if (sel_man)
-                if(map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
+                if (map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
                     sel_man->wayto(sel_man->z + 1, sel_man->x, sel_man->y);
-                
+
             //Pathfinding version 1:
             /*if (sel_man->use_elevator(+1))
                 map->center(sel_man);*/
-                
+
         }
-    } else
-    if (button[B_MAN_DOWN].is_inside(mx, my)) {
+    } else if (button[B_MAN_DOWN].is_inside(mx, my)) {
         if (MODE != WATCH) {
             //Pathfinding version 2:
             if (sel_man)
-                if(map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
+                if (map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
                     sel_man->wayto(sel_man->z - 1, sel_man->x, sel_man->y);
-                
+
             //Pathfinding version 1:
             /*if (sel_man->use_elevator(-1))
                 map->center(sel_man);*/
-            
+
         }
-    } else
-    if (button[B_VIEW_UP].is_inside(mx, my)) {
+    } else if (button[B_VIEW_UP].is_inside(mx, my)) {
         if (map->sel_lev < map->level - 1)
             map->sel_lev++;
-    } else
-    if (button[B_VIEW_DOWN].is_inside(mx, my)) {
+    } else if (button[B_VIEW_DOWN].is_inside(mx, my)) {
         if (map->sel_lev > 0)
             map->sel_lev--;
 //
 // Buttons for reserving time:
 //
-    } else
-    if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
-        if(sel_man)
-            sel_man->set_reserve_type(RESERVE_FREE); 
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-    } else
-    if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
-        if(sel_man)     
+    } else if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
+        if (sel_man)
+            sel_man->set_reserve_type(RESERVE_FREE);
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+    } else if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
+        if (sel_man)
             sel_man->set_reserve_type(RESERVE_AIM);
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
-    } else
-    if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
-        if(sel_man)
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
+    } else if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
+        if (sel_man)
             sel_man->set_reserve_type(RESERVE_SNAP);
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-    } else
-    if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
-        if(sel_man)
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+    } else if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
+        if (sel_man)
             sel_man->set_reserve_type(RESERVE_AUTO);
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);  
-    } else
-    if (button[B_MAP].is_inside(mx, my)) {
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
+    } else if (button[B_MAP].is_inside(mx, my)) {
         if (MODE != WATCH)
             MODE = MAP2D;
-    } else
-    if (button[B_CROUCH].is_inside(mx, my)) {
+    } else if (button[B_CROUCH].is_inside(mx, my)) {
         if (MODE != WATCH) {
             if ((sel_man != NULL) && (!sel_man->ismoving()) && (!sel_man->is_flying())) {
                 sel_man->change_pose();
             }
         }
-    } else
-    if (button[B_MAN_STATS].is_inside(mx, my)) {
+    } else if (button[B_MAN_STATS].is_inside(mx, my)) {
         if (MODE != WATCH)
             MODE = UNIT_INFO;
 //
 // Test: Toggle Stats-BarChart between normal & alternate version (Todo)
 //
-    } else
-    if (button[B_BARCHART].is_inside(mx, my)) {
+    } else if (button[B_BARCHART].is_inside(mx, my)) {
         g_console->printf(COLOR_SYS_OK, "%s", "BarChart");
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 //
-    } else
-    if (button[B_INVENTORY].is_inside(mx, my)) {
+    } else if (button[B_INVENTORY].is_inside(mx, my)) {
         if (MODE != WATCH) {
             TARGET = 0;
             if ((sel_man != NULL) && (sel_man->is_panicking())) {
@@ -861,13 +846,11 @@ void Icon::execute(int mx, int my)
                 MODE = MAN;
             }
         }
-    } else
-    if (button[B_CENTER_VIEW].is_inside(mx, my)) {
+    } else if (button[B_CENTER_VIEW].is_inside(mx, my)) {
         if (sel_man != NULL) {
             map->center(sel_man);
         }
-    } else
-    if (button[B_NEXT_MAN].is_inside(mx, my)) { 
+    } else if (button[B_NEXT_MAN].is_inside(mx, my)) {
         TARGET = 0;
         if (sel_man == NULL) {
             sel_man = platoon_local->captain();
@@ -879,8 +862,7 @@ void Icon::execute(int mx, int my)
             if (s != sel_man)
                 map->center(sel_man);
         }
-    } else
-    if (button[B_NEXT_MAN_2].is_inside(mx, my)) {
+    } else if (button[B_NEXT_MAN_2].is_inside(mx, my)) {
         TARGET = 0;
         if (sel_man == NULL) {
             sel_man = platoon_local->captain();
@@ -893,36 +875,32 @@ void Icon::execute(int mx, int my)
             if (s != sel_man)
                 map->center(sel_man);
         }
-    } else
-    if (button[B_TOGGLE_ROOF].is_inside(mx, my)) {  
+    } else if (button[B_TOGGLE_ROOF].is_inside(mx, my)) {
         if (FLAGS & F_SHOWLEVELS)
             FLAGS &= ~F_SHOWLEVELS;
         else
             FLAGS |= F_SHOWLEVELS;
-    } else
-    if (button[B_OPTIONS].is_inside(mx, my)) {
+    } else if (button[B_OPTIONS].is_inside(mx, my)) {
         int prev_pause = g_pause;
         if (MODE == WATCH)
             g_pause = 1;
 
         configure();
-        
+
         g_pause = prev_pause;
-    } else
-    if (button[B_DONE].is_inside(mx, my)) {
+    } else if (button[B_DONE].is_inside(mx, my)) {
         if (MODE != WATCH) {
             TARGET = 0;
             if (nomoves())
                 send_turn();
         }
-    } else
-    if (button[B_EXIT].is_inside(mx, my)) {
+    } else if (button[B_EXIT].is_inside(mx, my)) {
         simulate_keypress(KEY_ESC << 8);
     }
 }
 
 /**
- * Draw infos about current soldier into control-panel / icon-area: 
+ * Draw infos about current soldier into control-panel / icon-area:
  * items in hands, name, stats with bargraphs.
  * Show Turn-number where XCOM had the rank-picture.
  */
@@ -936,26 +914,26 @@ void Icon::info()
     if (sel_man != NULL) {
         sel_man->drawinfo(x, y);
     }
-    
+
     draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
-        
-    if(sel_man)
-        switch(sel_man->m_ReserveTimeMode) {
-        case RESERVE_FREE:
-            reserve[R_TIME_FREE].Draw(iconsbmp);
-            break;
-        
-        case RESERVE_AIM:
-            reserve[R_TIME_AIM].Draw(iconsbmp);
-            break;
-        
-        case RESERVE_SNAP:
-            reserve[R_TIME_SNAP].Draw(iconsbmp);
-            break;
-        
-        case RESERVE_AUTO:
-            reserve[R_TIME_AUTO].Draw(iconsbmp);
-            break;
+
+    if (sel_man)
+        switch (sel_man->m_ReserveTimeMode) {
+            case RESERVE_FREE:
+                reserve[R_TIME_FREE].Draw(iconsbmp);
+                break;
+
+            case RESERVE_AIM:
+                reserve[R_TIME_AIM].Draw(iconsbmp);
+                break;
+
+            case RESERVE_SNAP:
+                reserve[R_TIME_SNAP].Draw(iconsbmp);
+                break;
+
+            case RESERVE_AUTO:
+                reserve[R_TIME_AUTO].Draw(iconsbmp);
+                break;
         }
     else reserve[R_TIME_FREE].Draw(iconsbmp);
 }
@@ -973,7 +951,7 @@ inline bool is_trans(int c)
 int Icon::inside(int mx, int my)
 {
     if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height) &&
-        !(is_trans(getpixel(iconsbmp, mx - x, my - y))))
+            !(is_trans(getpixel(iconsbmp, mx - x, my - y))))
         return 1;
     else
         return 0;
@@ -981,7 +959,7 @@ int Icon::inside(int mx, int my)
 
 /**
  * Show End-of-turn - Picture
- */ 
+ */
 void Icon::show_eot()
 {
     BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
@@ -1025,16 +1003,16 @@ void Icon::draw_text(int txt, int val, char *format)
 }
 
 /**
- * Draw item in hand, with additional info: 
+ * Draw item in hand, with additional info:
  * available ammo in weapon, delay for primed grenade
  */
 void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 {
     if (item[itm].button.is_inside(mouse_x - x, mouse_y - y))
-       item[itm].Draw(iconsbmp, highlbmp, it);
+        item[itm].Draw(iconsbmp, highlbmp, it);
     else
         item[itm].Draw(iconsbmp, it);
-        
+
     if (rounds != -1)
         item[itm].DrawDigits(iconsbmp, rounds, dig_round);
     else if (prime != -1)

@@ -28,7 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 //! Starting pages for the help-chapters
 #define HELP_U2K_INDEX    0
- // "HELP_INDEX" already used in /MinGW/include/winuser.h
+// "HELP_INDEX" already used in /MinGW/include/winuser.h
 #define HELP_INTRO       10
 #define HELP_BATTLESCAPE 20
 #define HELP_MAPVIEW     40
@@ -51,10 +51,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 const char *datetime();
 
 //! Write message into init-scripts.log
-void lua_message( const std::string &str1 );
+void lua_message(const std::string &str1);
 
 //! Write message into battlereport.txt
-void battle_report( const char *format, ... );
+void battle_report(const char *format, ...);
 
 #undef map
 //! Interface to LUA-gettext()
@@ -66,13 +66,13 @@ extern std::map<const char *, const char *> translation_cache;
 void Init_place_names();
 
 //! Tooltips for the control-panel
-const char *icontext( const int icon_nr );
+const char *icontext(const int icon_nr);
 
 //! Show tip-of-the-day
 void showtip();
 
 //! Simple help, using alert3().
-void help( const int helppage );
+void help(const int helppage);
 
 #endif
 

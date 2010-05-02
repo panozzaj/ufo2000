@@ -71,19 +71,19 @@ public:
     static int             m_games_started;
     static std::string     m_last_user_name;
     static NLtime          m_last_user_disconnect_time;
-    
+
     ServerClientUfo(ServerDispatch *d, NLsocket s)
         : ServerClient(d, s), m_busy(false), game(NULL) { }
     virtual ~ServerClientUfo();
     bool recv_packet(NLuint id, const std::string &packet);
 
-    const std::string & get_realm() { return m_realm; }
-    const std::string & get_system() { return m_system; }
-    const std::string & get_version() { return m_version; }
+    const std::string &get_realm() { return m_realm; }
+    const std::string &get_system() { return m_system; }
+    const std::string &get_version() { return m_version; }
 
     // TODO - return right opponent.
     bool is_in_server_chat() { return !m_busy; }
-    Server_Game_UFO* game;
+    Server_Game_UFO *game;
     long int session_id;
     // game_id for user who doesn't really play the game but can send debug info (debug replay)
     long int debug_game_id;
@@ -98,8 +98,8 @@ class ClientServerUfo: public ClientServer
 {
 public:
     bool login(const std::string &name, const std::string &pass,
-        const std::string &realm, const std::string &system, const std::string &version,
-        std::string &error_message);
+               const std::string &realm, const std::string &system, const std::string &version,
+               std::string &error_message);
     bool message(const std::string &text);
     bool challenge(const std::string &user);
     bool decline_challenge(const std::string &user);

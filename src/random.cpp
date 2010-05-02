@@ -82,7 +82,7 @@ REAL Random::getUniform()
  */
 REAL Random::getUniform(REAL a, REAL b)
 {
-	//! False if hitting a tile with an item that has no damage attribute. From Bullet::hitman(), Map->apply_hit();
+    //! False if hitting a tile with an item that has no damage attribute. From Bullet::hitman(), Map->apply_hit();
     ASSERT(a < b);
     next();
     REAL result = m_j * FAC;
@@ -90,7 +90,7 @@ REAL Random::getUniform(REAL a, REAL b)
 #if RANDOM_DL >= 3
     char debugstr[STDBUFSIZE];
     sprintf(debugstr, "REAL Random::getUniform(REAL a = %lf, REAL b = %lf) = %lf",
-        (double) a, (double) b, (double) result);
+            (double) a, (double) b, (double) result);
     lua_message(debugstr);
 #endif
     return result;
@@ -114,7 +114,7 @@ REAL Random::getNormal()
             v2 = getUniform(-1.0, 1.0);
             rsq = v1 * v1 + v2 * v2;
         } while (rsq >= 1.0 || rsq < LOW); // Don't make it too low to avoid precision errors.
-        fact = sqrt (-2.0 * fdlibm::log (rsq) / rsq);
+        fact = sqrt(-2.0 * fdlibm::log(rsq) / rsq);
         m_normalsaved = v1 * fact;
         m_normalready = true;
         result = v2 * fact;
@@ -122,7 +122,7 @@ REAL Random::getNormal()
 #if RANDOM_DL >= 2
     char debugstr[STDBUFSIZE];
     sprintf(debugstr, "REAL Random::getNormal() = %lf",
-        (double) result);
+            (double) result);
     lua_message(debugstr);
 #endif
     return result;
@@ -139,7 +139,7 @@ REAL Random::getNormal(REAL varsqrt)
 #if RANDOM_DL >= 1
     char debugstr[STDBUFSIZE];
     sprintf(debugstr, "REAL Random::getNormal(REAL varsqrt = %lf) = %lf",
-        (double) varsqrt, (double) result);
+            (double) varsqrt, (double) result);
     lua_message(debugstr);
 #endif
     return result;
@@ -154,7 +154,7 @@ void Random::init(long init_num, long preiters)
 #if RANDOM_DL >= 1
     char debugstr[STDBUFSIZE];
     sprintf(debugstr, "void Random::init(long init_num = %ld, long preiters = %ld)",
-        init_num, preiters);
+            init_num, preiters);
     lua_message(debugstr);
 #endif
     ASSERT(init_num >= 0);

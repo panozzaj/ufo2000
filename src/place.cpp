@@ -33,7 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
-Place::Place(int x, int y, int w, int h, Cell* cell)
+Place::Place(int x, int y, int w, int h, Cell *cell)
 {
     viscol = 0;
     m_item = NULL;
@@ -135,7 +135,7 @@ int Place::isfree(int xx, int yy)
 {
     if (!outside_belt(xx, yy))
         if ((xx >= 0) && (xx < width) && (yy >= 0) && (yy < height)) {
-            Item * t = m_item;
+            Item *t = m_item;
             while (t != NULL) {
                 if (t->inside(xx, yy))
                     return 0;
@@ -161,7 +161,7 @@ int Place::ishand()
  * Test if item fits into a place like hand, belt, backpack etc.
  * Return 1 if it fits, 0 otherwise
  */
-int Place::isfit(Item * it, int xx, int yy)
+int Place::isfit(Item *it, int xx, int yy)
 {
     if (ishand() && (m_item != NULL))
         return 0;
@@ -184,9 +184,9 @@ int Place::put(Item *it, int xx, int yy)
     if (m_cell != NULL) {
         Position p = m_cell->get_position();
         if ((p.level() > 0) &&
-            (map->mcd(p.level(), p.column(), p.row(), 0)->No_Floor) &&
-            !(map->isStairs(p.level()-1, p.column(), p.row())))
-                return map->place(p.level()-1, p.column(), p.row())->put(it, xx, yy);
+                (map->mcd(p.level(), p.column(), p.row(), 0)->No_Floor) &&
+                !(map->isStairs(p.level() - 1, p.column(), p.row())))
+            return map->place(p.level() - 1, p.column(), p.row())->put(it, xx, yy);
     }
 
 
@@ -196,13 +196,13 @@ int Place::put(Item *it, int xx, int yy)
         it->m_next = m_item; it->m_prev = NULL; it->m_place = this;
         it->setpos(xx, yy);
         m_item = it;
-       	/* if this place belongs to a map cell */
+        /* if this place belongs to a map cell */
         if (m_cell != NULL) {
-           	Position p = m_cell->get_position();
+            Position p = m_cell->get_position();
             map->update_seen_item(p);
             if (it->obdata_ownLight())
-            	/* if item has own light - an electro flare */
-				map->add_light_source(p.level(), p.column(), p.row(), it->obdata_ownLight());
+                /* if item has own light - an electro flare */
+                map->add_light_source(p.level(), p.column(), p.row(), it->obdata_ownLight());
         }
 
         return 1;
@@ -215,7 +215,7 @@ int Place::put(Item *it, int xx, int yy)
  * This function also finds a suitable position for the item.
  * @return 1 if successful, 0 otherwise (no room for item).
  */
-int Place::put(Item * it)
+int Place::put(Item *it)
 {
     it->unlink();	// delete item from its original position
 
@@ -237,11 +237,11 @@ void Place::set_item(Item *it)
 {
     m_item = it;
     if (m_cell != NULL) {
-       	/* if item has own light - an electro flare */
+        /* if item has own light - an electro flare */
         if (int ownlight = it->obdata_ownLight()) {
-        	Position p = m_cell->get_position();
-			map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
-		}
+            Position p = m_cell->get_position();
+            map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
+        }
         map->update_seen_item(m_cell->get_position());
     }
 
@@ -251,20 +251,20 @@ void Place::set_item(Item *it)
  * Get item from place (delete from place's list)
  * @return The item at the position, or NULL if no item there.
  */
-Item * Place::get(int xx, int yy)
+Item *Place::get(int xx, int yy)
 {
-    Item * t;
+    Item *t;
     t = m_item;
     while (t != NULL) {
         if (ishand() || t->inside(xx, yy)) {
             t->unlink();	/* remove from list */
             if (m_cell != NULL) {
-            	Position p = m_cell->get_position();
+                Position p = m_cell->get_position();
                 map->update_seen_item(p);
-	            if (int ownlight = t->obdata_ownLight())
-	            	/* if item has own light - an electro flare */
-					map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
-			}
+                if (int ownlight = t->obdata_ownLight())
+                    /* if item has own light - an electro flare */
+                    map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
+            }
             return t;
         }
         t = t->m_next;
@@ -279,17 +279,17 @@ Item * Place::get(int xx, int yy)
  */
 int Place::destroy(Item *it)
 {
-    Item * t;
+    Item *t;
     t = m_item;
     while (t != NULL) {
         if (t == it) {
             t->unlink();	// remove from list
             if (m_cell != NULL) {
-            	Position p = m_cell->get_position();
+                Position p = m_cell->get_position();
                 map->update_seen_item(p);
-	            if (int ownlight = t->obdata_ownLight())	/* if item has own light - an electro flare */
-					map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
-			}
+                if (int ownlight = t->obdata_ownLight())	/* if item has own light - an electro flare */
+                    map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
+            }
             delete it;
             return 1;
         }
@@ -375,7 +375,7 @@ void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
         const char *eqname = get_current_equipment_name();
         if (!eqname) eqname = _("(none, remote player doesn't have any of your weaposets)");
         textprintf(dest, g_small_font, gx, gy + 1 - text_height(g_small_font), COLOR_WHITE,
-            _("Weapon set: %s"), eqname);
+                   _("Weapon set: %s"), eqname);
     } else {
         textout(dest, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
     }
@@ -429,17 +429,17 @@ void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
 
             if (ishand()) { // Inventory-view: display ammo-rounds & grenade-delay
                 if (t->clip() != NULL) {   // see also: Soldier::drawinfo()
-                    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->roundsremain() );
+                    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->roundsremain());
                     textout(dest, g_small_font, t->get_damage_name(), gx + 3, gy + 36, COLOR_GREEN);
                 }
-                if (t->obdata_isAmmo() ) {   // Test
-                    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->m_rounds );
+                if (t->obdata_isAmmo()) {    // Test
+                    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->m_rounds);
                 }
-                if (t->is_grenade() ) {  // see also: icon.h : DrawPrimed
+                if (t->is_grenade()) {   // see also: icon.h : DrawPrimed
                     if (t->delay_time() > 0)
-                    printsmall_x(dest, gx + 23, gy + 39, COLOR_RED, t->delay_time() - 1);
+                        printsmall_x(dest, gx + 23, gy + 39, COLOR_RED, t->delay_time() - 1);
                     else if (t->is_proximity_grenade() && t->delay_time() < 0)
-                    textout(dest, g_small_font, "*", gx + 23, gy + 36, COLOR_RED);
+                        textout(dest, g_small_font, "*", gx + 23, gy + 36, COLOR_RED);
                 }
             }
 
@@ -463,16 +463,16 @@ void Place::dropall(int lev, int col, int row)
     Item *t = m_item;
     Position p;
     if (m_cell != NULL)
-    	p = m_cell->get_position();
+        p = m_cell->get_position();
     while (t != NULL) {
         //text_mode(0);
         //textprintf(screen, font, 1, 150, 1, "x=%d y=%d t=%2x p=%4s n=%1s   ", t->x, t->y, t->type, t->prev, t->next);
 
         //Place::put modifies t, so store reference to next item beforehand
-        Item* tm = t->m_next;
+        Item *tm = t->m_next;
         if (m_cell != NULL)
             if (int ownlight = t->obdata_ownLight())	/* if item has own light - an electro flare */
-				map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
+                map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
         map->place(lev, col, row)->put(t);
 
         //textprintf(screen, font, 1, 160, 1, "put t=%2x", t->type);
@@ -565,11 +565,10 @@ bool Place::add_item(int x, int y, const char *item_name, bool autoload)
     return false;
 }
 
-void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds
+void Place::build_ITEMDATA(int ip, ITEMDATA *id)  //don't save clip rounds
 {
-    Item * it = m_item;
-    while (it != NULL)
-    {
+    Item *it = m_item;
+    while (it != NULL) {
         ASSERT(id->num < 100);
         id->place[id->num] = ip;
         id->item_type[id->num] = intel_uint32(it->m_type);
@@ -598,11 +597,11 @@ void Place::save_to_string(std::string &str)
         char line[512];
         if (!it->haveclip()) {
             sprintf(line, "{%d, %d, \"%s\"},\n", it->m_x, it->m_y,
-                lua_escape_string(it->name()).c_str());
+                    lua_escape_string(it->name()).c_str());
         } else {
             sprintf(line, "{%d, %d, \"%s\", \"%s\"},\n", it->m_x, it->m_y,
-                lua_escape_string(it->name()).c_str(),
-                lua_escape_string(Item::obdata_name(it->cliptype())).c_str());
+                    lua_escape_string(it->name()).c_str(),
+                    lua_escape_string(Item::obdata_name(it->cliptype())).c_str());
         }
         str += line;
         it = it->m_prev;
@@ -673,8 +672,7 @@ int Place::eot_save(int ip, char *txt)
     while (t != NULL) {
         len += sprintf(txt + len, "ip=%d type=%d x=%d y=%d rounds=%d\r\n",
                        ip, t->m_type, t->m_x, t->m_y, t->m_rounds);
-        if (t->haveclip()) //////////////////////
-        {
+        if (t->haveclip()) { //////////////////////
             len += sprintf(txt + len, "ip=%d type=%d x=%d y=%d rounds=%d\r\n",
                            -1, t->cliptype(), -1, -1, t->roundsremain());
         }
@@ -691,8 +689,7 @@ int Place::count_weight()
     Item *t = m_item;
     int weight = 0;
 
-    while (t != NULL)
-    {
+    while (t != NULL) {
         weight += t->obdata_weight();
         if (t->haveclip())
             weight += t->clip()->obdata_weight();
@@ -709,8 +706,7 @@ int Place::has_forbidden_equipment()
 {
     Item *t = m_item;
 
-    while (t != NULL)
-    {
+    while (t != NULL) {
         if (!is_item_allowed(t->itemtype()))
             return 1;
         t = t->m_next;
@@ -727,14 +723,14 @@ void Place::destroy_all_items()
 
     Position p;
     if (m_cell)	/* if this is a map cell, remember position */
-    	p = m_cell->get_position();
+        p = m_cell->get_position();
 
     t = m_item;
     while (t != NULL) {
         t2 = t->m_next;
         if (m_cell != NULL) {
             if (int ownlight = t->obdata_ownLight())	/* if item has own light - an electro flare */
-				map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
+                map->remove_light_source(p.level(), p.column(), p.row(), ownlight);
         }
         t->unlink();
         delete t;
@@ -752,10 +748,10 @@ void Place::damage_items(int dam)
 {
     Item *it = m_item;
 
-	/* grenades explode by being damaged, so store them in a list when destroyed */
+    /* grenades explode by being damaged, so store them in a list when destroyed */
     std::vector<int> explo_type, explo_owner;
 
-    while(it != NULL) {
+    while (it != NULL) {
         if (it->damage(dam)) { //destroyed
             Item *t2 = it->m_next;	// remember next as destroy() will delete this item
 
@@ -775,11 +771,11 @@ void Place::damage_items(int dam)
 
     if (explo_type.size() > 0) {
         int lev, col, row;
-		
-		/* Find the coordinates of this place. Can be found at 3 different places:
-			- on the map
-			- our soldier has it
-			- the opponent's soldier has it */
+
+        /* Find the coordinates of this place. Can be found at 3 different places:
+        	- on the map
+        	- our soldier has it
+        	- the opponent's soldier has it */
         int pf = map->find_place_coords(this, lev, col, row);
         if (!pf)
             pf = platoon_local->find_place_coords(this, lev, col, row);

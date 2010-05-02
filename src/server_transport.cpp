@@ -45,11 +45,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 static NLuint nlSwapi(NLuint x)
 {
     int tmp = 1;
-    if (*(char *)&tmp == 1)
-    {
+    if (*(char *)&tmp == 1) {
         // swap is needed
-        return (NLuint)(((((NLuint)x) & 0x000000ff) << 24) | ((((NLuint)x) & 0x0000ff00) << 8) | 
-            ((((NLuint)x) & 0x00ff0000) >> 8) | ((((NLuint)x) & 0xff000000) >> 24));
+        return (NLuint)(((((NLuint)x) & 0x000000ff) << 24) | ((((NLuint)x) & 0x0000ff00) << 8) |
+                        ((((NLuint)x) & 0x00ff0000) >> 8) | ((((NLuint)x) & 0xff000000) >> 24));
     } else {
         // swap is not needed
         return x;
@@ -59,7 +58,7 @@ static NLuint nlSwapi(NLuint x)
 #ifdef ENABLE_UFO2K_SERVER
 
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
-    :m_socket(socket), m_server(server)
+    : m_socket(socket), m_server(server)
 {
     m_error = false;
     nlTime(&m_connection_time);
@@ -82,8 +81,8 @@ ServerClient::~ServerClient()
     nlGroupDeleteSocket(m_server->m_group, m_socket);
     nlClose(m_socket);
 
-    server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
-        m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
+    server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n",
+               m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
 }
 
 #endif
@@ -112,7 +111,7 @@ static bool packet_to_stream(std::string &stream, NLuint id, const std::string &
 {
     NLuint size = nlSwapi(packet.size());
     id = nlSwapi(id);
-    
+
     stream += std::string((const char *)&size, sizeof(size));
     stream += std::string((const char *)&id, sizeof(id));
     stream += packet;
@@ -130,7 +129,7 @@ static bool stream_to_socket(NLsocket socket, std::string &stream)
     if (size_written != NL_INVALID)
         stream.erase(stream.begin(), stream.begin() + size_written);
 
-    return true;    
+    return true;
 }
 
 #ifdef ENABLE_UFO2K_SERVER
@@ -144,9 +143,9 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     std::string packet;
     int err;
 
-    if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' && 
-        stream[1] == 'E' && stream[2] == 'T') {
-    //  HTTP request        
+    if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' &&
+            stream[1] == 'E' && stream[2] == 'T') {
+        //  HTTP request
         client->m_http = true;
         std::string http_reply;
         http_reply += "HTTP/1.1 200 OK\r\n";
@@ -198,10 +197,10 @@ void ServerDispatch::HandleNewConnections()
     nlGetRemoteAddr(newsock, &addr);
 
     NLbyte string[NL_MAX_STRING_LENGTH];
-    
+
     if (!validate_ip(nlAddrToString(&addr, string))) {
         server_log("rejected connection from %s, address found in blacklist\n",
-            nlAddrToString(&addr, string));
+                   nlAddrToString(&addr, string));
         nlClose(newsock);
         return;
     } else {
@@ -238,8 +237,8 @@ void ServerDispatch::Run(NLsocket sock)
         }
 
         HandleNewConnections();
-        
-    //  Check for incoming messages
+
+        //  Check for incoming messages
         if (s.size() < CONNECTIONS_COUNT_LIMIT) s.resize(CONNECTIONS_COUNT_LIMIT);
         NLint count = nlPollGroup(m_group, NL_READ_STATUS, &s[0], CONNECTIONS_COUNT_LIMIT, 0);
         if (count == NL_INVALID) {
@@ -247,7 +246,7 @@ void ServerDispatch::Run(NLsocket sock)
             continue;
         }
 
-    //  Loop through the clients and read the packets
+        //  Loop through the clients and read the packets
         for (NLint i = 0; i < count; i++) {
             ServerClient *client = m_clients_by_socket[s[i]];
             int readlen;
@@ -255,7 +254,7 @@ void ServerDispatch::Run(NLsocket sock)
 
             while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
                 client->m_stream.append(buffer, readlen);
-            //  Check for traffic limit
+                //  Check for traffic limit
                 unsigned long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
                 if (ave_traffic > client->m_max_ave_traffic)
                     client->m_max_ave_traffic = ave_traffic;
@@ -267,29 +266,29 @@ void ServerDispatch::Run(NLsocket sock)
                     client->m_error = true;
                 } else {
                     server_log("socket read error %d: user '%s' from %s\n",
-                        err, client->m_name.c_str(), client->m_ip.c_str());
+                               err, client->m_name.c_str(), client->m_ip.c_str());
                 }
             }
 
             HandleSocket(s[i]);
         }
 
-    //  Loop through the clients and write the packets
+        //  Loop through the clients and write the packets
         std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
         while (it != m_clients_by_socket.end()) {
             ServerClient *client = it->second; it++;
             if (client->m_stream_out.empty()) continue;
 
             NLint size_written = nlWrite(client->m_socket,
-                client->m_stream_out.data(), client->m_stream_out.size());
+                                         client->m_stream_out.data(), client->m_stream_out.size());
 
             if (size_written != NL_INVALID) {
-                client->m_stream_out.erase(client->m_stream_out.begin(), 
-                    client->m_stream_out.begin() + size_written);
+                client->m_stream_out.erase(client->m_stream_out.begin(),
+                                           client->m_stream_out.begin() + size_written);
             } else {
                 NLenum err = nlGetError();
                 server_log("socket write error %d: user '%s' from %s\n",
-                    err, client->m_name.c_str(), client->m_ip.c_str());
+                           err, client->m_name.c_str(), client->m_ip.c_str());
             }
 
             if (client->m_http && client->m_stream_out.empty())
@@ -341,8 +340,8 @@ static bool string_to_base64(const char *src, std::string &dst)
 
         if (x == 0) return true;
 
-        if (x == 1) a=0;
-        if (x == 2) b=0;
+        if (x == 1) a = 0;
+        if (x == 2) b = 0;
         temp[0] = alphabet[buffer[0] >> 2];
         temp[1] = alphabet[((buffer[0] & 3) << 4) | (buffer[1] >> 4) * a];
         temp[2] = x > 1 ? alphabet[((buffer[1] & 0xF) << 2) | (buffer[2] >> 6) * b] : '=';
@@ -389,17 +388,17 @@ bool ClientServer::connect(
         char tmp[512];
 
         if (http_proxy_login.empty()) {
-            sprintf(tmp, 
-                "CONNECT %s HTTP/1.1\r\n\r\n", 
-                host.c_str());
+            sprintf(tmp,
+                    "CONNECT %s HTTP/1.1\r\n\r\n",
+                    host.c_str());
         } else {
             std::string login_base64;
             string_to_base64(http_proxy_login.c_str(), login_base64);
-            sprintf(tmp, 
-                "CONNECT %s HTTP/1.1\r\n"
-                "Proxy-Authorization: Basic %s\r\n\r\n",
-                host.c_str(),
-                login_base64.c_str());
+            sprintf(tmp,
+                    "CONNECT %s HTTP/1.1\r\n"
+                    "Proxy-Authorization: Basic %s\r\n\r\n",
+                    host.c_str(),
+                    login_base64.c_str());
         }
 
         std::string request = tmp;
@@ -492,8 +491,7 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
     while ((readlen = nlRead(m_socket, buffer, sizeof(buffer))) > 0)
         m_stream.append(buffer, readlen);
 
-    if (stream_size_before == m_stream.size() && readlen == NL_INVALID)
-    {
+    if (stream_size_before == m_stream.size() && readlen == NL_INVALID) {
         NLenum err = nlGetError();
         if (err == NL_SOCK_DISCONNECT || err == NL_MESSAGE_END)
             return -1;
@@ -503,8 +501,8 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
     if (result < 0) return result;
 
     if (result && (id == SRV_KEEP_ALIVE)) {
-        // send the same packet back to the server to confirm that 
-        // we are still online, the rest of client code does not 
+        // send the same packet back to the server to confirm that
+        // we are still online, the rest of client code does not
         // even need to know that we have received this packet
         send_packet(id, packet);
         return 0;

@@ -4,7 +4,7 @@ This file is part of "UFO 2000" aka "X-COM: Gladiators"
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
 Copyright (C) 2002       ufo2000 development team
 
-This file contains slightly modified code for C++ objects 
+This file contains slightly modified code for C++ objects
 persistance taken from CommonC++ library v1.9.7
 WWW: http://cplusplus.sourceforge.net/
      http://www.gnu.org/software/CommonC++
@@ -46,20 +46,21 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #endif
 
-namespace persist {
+namespace persist
+{
 
 class PersistException
 {
 public:
-	CCXX_MEMBER_EXPORT(CCXX_EMPTY) PersistException(const std::string& reason);
-	CCXX_MEMBER_EXPORT(const std::string&) GetMessage() const;
-	CCXX_MEMBER_EXPORT(virtual) ~PersistException();
+    CCXX_MEMBER_EXPORT(CCXX_EMPTY) PersistException(const std::string &reason);
+    CCXX_MEMBER_EXPORT(const std::string &) GetMessage() const;
+    CCXX_MEMBER_EXPORT(virtual) ~PersistException();
 protected:
-	std::string myMessage;
+    std::string myMessage;
 };
 
 // This typedef allows us to declare NewBaseObjectFunction now
-typedef class BaseObject* (*NewBaseObjectFunction) (void);
+typedef class BaseObject*(*NewBaseObjectFunction)(void);
 
 /**
  * This class manages the types for generation of the persistent objects.
@@ -72,39 +73,39 @@ typedef class BaseObject* (*NewBaseObjectFunction) (void);
 class TypeManager
 {
 public:
-	
-	/**
-	 * This manages a registration to the typemanager - attempting to
-	 * remove problems with the optimisers
-	 */
-	class Registration
-	{
-	public:
-		Registration(const char* name, NewBaseObjectFunction func)
-			: myName(name) { TypeManager::Add(name,func); }
-		virtual ~Registration() { TypeManager::Remove(myName.c_str()); }
-	private:
-		std::string myName;
-	};
-	
-	/**
-	 * This adds a new construction function to the type manager
-	 */
-	CCXX_MEMBER_EXPORT(static void) Add(const char* name, NewBaseObjectFunction construction);
-	
-	/**
-	 * And this one removes a type from the managers lists
-	 */
-	CCXX_MEMBER_EXPORT(static void) Remove(const char* name);
-	
-	/**
-	 * This function creates a new object of the required type and
-	 * returns a pointer to it. NULL is returned if we couldn't find 
-	 * the type
-	 */
-	CCXX_EXPORT(static BaseObject*) CreateInstanceOf(const char* name);
-	
-	typedef std::map<std::string,NewBaseObjectFunction> StringFunctionMap;
+
+    /**
+     * This manages a registration to the typemanager - attempting to
+     * remove problems with the optimisers
+     */
+    class Registration
+    {
+    public:
+        Registration(const char *name, NewBaseObjectFunction func)
+            : myName(name) { TypeManager::Add(name, func); }
+        virtual ~Registration() { TypeManager::Remove(myName.c_str()); }
+    private:
+        std::string myName;
+    };
+
+    /**
+     * This adds a new construction function to the type manager
+     */
+    CCXX_MEMBER_EXPORT(static void) Add(const char *name, NewBaseObjectFunction construction);
+
+    /**
+     * And this one removes a type from the managers lists
+     */
+    CCXX_MEMBER_EXPORT(static void) Remove(const char *name);
+
+    /**
+     * This function creates a new object of the required type and
+     * returns a pointer to it. NULL is returned if we couldn't find
+     * the type
+     */
+    CCXX_EXPORT(static BaseObject *) CreateInstanceOf(const char *name);
+
+    typedef std::map<std::string, NewBaseObjectFunction> StringFunctionMap;
 };
 
 
@@ -154,36 +155,36 @@ class Engine;
 class BaseObject
 {
 public:
-	/**
-	 * This constructor is used in serialisation processes.
-	 * It is called in CreateNewInstance in order to create
-	 * an instance of the class to have Read() called on it.
-	 */
-	CCXX_MEMBER_EXPORT(CCXX_EMPTY) BaseObject();
-	
-	/**
-	 * Default destructor
-	 */
-	CCXX_MEMBER_EXPORT(virtual) ~BaseObject();
-	
-	/**
-	 * This returns the ID of the persistent object (Its type)
-	 */
-	CCXX_MEMBER_EXPORT(virtual const char*) GetPersistenceID() const;
-	
-	/**
-	 * This method is used to write to the Persistence::Engine
-	 * It is not equivalent to the << operator as it writes only the data
-	 * and not the object type etc.
-	 */
-	CCXX_MEMBER_EXPORT(virtual bool) Write(Engine& archive) const;
+    /**
+     * This constructor is used in serialisation processes.
+     * It is called in CreateNewInstance in order to create
+     * an instance of the class to have Read() called on it.
+     */
+    CCXX_MEMBER_EXPORT(CCXX_EMPTY) BaseObject();
 
-	/**
-	 * This method is used to read from a Persistence::Engine
-	 * It is not equivalent to the >> operator as it does no 
-	 * typesafety or anything.
-	 */
-	CCXX_MEMBER_EXPORT(virtual bool) Read(Engine& archive);
+    /**
+     * Default destructor
+     */
+    CCXX_MEMBER_EXPORT(virtual) ~BaseObject();
+
+    /**
+     * This returns the ID of the persistent object (Its type)
+     */
+    CCXX_MEMBER_EXPORT(virtual const char *) GetPersistenceID() const;
+
+    /**
+     * This method is used to write to the Persistence::Engine
+     * It is not equivalent to the << operator as it writes only the data
+     * and not the object type etc.
+     */
+    CCXX_MEMBER_EXPORT(virtual bool) Write(Engine &archive) const;
+
+    /**
+     * This method is used to read from a Persistence::Engine
+     * It is not equivalent to the >> operator as it does no
+     * typesafety or anything.
+     */
+    CCXX_MEMBER_EXPORT(virtual bool) Read(Engine &archive);
 };
 
 
@@ -191,7 +192,7 @@ public:
  * Engine
  *
  * This class constructs on a standard C++ STL stream and then
- * operates in the mode specified. 
+ * operates in the mode specified.
  *
  * @author Daniel Silverstone
  * @short stream serialization of persistent classes.
@@ -200,140 +201,139 @@ public:
 class Engine
 {
 public:
-	/**
-	 * If problems happen which are fatal - expect one of these thrown 
-	 * at you
-	 */
-	class Exception : public PersistException
-	{
-	public:
-		CCXX_MEMBER_EXPORT(CCXX_EMPTY) Exception(const std::string &reason) : PersistException(reason) {}
-	};
-	
-	/**
-	 * These are the modes the Persistence::Engine can work in
-	 */
-	enum EngineMode
-	{
-		modeRead,
-		modeWrite
-	};
-	
-	/**
-	 * Constructs a Persistence::Engine with the specified stream in
-	 * the given mode. The stream must be initialised properly prior
-	 * to this call or problems will ensue.
-	 */
-	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::iostream& stream, EngineMode mode) THROWS (PersistException);
-	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::ostream& stream) THROWS (PersistException);
-	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::istream& stream) THROWS (PersistException);
-	
-	/**
-	 * This Flushes the buffers and closes the Persistence::Engine
-	 * this must happen before the underlying stream is shut down
-	 */
-	CCXX_MEMBER_EXPORT(virtual) ~Engine();
+    /**
+     * If problems happen which are fatal - expect one of these thrown
+     * at you
+     */
+    class Exception : public PersistException
+    {
+    public:
+        CCXX_MEMBER_EXPORT(CCXX_EMPTY) Exception(const std::string &reason) : PersistException(reason) {}
+    };
+
+    /**
+     * These are the modes the Persistence::Engine can work in
+     */
+    enum EngineMode {
+        modeRead,
+        modeWrite
+    };
+
+    /**
+     * Constructs a Persistence::Engine with the specified stream in
+     * the given mode. The stream must be initialised properly prior
+     * to this call or problems will ensue.
+     */
+    CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::iostream &stream, EngineMode mode) THROWS(PersistException);
+    CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::ostream &stream) THROWS(PersistException);
+    CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::istream &stream) THROWS(PersistException);
+
+    /**
+     * This Flushes the buffers and closes the Persistence::Engine
+     * this must happen before the underlying stream is shut down
+     */
+    CCXX_MEMBER_EXPORT(virtual) ~Engine();
 
 
-	// Write operations
-	CCXX_MEMBER_EXPORT(void) Write(const BaseObject *object) THROWS (Exception);
-	/*
-	 * shortcut, to make the following more readable
-	 */
+    // Write operations
+    CCXX_MEMBER_EXPORT(void) Write(const BaseObject *object) THROWS(Exception);
+    /*
+     * shortcut, to make the following more readable
+     */
 #define CCXX_ENGINEWRITE_REF(valref) WriteBinary((const uint8*)&valref,sizeof(valref))
-	void Write(int8 i)   THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(uint8 i)  THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(int16 i)  THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(uint16 i) THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(int32 i)  THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(uint32 i) THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(float i)  THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
-	void Write(double i) THROWS (Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(int8 i)   THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(uint8 i)  THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(int16 i)  THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(uint16 i) THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(int32 i)  THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(uint32 i) THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(float i)  THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
+    void Write(double i) THROWS(Exception) { CCXX_ENGINEWRITE_REF(i); }
 #undef CCXX_ENGINEWRITE_REF
 
-	CCXX_MEMBER_EXPORT(void) Write(const std::string& str) THROWS (Exception);
-	// Every write operation boils down to one or more of theses
-	CCXX_MEMBER_EXPORT(void) WriteBinary(const uint8* data, const uint32 size) THROWS (Exception);
-	
-	// Read Operations
-	
-	CCXX_MEMBER_EXPORT(void) Read(BaseObject *&object) THROWS (Exception);
+    CCXX_MEMBER_EXPORT(void) Write(const std::string &str) THROWS(Exception);
+    // Every write operation boils down to one or more of theses
+    CCXX_MEMBER_EXPORT(void) WriteBinary(const uint8 *data, const uint32 size) THROWS(Exception);
+
+    // Read Operations
+
+    CCXX_MEMBER_EXPORT(void) Read(BaseObject *&object) THROWS(Exception);
 #define CCXX_ENGINEREAD_REF(valref) ReadBinary((uint8*)&valref,sizeof(valref))
-	void Read(int8& i)   THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(uint8& i)  THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(int16& i)  THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(uint16& i) THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(int32& i)  THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(uint32& i) THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(float& i)  THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
-	void Read(double& i) THROWS (Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(int8 &i)   THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(uint8 &i)  THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(int16 &i)  THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(uint16 &i) THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(int32 &i)  THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(uint32 &i) THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(float &i)  THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
+    void Read(double &i) THROWS(Exception) { CCXX_ENGINEREAD_REF(i); }
 #undef CCXX_ENGINEREAD_REF
 
-	CCXX_MEMBER_EXPORT(void) Read(std::string& str) THROWS (Exception);
-	// Every read operation boild down to one or more of these
-	CCXX_MEMBER_EXPORT(void) ReadBinary(uint8* data, uint32 size) THROWS (Exception);
+    CCXX_MEMBER_EXPORT(void) Read(std::string &str) THROWS(Exception);
+    // Every read operation boild down to one or more of these
+    CCXX_MEMBER_EXPORT(void) ReadBinary(uint8 *data, uint32 size) THROWS(Exception);
 
 private:
-	/**
-	 * The underlying stream
-	 */
-	std::istream* myUnderlyingIStream;
-	std::ostream* myUnderlyingOStream;
-	
-	/**
-	 * The mode of the engine
-	 */
-	EngineMode myOperationalMode;
+    /**
+     * The underlying stream
+     */
+    std::istream *myUnderlyingIStream;
+    std::ostream *myUnderlyingOStream;
 
-	/**
-	 * Typedefs for the Persistence::BaseObject support
-	 */
-	typedef std::vector<BaseObject*>           ArchiveVector;
-	typedef std::map<BaseObject const*, int32> ArchiveMap;
-	typedef std::vector<std::string>                ClassVector;
-	typedef std::map<std::string, int32>            ClassMap;
-	
-	ArchiveVector myArchiveVector;
-	ArchiveMap myArchiveMap;
-	ClassVector myClassVector;
-	ClassMap myClassMap;
+    /**
+     * The mode of the engine
+     */
+    EngineMode myOperationalMode;
 
-	// Compression support
+    /**
+     * Typedefs for the Persistence::BaseObject support
+     */
+    typedef std::vector<BaseObject *>           ArchiveVector;
+    typedef std::map<BaseObject const *, int32> ArchiveMap;
+    typedef std::vector<std::string>                ClassVector;
+    typedef std::map<std::string, int32>            ClassMap;
+
+    ArchiveVector myArchiveVector;
+    ArchiveMap myArchiveMap;
+    ClassVector myClassVector;
+    ClassMap myClassMap;
+
+    // Compression support
 };
 
 // Standard >> and << stream operators for BaseObject
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, BaseObject *&ob)      THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, BaseObject const *ob) THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, BaseObject *&ob)      THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, BaseObject const *ob) THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, int8& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, int8 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, int8 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, int8 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, uint8& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, uint8 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, uint8 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, uint8 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, int16& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, int16 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, int16 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, int16 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, uint16& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, uint16 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, uint16 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, uint16 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, int32& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, int32 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, int32 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, int32 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, uint32& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, uint32 ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, uint32 &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, uint32 ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, float& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, float ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, float &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, float ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, double& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, double ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, double &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, double ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, std::string& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, std::string ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, std::string &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, std::string ob)  THROWS(Engine::Exception);
 
-CCXX_EXPORT(Engine&) operator >>( Engine& ar, bool& ob) THROWS (Engine::Exception);
-CCXX_EXPORT(Engine&) operator <<( Engine& ar, bool ob)  THROWS (Engine::Exception);
+CCXX_EXPORT(Engine &) operator >>(Engine &ar, bool &ob) THROWS(Engine::Exception);
+CCXX_EXPORT(Engine &) operator <<(Engine &ar, bool ob)  THROWS(Engine::Exception);
 
 /**
  * The following are templated classes
@@ -344,12 +344,12 @@ CCXX_EXPORT(Engine&) operator <<( Engine& ar, bool ob)  THROWS (Engine::Exceptio
  * the engine
  */
 template<class T>
-Engine& operator <<( Engine& ar, typename std::vector<T> const& ob) THROWS (Engine::Exception)
+Engine &operator <<(Engine &ar, typename std::vector<T> const &ob) THROWS(Engine::Exception)
 {
-	ar << (uint32)ob.size();
-	for(uint32 i=0; i < ob.size(); ++i)
-		ar << ob[i];
-	return ar;
+    ar << (uint32)ob.size();
+    for (uint32 i = 0; i < ob.size(); ++i)
+        ar << ob[i];
+    return ar;
 }
 
 /**
@@ -357,15 +357,15 @@ Engine& operator <<( Engine& ar, typename std::vector<T> const& ob) THROWS (Engi
  * an engine.
  */
 template<class T>
-Engine& operator >>( Engine& ar, typename std::vector<T>& ob) THROWS (Engine::Exception)
+Engine &operator >>(Engine &ar, typename std::vector<T>& ob) THROWS(Engine::Exception)
 {
-	ob.clear();
-	uint32 siz;
-	ar >> siz;
-	ob.resize(siz);
-	for(uint32 i=0; i < siz; ++i)
-		ar >> ob[i];
-	return ar;
+    ob.clear();
+    uint32 siz;
+    ar >> siz;
+    ob.resize(siz);
+    for (uint32 i = 0; i < siz; ++i)
+        ar >> ob[i];
+    return ar;
 }
 
 /**
@@ -373,12 +373,12 @@ Engine& operator >>( Engine& ar, typename std::vector<T>& ob) THROWS (Engine::Ex
  * to an engine.
  */
 template<class Key, class Value>
-Engine& operator <<( Engine& ar, typename std::map<Key,Value> const & ob) THROWS (Engine::Exception)
+Engine &operator <<(Engine &ar, typename std::map<Key, Value> const &ob) THROWS(Engine::Exception)
 {
-	ar << (uint32)ob.size();
-	for(typename std::map<Key,Value>::const_iterator it = ob.begin();it != ob.end();++it)
-		ar << it->first << it->second;
-	return ar;
+    ar << (uint32)ob.size();
+    for (typename std::map<Key, Value>::const_iterator it = ob.begin(); it != ob.end(); ++it)
+        ar << it->first << it->second;
+    return ar;
 }
 
 /**
@@ -386,17 +386,17 @@ Engine& operator <<( Engine& ar, typename std::map<Key,Value> const & ob) THROWS
  * from an engine.
  */
 template<class Key, class Value>
-Engine& operator >>( Engine& ar, typename std::map<Key,Value>& ob) THROWS (Engine::Exception)
+Engine &operator >>(Engine &ar, typename std::map<Key, Value>& ob) THROWS(Engine::Exception)
 {
-	ob.clear();
-	uint32 siz;
-	ar >> siz;
-	for(uint32 i=0; i < siz; ++i) {
-		Key a;
-		ar >> a;
-		ar >> ob[a];
-	}
-	return ar;
+    ob.clear();
+    uint32 siz;
+    ar >> siz;
+    for (uint32 i = 0; i < siz; ++i) {
+        Key a;
+        ar >> a;
+        ar >> ob[a];
+    }
+    return ar;
 }
 
 };

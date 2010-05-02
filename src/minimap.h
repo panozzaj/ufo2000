@@ -31,97 +31,93 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 class Minimap : public VisualObject
 {
-	int m_height_10, m_width_10;
+    int m_height_10, m_width_10;
 
-	enum MINIMAP_STATE {
-		MINIMAP_STATE_UNEXPLORED,
-		MINIMAP_STATE_SEEN,
-		MINIMAP_STATE_VISIBLE,
-		MINIMAP_STATE_FRIEND,
-		MINIMAP_STATE_ENEMY,
-		MINIMAP_STATE_SCTARGET,
-		MINIMAP_STATE_ITEM_SEEN,
-		MINIMAP_STATE_ITEM_VISIBLE
-	};
+    enum MINIMAP_STATE {
+        MINIMAP_STATE_UNEXPLORED,
+        MINIMAP_STATE_SEEN,
+        MINIMAP_STATE_VISIBLE,
+        MINIMAP_STATE_FRIEND,
+        MINIMAP_STATE_ENEMY,
+        MINIMAP_STATE_SCTARGET,
+        MINIMAP_STATE_ITEM_SEEN,
+        MINIMAP_STATE_ITEM_VISIBLE
+    };
 
-	MINIMAP_STATE **m_minimap_state;
+    MINIMAP_STATE **m_minimap_state;
 
-	Map *m_map;
-	BITMAP **m_minimap_visible;
-	BITMAP **m_minimap_seen;
-	BITMAP *m_minimap_unknown;
-	int m_old_sel_lev;
+    Map *m_map;
+    BITMAP **m_minimap_visible;
+    BITMAP **m_minimap_seen;
+    BITMAP *m_minimap_unknown;
+    int m_old_sel_lev;
 
-	void redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode);
+    void redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode);
 
 public:
-	Minimap(Map *map);
-	virtual ~Minimap();
+    Minimap(Map *map);
+    virtual ~Minimap();
 
-	void redraw_full(BITMAP *bmp, int x, int y);
-	void redraw_fast(BITMAP *bmp, int x, int y);
+    void redraw_full(BITMAP *bmp, int x, int y);
+    void redraw_fast(BITMAP *bmp, int x, int y);
 };
 
 class MinimapArea : public VisualObject
 {
-	Minimap *m_minimap;
-	int      m_last_time_left;
+    Minimap *m_minimap;
+    int      m_last_time_left;
 
-	void show_time_left(BITMAP *bmp, int x, int y, int full_redraw_mode)
-	{
-		int time_left = g_time_left;
+    void show_time_left(BITMAP *bmp, int x, int y, int full_redraw_mode) {
+        int time_left = g_time_left;
 
-		if (!full_redraw_mode && m_last_time_left == time_left) return;
+        if (!full_redraw_mode && m_last_time_left == time_left) return;
 
-		rectfill(bmp, 
-			x + m_width - m_minimap->get_width(),
-			y + m_minimap->get_height(),
-			x + m_width - 1,
-			y + m_minimap->get_height() + text_height(font),
-			COLOR_BLACK1);
+        rectfill(bmp,
+                 x + m_width - m_minimap->get_width(),
+                 y + m_minimap->get_height(),
+                 x + m_width - 1,
+                 y + m_minimap->get_height() + text_height(font),
+                 COLOR_BLACK1);
 
-		if (time_left > 0) {
-			// This display of time remaining is only visible 
-			// when the minimap is on the screen
-			text_mode(-1);
-			textprintf_centre(bmp, font, 
-				x + m_width - m_minimap->get_width() / 2,
-				y + m_minimap->get_height(), 
-				COLOR_WHITE,
-				"Time left: %d", time_left); // $$$
-			//if ((time_left == 10) 	// Warning-sound: time running out
-			//||  (time_left <=  5))
-			//	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-		}
+        if (time_left > 0) {
+            // This display of time remaining is only visible
+            // when the minimap is on the screen
+            text_mode(-1);
+            textprintf_centre(bmp, font,
+                              x + m_width - m_minimap->get_width() / 2,
+                              y + m_minimap->get_height(),
+                              COLOR_WHITE,
+                              "Time left: %d", time_left); // $$$
+            //if ((time_left == 10) 	// Warning-sound: time running out
+            //||  (time_left <=  5))
+            //	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+        }
 
-		m_last_time_left = time_left;
-	}
+        m_last_time_left = time_left;
+    }
 
 public:
-	MinimapArea(Map *map, int width, int height)
-	{
-		m_last_time_left = -1;
-		m_minimap = new Minimap(map);
-		m_width = width;
-		m_height = height;
-	}
-	virtual ~MinimapArea()
-	{
-		delete m_minimap;
-	}
+    MinimapArea(Map *map, int width, int height) {
+        m_last_time_left = -1;
+        m_minimap = new Minimap(map);
+        m_width = width;
+        m_height = height;
+    }
+    virtual ~MinimapArea() {
+        delete m_minimap;
+    }
 
-	void redraw_full(BITMAP *bmp, int x, int y);
-	
-	void redraw_fast(BITMAP *bmp, int x, int y);
+    void redraw_full(BITMAP *bmp, int x, int y);
 
-	bool resize(int width, int height)
-	{
-		m_width  = width;
-		m_height = height;
-		set_full_redraw();
-		return true;
-	}
-	int get_minimap_width() { return m_minimap->get_width(); }
+    void redraw_fast(BITMAP *bmp, int x, int y);
+
+    bool resize(int width, int height) {
+        m_width  = width;
+        m_height = height;
+        set_full_redraw();
+        return true;
+    }
+    int get_minimap_width() { return m_minimap->get_width(); }
 };
 
 #endif

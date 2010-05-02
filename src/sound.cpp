@@ -29,153 +29,155 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 struct sound_sym_maptable_t {
     SoundSym_e_t symcode;
-    const char * sym;
+    const char *sym;
 };
 
 /** static mapping between enum values and sym attribute values */
 static const sound_sym_maptable_t KNOWN_SYMS[] = {
 
-{ SS_UNKNOWN, "unknown" }, /* unknown samples */
-{ SS_UNUSED, "unused" },  /* empty, broken or otherwise unused samples */
+    { SS_UNKNOWN, "unknown" }, /* unknown samples */
+    { SS_UNUSED, "unused" },  /* empty, broken or otherwise unused samples */
 
-/* interface */
-{ SS_WINDOW_OPEN_1, "window-open-1" },
-{ SS_WINDOW_OPEN_2, "window-open-2" },
-{ SS_WINDOW_CLOSE_1, "window-close-1" },
-{ SS_WINDOW_CLOSE_2, "window-close-2" },
-{ SS_BUTTON_PUSH_1, "button-push-1" },
-{ SS_BUTTON_PUSH_2, "button-push-2" },
+    /* interface */
+    { SS_WINDOW_OPEN_1, "window-open-1" },
+    { SS_WINDOW_OPEN_2, "window-open-2" },
+    { SS_WINDOW_CLOSE_1, "window-close-1" },
+    { SS_WINDOW_CLOSE_2, "window-close-2" },
+    { SS_BUTTON_PUSH_1, "button-push-1" },
+    { SS_BUTTON_PUSH_2, "button-push-2" },
 
-/* inventory */
-{ SS_CLIP_LOAD, "clip-load" },
-{ SS_CLIP_EJECT, "clip-eject" },
-{ SS_ITEM_GET, "item-get" },
-{ SS_ITEM_PUT, "item-put" },
-{ SS_ITEM_DROP, "item-drop" },
+    /* inventory */
+    { SS_CLIP_LOAD, "clip-load" },
+    { SS_CLIP_EJECT, "clip-eject" },
+    { SS_ITEM_GET, "item-get" },
+    { SS_ITEM_PUT, "item-put" },
+    { SS_ITEM_DROP, "item-drop" },
 
-/* conventional weapons */
-{ SS_CV_PISTOL_SHOT, "cv-pistol-shot" },
-{ SS_CV_RIFLE_SHOT, "cv-rifle-shot" },
-{ SS_CV_BULLET_BOUNCE, "cv-bullet-bounce" },
-{ SS_CV_BULLET_HIT, "cv-bullet-hit" },
-{ SS_CV_HWP_SHOT, "cv-HWP-shot" },
-{ SS_CV_CRAFT_SHOT, "cv-craft-shot" },
-{ SS_CV_HEAVY_CANNON_SHOT, "cv-heavy-cannon-shot" },
-{ SS_CV_AUTO_CANNON_SHOT, "cv-auto-cannon-shot" },
-{ SS_CV_CANNON_AP_HIT, "cv-cannon-AP-hit" },
-{ SS_CV_CANNON_HE_HIT, "cv-cannon-HE-hit" },
-{ SS_CV_CANNON_IN_HIT, "cv-cannon-IN-hit" },
+    /* conventional weapons */
+    { SS_CV_PISTOL_SHOT, "cv-pistol-shot" },
+    { SS_CV_RIFLE_SHOT, "cv-rifle-shot" },
+    { SS_CV_BULLET_BOUNCE, "cv-bullet-bounce" },
+    { SS_CV_BULLET_HIT, "cv-bullet-hit" },
+    { SS_CV_HWP_SHOT, "cv-HWP-shot" },
+    { SS_CV_CRAFT_SHOT, "cv-craft-shot" },
+    { SS_CV_HEAVY_CANNON_SHOT, "cv-heavy-cannon-shot" },
+    { SS_CV_AUTO_CANNON_SHOT, "cv-auto-cannon-shot" },
+    { SS_CV_CANNON_AP_HIT, "cv-cannon-AP-hit" },
+    { SS_CV_CANNON_HE_HIT, "cv-cannon-HE-hit" },
+    { SS_CV_CANNON_IN_HIT, "cv-cannon-IN-hit" },
 
-/* melee weapons */
-{ SS_KNIFE_PUNCH, "knife-punch" },
-{ SS_KNIFE_THROW, "knife-throw" },
-{ SS_KNIFE_HIT, "knife-hit" },
-{ SS_KASTET_PUNCH, "kastet-punch" },
-{ SS_STUNROD_HIT, "stunrod-hit" },
-{ SS_BLUNT_HIT, "blunt-hit" },
+    /* melee weapons */
+    { SS_KNIFE_PUNCH, "knife-punch" },
+    { SS_KNIFE_THROW, "knife-throw" },
+    { SS_KNIFE_HIT, "knife-hit" },
+    { SS_KASTET_PUNCH, "kastet-punch" },
+    { SS_STUNROD_HIT, "stunrod-hit" },
+    { SS_BLUNT_HIT, "blunt-hit" },
 
-/* rocket launchers */
-{ SS_RL_LAUNCH, "rl-launch" },
-{ SS_HWP_LAUNCH, "HWP-launch" },
-{ SS_HWP_BLASTER_LAUNCH, "HWP-blaster-launch" },
-{ SS_ALIEN_SMALL_LAUNCH, "alien-small-launch" },
-{ SS_ALIEN_BLASTER_LAUNCH, "alien-blaster-launch" },
-{ SS_SMALL_ROCKET_HIT, "small-rocket-hit" },
-{ SS_HE_ROCKET_HIT, "HE-rocket-hit" },
-{ SS_IN_ROCKET_HIT, "IN-rocket-hit" },
-{ SS_HWP_ROCKET_HIT, "HWP-rocket-hit" },
-{ SS_HWP_BLASTER_HIT, "HWP-blaster-hit" },
-{ SS_ALIEN_SMALL_HIT, "alien-small-hit" },
-{ SS_ALIEN_BLASTER_HIT, "alien-blaster-hit" },
+    /* rocket launchers */
+    { SS_RL_LAUNCH, "rl-launch" },
+    { SS_HWP_LAUNCH, "HWP-launch" },
+    { SS_HWP_BLASTER_LAUNCH, "HWP-blaster-launch" },
+    { SS_ALIEN_SMALL_LAUNCH, "alien-small-launch" },
+    { SS_ALIEN_BLASTER_LAUNCH, "alien-blaster-launch" },
+    { SS_SMALL_ROCKET_HIT, "small-rocket-hit" },
+    { SS_HE_ROCKET_HIT, "HE-rocket-hit" },
+    { SS_IN_ROCKET_HIT, "IN-rocket-hit" },
+    { SS_HWP_ROCKET_HIT, "HWP-rocket-hit" },
+    { SS_HWP_BLASTER_HIT, "HWP-blaster-hit" },
+    { SS_ALIEN_SMALL_HIT, "alien-small-hit" },
+    { SS_ALIEN_BLASTER_HIT, "alien-blaster-hit" },
 
-/* laser weapons */
-{ SS_LASER_PISTOL_SHOT, "laser-pistol-shot" },
-{ SS_LASER_RIFLE_SHOT, "laser-rifle-shot" },
-{ SS_LASER_HEAVY_SHOT, "laser-heavy-shot" },
-{ SS_LASER_HWP_SHOT, "laser-HWP-shot" },
-{ SS_LASER_CANNON_SHOT, "laser-cannon-shot" },
-{ SS_LASER_CRAFT_SHOT, "laser-craft-shot" },
+    /* laser weapons */
+    { SS_LASER_PISTOL_SHOT, "laser-pistol-shot" },
+    { SS_LASER_RIFLE_SHOT, "laser-rifle-shot" },
+    { SS_LASER_HEAVY_SHOT, "laser-heavy-shot" },
+    { SS_LASER_HWP_SHOT, "laser-HWP-shot" },
+    { SS_LASER_CANNON_SHOT, "laser-cannon-shot" },
+    { SS_LASER_CRAFT_SHOT, "laser-craft-shot" },
 
-/* plasma weapons */
-{ SS_PLASMA_PISTOL_SHOT, "plasma-pistol-shot" },
-{ SS_PLASMA_RIFLE_SHOT, "plasma-rifle-shot" },
-{ SS_PLASMA_HEAVY_SHOT, "plasma-heavy-shot" },
-{ SS_PLASMA_HWP_SHOT, "plasma-HWP-shot" },
-{ SS_PLASMA_CYBERDISK_SHOT, "plasma-cyberdisk-shot" },
-{ SS_PLASMA_SECTOPOD_SHOT, "plasma-sectopod-shot" },
-{ SS_PLASMA_CANNON_SHOT, "plasma-cannon-shot" },
-{ SS_PLASMA_CRAFT_SHOT, "plasma-craft-shot" },
-{ SS_PLASMA_HIT, "plasma-hit" },
+    /* plasma weapons */
+    { SS_PLASMA_PISTOL_SHOT, "plasma-pistol-shot" },
+    { SS_PLASMA_RIFLE_SHOT, "plasma-rifle-shot" },
+    { SS_PLASMA_HEAVY_SHOT, "plasma-heavy-shot" },
+    { SS_PLASMA_HWP_SHOT, "plasma-HWP-shot" },
+    { SS_PLASMA_CYBERDISK_SHOT, "plasma-cyberdisk-shot" },
+    { SS_PLASMA_SECTOPOD_SHOT, "plasma-sectopod-shot" },
+    { SS_PLASMA_CANNON_SHOT, "plasma-cannon-shot" },
+    { SS_PLASMA_CRAFT_SHOT, "plasma-craft-shot" },
+    { SS_PLASMA_HIT, "plasma-hit" },
 
-/* grenades */
-{ SS_GRENADE_FALL, "grenade-fall" },
-{ SS_CV_GRENADE_BANG, "cv-grenade-bang" },
-{ SS_SMOKE_GRENADE_BANG, "smoke-grenade-bang" },
-{ SS_HIGH_EXPLOSIVE_BANG, "high-explosive-bang" },
-{ SS_PROXY_GRENADE_BANG, "proxy-grenade-bang" },
-{ SS_ALIEN_GRENADE_BANG, "alien-grenade-bang" },
+    /* grenades */
+    { SS_GRENADE_FALL, "grenade-fall" },
+    { SS_CV_GRENADE_BANG, "cv-grenade-bang" },
+    { SS_SMOKE_GRENADE_BANG, "smoke-grenade-bang" },
+    { SS_HIGH_EXPLOSIVE_BANG, "high-explosive-bang" },
+    { SS_PROXY_GRENADE_BANG, "proxy-grenade-bang" },
+    { SS_ALIEN_GRENADE_BANG, "alien-grenade-bang" },
 
-/* movement */
-{ SS_STEP_HUMAN, "step-human" },
-{ SS_STEP_HUMAN_METAL, "step-human-metal" },
-{ SS_STEP_SECTOID, "step-sectoid" },
-{ SS_STEP_SECTOID_METAL, "step-sectoid-metal" },
-{ SS_STEP_MUTON, "step-muton" },
-{ SS_STEP_MUTON_METAL, "step-muton-metal" },
-{ SS_STEP_ETHEREAL, "step-ethereal" },
-{ SS_STEP_ETHEREAL_METAL, "step-ethereal-metal" },
-{ SS_STEP_CHRYSSALID, "step-chryssalid" },
-{ SS_STEP_CHRYSSALID_METAL, "step-chryssalid-metal" },
-{ SS_STEP_REAPER, "step-reaper" },
-{ SS_STEP_REAPER_METAL, "step-reaper-metal" },
-{ SS_STEP_SNAKE, "step-snake" },
-{ SS_STEP_HOVER, "step-hover" },
-{ SS_STEP_ALIEN_HOVER, "step-alien-hover" },
-{ SS_DOOR_CLICK, "door-click" },
-{ SS_ALIEN_EXT_DOOR, "alien-ext-door" },
-{ SS_ALIEN_INT_DOOR, "alien-int-door" },
+    /* movement */
+    { SS_STEP_HUMAN, "step-human" },
+    { SS_STEP_HUMAN_METAL, "step-human-metal" },
+    { SS_STEP_SECTOID, "step-sectoid" },
+    { SS_STEP_SECTOID_METAL, "step-sectoid-metal" },
+    { SS_STEP_MUTON, "step-muton" },
+    { SS_STEP_MUTON_METAL, "step-muton-metal" },
+    { SS_STEP_ETHEREAL, "step-ethereal" },
+    { SS_STEP_ETHEREAL_METAL, "step-ethereal-metal" },
+    { SS_STEP_CHRYSSALID, "step-chryssalid" },
+    { SS_STEP_CHRYSSALID_METAL, "step-chryssalid-metal" },
+    { SS_STEP_REAPER, "step-reaper" },
+    { SS_STEP_REAPER_METAL, "step-reaper-metal" },
+    { SS_STEP_SNAKE, "step-snake" },
+    { SS_STEP_HOVER, "step-hover" },
+    { SS_STEP_ALIEN_HOVER, "step-alien-hover" },
+    { SS_DOOR_CLICK, "door-click" },
+    { SS_ALIEN_EXT_DOOR, "alien-ext-door" },
+    { SS_ALIEN_INT_DOOR, "alien-int-door" },
 
-/* growls */
-{ SS_MALE_WOUND, "male-wound" },
-{ SS_MALE_DEATH, "male-death" },
-{ SS_FEMALE_WOUND, "female-wound" },
-{ SS_FEMALE_DEATH, "female-death" },
-{ SS_HWP_DEATH, "HWP-death" },
-{ SS_SECTOID_WOUND, "sectoid-wound" },
-{ SS_SECTOID_DEATH, "sectoid-death" },
-{ SS_MUTON_WOUND, "muton-wound" },
-{ SS_MUTON_DEATH, "muton-death" },
-{ SS_SILACOID_WOUND, "silacoid-wound" },
-{ SS_SILACOID_DEATH, "silacoid-death" },
-{ SS_CELATID_WOUND, "celatid-wound" },
-{ SS_CELATID_DEATH, "celatid-death" },
-{ SS_FLOATER_WOUND, "floater-wound" },
-{ SS_FLOATER_DEATH, "floater-death" },
-{ SS_REAPER_WOUND, "reaper-wound" },
-{ SS_REAPER_DEATH, "reaper-death" },
-{ SS_SNAKEMAN_WOUND, "snakeman-wound" },
-{ SS_SNAKEMAN_DEATH, "snakeman-death" },
-{ SS_CHRYSSALID_WOUND, "chryssalid-wound" },
-{ SS_CHRYSSALID_DEATH, "chryssalid-death" },
-{ SS_ETHEREAL_WOUND, "ethereal-wound" },
-{ SS_ETHEREAL_DEATH, "ethereal-death" },
+    /* growls */
+    { SS_MALE_WOUND, "male-wound" },
+    { SS_MALE_DEATH, "male-death" },
+    { SS_FEMALE_WOUND, "female-wound" },
+    { SS_FEMALE_DEATH, "female-death" },
+    { SS_HWP_DEATH, "HWP-death" },
+    { SS_SECTOID_WOUND, "sectoid-wound" },
+    { SS_SECTOID_DEATH, "sectoid-death" },
+    { SS_MUTON_WOUND, "muton-wound" },
+    { SS_MUTON_DEATH, "muton-death" },
+    { SS_SILACOID_WOUND, "silacoid-wound" },
+    { SS_SILACOID_DEATH, "silacoid-death" },
+    { SS_CELATID_WOUND, "celatid-wound" },
+    { SS_CELATID_DEATH, "celatid-death" },
+    { SS_FLOATER_WOUND, "floater-wound" },
+    { SS_FLOATER_DEATH, "floater-death" },
+    { SS_REAPER_WOUND, "reaper-wound" },
+    { SS_REAPER_DEATH, "reaper-death" },
+    { SS_SNAKEMAN_WOUND, "snakeman-wound" },
+    { SS_SNAKEMAN_DEATH, "snakeman-death" },
+    { SS_CHRYSSALID_WOUND, "chryssalid-wound" },
+    { SS_CHRYSSALID_DEATH, "chryssalid-death" },
+    { SS_ETHEREAL_WOUND, "ethereal-wound" },
+    { SS_ETHEREAL_DEATH, "ethereal-death" },
 
 
-{ SS_TRAILER__SYM, "SS_TRAILER__SYM" }
+    { SS_TRAILER__SYM, "SS_TRAILER__SYM" }
 };
 
 // SS_TRAILER__SYM used here because sizeof(KNOWN_SYMS) > the number of sounds.
-SoundSym_e_t getSymCode(const char *const sym) {
+SoundSym_e_t getSymCode(const char *const sym)
+{
     for (unsigned i = 0 ; i < SS_TRAILER__SYM; i++) {
-        if ( 0 == strcmp(sym, KNOWN_SYMS[i].sym) )
+        if (0 == strcmp(sym, KNOWN_SYMS[i].sym))
             return KNOWN_SYMS[i].symcode;
     }
     return SS_UNKNOWN;
 }
 
-static const char *getSymString(const SoundSym_e_t symcode) {
+static const char *getSymString(const SoundSym_e_t symcode)
+{
     for (unsigned i = 0 ; i < SS_TRAILER__SYM; i++) {
-        if ( symcode == KNOWN_SYMS[i].symcode)
+        if (symcode == KNOWN_SYMS[i].symcode)
             return KNOWN_SYMS[i].sym;
     }
     return NULL;
@@ -190,19 +192,20 @@ enum cat_file_type_e_t {
 };
 
 /** used for loading original and CE sound files */
-class soundFile {
+class soundFile
+{
     std::vector<SAMPLE *> samples;
     std::string fileName;
 
-    void loadOrigCat(const std::string& buf, std::ostream& log, bool v = false);
-    void loadCeCat(const std::string& buf, std::ostream& log, bool v = false);
-    cat_file_type_e_t getFileType(const std::string& buf);
+    void loadOrigCat(const std::string &buf, std::ostream &log, bool v = false);
+    void loadCeCat(const std::string &buf, std::ostream &log, bool v = false);
+    cat_file_type_e_t getFileType(const std::string &buf);
 
 public:
     soundFile();
     ~soundFile();
 
-    int loadFile(const char *filename, std::ostream& log, bool verbose = false);
+    int loadFile(const char *filename, std::ostream &log, bool verbose = false);
     SAMPLE *fetchSample(int idx);
 };
 
@@ -241,7 +244,8 @@ where %d is sample's number in .cat file.
 
 /* pack_*() converted to work with std::string ref */
 
-static short buf_igetw(const std::string& inbuf, unsigned *curp) {
+static short buf_igetw(const std::string &inbuf, unsigned *curp)
+{
     short rval;
     if (*curp + 2 > inbuf.size())
         return EOF;
@@ -252,9 +256,10 @@ static short buf_igetw(const std::string& inbuf, unsigned *curp) {
     return intel_uint16(rval);
 }
 
-static int buf_igetl(const std::string& inbuf, unsigned *curp) {
+static int buf_igetl(const std::string &inbuf, unsigned *curp)
+{
     int rval;
-    if (*curp + 4 > inbuf.size() )
+    if (*curp + 4 > inbuf.size())
         return EOF;
 
     inbuf.copy((char *)&rval, 4, *curp);
@@ -263,7 +268,8 @@ static int buf_igetl(const std::string& inbuf, unsigned *curp) {
     return intel_uint32(rval);
 }
 
-static int buf_getc(const std::string& inbuf, unsigned *curp) {
+static int buf_getc(const std::string &inbuf, unsigned *curp)
+{
     char rval;
     if (*curp + 1 > inbuf.size())
         return EOF;
@@ -274,7 +280,7 @@ static int buf_getc(const std::string& inbuf, unsigned *curp) {
     return rval;
 }
 
-static int buf_fread(void *buf, unsigned len, const std::string& inbuf,
+static int buf_fread(void *buf, unsigned len, const std::string &inbuf,
                      unsigned *curp)
 {
     if (*curp + len > inbuf.size())
@@ -286,7 +292,7 @@ static int buf_fread(void *buf, unsigned len, const std::string& inbuf,
 
 /* allegro's loadwav converted to operate on std::string ref. */
 
-static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
+static SAMPLE *wav2sample(const std::string &inbuf, std::ostream &log,
                           bool verbose = false)
 {
     char buffer[25];
@@ -301,23 +307,23 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
     unsigned curp = 0;
 
     buf_fread(buffer, 12, inbuf, &curp);       /* check RIFF header */
-/*
-    log<<std::hex;
-    for (i=0; i<12; i++)
-        log<<" 0x"<<static_cast<int>(buffer[i]);
-    log<<std::endl;
-*/
-    if (memcmp(buffer, "RIFF", 4) || memcmp(buffer+8, "WAVE", 4)) {
+    /*
+        log<<std::hex;
+        for (i=0; i<12; i++)
+            log<<" 0x"<<static_cast<int>(buffer[i]);
+        log<<std::endl;
+    */
+    if (memcmp(buffer, "RIFF", 4) || memcmp(buffer + 8, "WAVE", 4)) {
         if (verbose)
-            log<<"Not RIFF WAVE.\n";
+            log << "Not RIFF WAVE.\n";
         curp = 0xFFFFFFFF; // hack around goto.
     }
 
-    while (inbuf.size() > curp ) {
+    while (inbuf.size() > curp) {
         if (buf_fread(buffer, 4, inbuf, &curp) != 4) {
             if (verbose)
-                log<<"Can't read chunk ID at offset 0x"<<std::hex<<curp
-                   <<std::endl;
+                log << "Can't read chunk ID at offset 0x" << std::hex << curp
+                    << std::endl;
             break;
         }
 
@@ -328,8 +334,8 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
             length -= 2;
             if (i != 1) {
                 if (verbose)
-                    log<<"Not PCM? (i = 0x"
-                       <<std::hex<<std::setw(4)<<i<<")\n"<<std::dec;
+                    log << "Not PCM? (i = 0x"
+                        << std::hex << std::setw(4) << i << ")\n" << std::dec;
                 break;
             }
 
@@ -337,7 +343,7 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
             length -= 2;
             if ((channels != 1) && (channels != 2)) {
                 if (verbose)
-                    log<<"Bogus num of channels: "<<std::dec<<channels<<"\n";
+                    log << "Bogus num of channels: " << std::dec << channels << "\n";
                 break;
             }
 
@@ -352,14 +358,13 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
             length -= 2;
             if ((bits != 8) && (bits != 16)) {
                 if (verbose)
-                    log<<"\nBogus sample size: "<<std::dec<<bits<<"\n";
+                    log << "\nBogus sample size: " << std::dec << bits << "\n";
                 break;
             }
             if (verbose)
-                log<<"Format: "<<std::dec<<channels<<" channel(s), "
-                   <<bits<<" bits, "<<freq<<" Hz\n";
-        }
-        else if (memcmp(buffer, "data", 4) == 0) {
+                log << "Format: " << std::dec << channels << " channel(s), "
+                    << bits << " bits, " << freq << " Hz\n";
+        } else if (memcmp(buffer, "data", 4) == 0) {
             /* log<<"Data: "<<length<<" bytes\n"; */
             len = length / channels;
 
@@ -374,25 +379,25 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
                 if (bits == 8) {
                     if (buf_fread(spl->data, length, inbuf, &curp) != length) {
                         if (verbose)
-                            log<<"Can't read "<<std::dec<<length
-                               <<" bytes of data ("<<(inbuf.size() - curp)
-                               <<" left)\n",
-                        *allegro_errno = 1;
+                            log << "Can't read " << std::dec << length
+                                << " bytes of data (" << (inbuf.size() - curp)
+                                << " left)\n",
+                                *allegro_errno = 1;
                     }
                 } else {
-                   for (i=0; i<len*channels; i++) {
+                    for (i = 0; i < len * channels; i++) {
                         s = buf_igetw(inbuf, &curp);
-                        ((signed short *)(spl->data))[i] = s^0x8000;
-                   }
+                        ((signed short *)(spl->data))[i] = s ^ 0x8000;
+                    }
                 }
 
                 length = 0;
 
                 if (*allegro_errno) {
                     if (verbose)
-                        log<<"allegro_errno: "<<(*allegro_errno)<<".\n";
-                   destroy_sample(spl);
-                   spl = NULL;
+                        log << "allegro_errno: " << (*allegro_errno) << ".\n";
+                    destroy_sample(spl);
+                    spl = NULL;
                 }
             }
         }
@@ -411,16 +416,17 @@ by shifting the sample value 0, 1 or 2 positions.
 This code unconditionally shifts the sample 2 positions to achieve maximum
 volume. */
 
-SAMPLE *raw2sample(const std::string& buf) {
+SAMPLE *raw2sample(const std::string &buf)
+{
     SAMPLE *spl = create_sample(8, 0, 8000, buf.size());
-/* above returns NULL if len == 0 */
+    /* above returns NULL if len == 0 */
     if (spl == NULL)
         return NULL;
 
-/* copy data */
+    /* copy data */
     buf.copy(static_cast<char *>(spl->data), buf.size());
 
-/* adjust volume */
+    /* adjust volume */
     for (unsigned i = 0; i < buf.size(); i++)
         (static_cast<unsigned char *>(spl->data))[i] =
             (static_cast<unsigned char *>(spl->data))[i] << 2;
@@ -434,7 +440,8 @@ soundFile::soundFile() { }
 
 soundFile::~soundFile() { }
 
-int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
+int soundFile::loadFile(const char *fname, std::ostream &log, bool verbose)
+{
     std::ifstream ifs(fname, std::ios::in | std::ios::binary);
 
     if (!ifs)
@@ -444,33 +451,35 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 
     ISTREAM_TO_STRING(ifs, fdata);
 
-    switch(getFileType(fdata)) {
+    switch (getFileType(fdata)) {
         case CT_ORIGINAL:
             if (verbose)
-                log<<"Parsing original .cat"<<std::endl;
+                log << "Parsing original .cat" << std::endl;
             loadOrigCat(fdata, log, verbose);
             break;
         case CT_CE:
             if (verbose)
-                log<<"Parsing CE .cat"<<std::endl;
+                log << "Parsing CE .cat" << std::endl;
             loadCeCat(fdata, log, verbose);
             break;
         default:
-            log<<"Unknown file type\n";
+            log << "Unknown file type\n";
             return -1;
     }
 
     return 0;
 }
 
-SAMPLE * soundFile::fetchSample(int idx) {
+SAMPLE *soundFile::fetchSample(int idx)
+{
     ASSERT(idx >= 0 && idx < static_cast<int>(samples.size()));
     return samples[idx];
 }
 
 
 /** try to determine if this is an CE file or not. */
-cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
+cat_file_type_e_t soundFile::getFileType(const std::string &buf)
+{
     int i;
     int offs;
     const int head_len = 10;
@@ -482,31 +491,31 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
 
 
 #if defined(DEBUGMODE)
-{
-    std::cerr<<"getFileType(): offset "<<offs<<std::endl;
+    {
+        std::cerr << "getFileType(): offset " << offs << std::endl;
 
-    std::cerr<<std::hex;
-    for (i=0; i<head_len; i++)
-        std::cerr<<" 0x"<<static_cast<int>(sbuf[i]);
-    std::cerr<<std::dec<<std::endl;
-}
+        std::cerr << std::hex;
+        for (i = 0; i < head_len; i++)
+            std::cerr << " 0x" << static_cast<int>(sbuf[i]);
+        std::cerr << std::dec << std::endl;
+    }
 #endif
 
-/*
- * Assuming this is CE file, scan first head_len bytes for RIFF sequence.
- * Declare original file otherwise.
- *
- */
+    /*
+     * Assuming this is CE file, scan first head_len bytes for RIFF sequence.
+     * Declare original file otherwise.
+     *
+     */
 
-    for (i = 0; i<head_len - 4; i++)
-        if ( 0 == memcmp(sbuf+i, "RIFF", 4))
+    for (i = 0; i < head_len - 4; i++)
+        if (0 == memcmp(sbuf + i, "RIFF", 4))
             return CT_CE; /* gotcha, this is CE file */
 
     return CT_ORIGINAL;
 }
 
 /* load Gold Edition .cat file */
-void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
+void soundFile::loadCeCat(const std::string &buf, std::ostream &log,
                           bool verbose)
 {
     int i, count, nsamples;
@@ -520,63 +529,63 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
 
     count = 0;
     do {
-        buf.copy((char *)&(offsets[count]), 4, 4 * (2 * count ));
-        buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
+        buf.copy((char *)&(offsets[count]), 4, 4 *(2 * count));
+        buf.copy((char *)&(lengths[count]), 4, 4 *(2 * count + 1));
         offsets[count] = intel_uint32(offsets[count]);
         lengths[count] = intel_uint32(lengths[count]);
         count++;
-    } while(count < nsamples);
+    } while (count < nsamples);
 
     offsets[count] = buf.size();
     lengths[count] = 0;
 
     std::ios::fmtflags oldFlags = log.flags();
 
-    for (i=0; i<nsamples; i++) {
+    for (i = 0; i < nsamples; i++) {
         SAMPLE *smpl;
         int datbytes;
 
         /* seems like the first datbyte is actually datbytes length:
            it is always 1 or 2, and the same number of datbytes follow. */
         if (verbose)
-            log<<"#"<<std::setw(2)<<std::setfill((char)' ')<<std::dec<<i
-               <<": "<<std::setw(6)<<(lengths[i])
-               <<" bytes from 0x"
-               <<std::hex<<std::setfill((char)'0')<<std::setw(5)<<(offsets[i])
-               <<", data bytes:";
+            log << "#" << std::setw(2) << std::setfill((char)' ') << std::dec << i
+                << ": " << std::setw(6) << (lengths[i])
+                << " bytes from 0x"
+                << std::hex << std::setfill((char)'0') << std::setw(5) << (offsets[i])
+                << ", data bytes:";
 
         if (lengths[i] > 0) {
-            datbytes= buf.at(offsets[i]);
+            datbytes = buf.at(offsets[i]);
 
             if (verbose) {
-                log<<std::setw(2);
-                for (int di=offsets[i] + 1; di<offsets[i] + datbytes + 1; di++)
-                    log<<" 0x"<< (static_cast<unsigned int>(buf.at(di)) & 0xFF);
-                log<<"\n";
+                log << std::setw(2);
+                for (int di = offsets[i] + 1; di < offsets[i] + datbytes + 1; di++)
+                    log << " 0x" << (static_cast<unsigned int>(buf.at(di)) & 0xFF);
+                log << "\n";
             }
 
             datbytes++; // include datlen
 
-            if ( verbose && (lengths[i] + offsets[i] + datbytes != offsets[i+1]))
-                log<<" !!! warning: inconsistency: "
-                       "next offset should be 0x"
-                   <<(lengths[i] + offsets[i] + datbytes)
-                   <<", is 0x"<<offsets[i+1]<<std::endl;
+            if (verbose && (lengths[i] + offsets[i] + datbytes != offsets[i+1]))
+                log << " !!! warning: inconsistency: "
+                    "next offset should be 0x"
+                    << (lengths[i] + offsets[i] + datbytes)
+                    << ", is 0x" << offsets[i+1] << std::endl;
 
             if (verbose)
-                log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
-                   <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
+                log << "Giving 0x" << lengths[i] << " bytes at offset 0x"
+                    << (offsets[i] + datbytes) << " to wav2sample()" << std::endl;
 
             std::string chunk = buf.substr(offsets[i] + datbytes, lengths[i]);
 
             smpl = wav2sample(chunk, log, verbose);
 
             if (verbose && (smpl == NULL))
-                log<<"Error reading wave.\n";
+                log << "Error reading wave.\n";
 
         } else {
             if (verbose)
-                log<<" none.\n";
+                log << " none.\n";
             smpl = NULL;
         }
         samples.push_back(smpl);
@@ -590,7 +599,7 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
 static const int ORIG_SAMPLE_DATA_HEADER_LEN = 6;
 
 /** Load original *.cat file */
-void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
+void soundFile::loadOrigCat(const std::string &buf, std::ostream &log,
                             bool verbose)
 {
     int i, count, nsamples;
@@ -604,53 +613,53 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
 
     count = 0;
     do {
-        buf.copy((char *)&(offsets[count]), 4, 4 * (2 * count ));
-        buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
+        buf.copy((char *)&(offsets[count]), 4, 4 *(2 * count));
+        buf.copy((char *)&(lengths[count]), 4, 4 *(2 * count + 1));
         offsets[count] = intel_uint32(offsets[count]);
         lengths[count] = intel_uint32(lengths[count]);
         count++;
-    } while(count < nsamples);
+    } while (count < nsamples);
 
     offsets[count] = buf.size();
     lengths[count] = 0;
 
     std::ios::fmtflags oldFlags = log.flags();
 
-    for (i=0; i<nsamples; i++) {
+    for (i = 0; i < nsamples; i++) {
         SAMPLE *smpl;
 
         if (verbose)
-            log<<"#"<<std::setw(2)<<std::setfill((char)' ')<<std::dec<<i
-               <<": "<<std::setw(6)<<(lengths[i])
-               <<" bytes from 0x"
-               <<std::hex<<std::setfill((char)'0')<<std::setw(5)<<(offsets[i])
-               <<", data bytes:";
+            log << "#" << std::setw(2) << std::setfill((char)' ') << std::dec << i
+                << ": " << std::setw(6) << (lengths[i])
+                << " bytes from 0x"
+                << std::hex << std::setfill((char)'0') << std::setw(5) << (offsets[i])
+                << ", data bytes:";
 
         if (lengths[i] > 0) {
             if (verbose) {
-                log<<std::setw(2);
-                for (int di=offsets[i];
-                        di<offsets[i] + ORIG_SAMPLE_DATA_HEADER_LEN; di++)
-                    log<<" 0x"<< (static_cast<unsigned int>(buf.at(di)) & 0xFF);
-                log<<"\n";
+                log << std::setw(2);
+                for (int di = offsets[i];
+                        di < offsets[i] + ORIG_SAMPLE_DATA_HEADER_LEN; di++)
+                    log << " 0x" << (static_cast<unsigned int>(buf.at(di)) & 0xFF);
+                log << "\n";
                 if (lengths[i] + offsets[i] != offsets[i+1])
-                    log<<" !!! warning: inconsistency: "
-                           "next offset should be 0x"
-                       <<(lengths[i] + offsets[i])
-                       <<", is 0x"<<offsets[i+1]<<std::endl;
+                    log << " !!! warning: inconsistency: "
+                        "next offset should be 0x"
+                        << (lengths[i] + offsets[i])
+                        << ", is 0x" << offsets[i+1] << std::endl;
             }
 
             std::string chunk =
                 buf.substr(offsets[i] + ORIG_SAMPLE_DATA_HEADER_LEN,
-                            lengths[i] - ORIG_SAMPLE_DATA_HEADER_LEN);
+                           lengths[i] - ORIG_SAMPLE_DATA_HEADER_LEN);
             smpl = raw2sample(chunk);
 
             if (verbose && (smpl == NULL)) {
-                log<<"Error reading raw."<<std::endl;
+                log << "Error reading raw." << std::endl;
             }
         } else {
             if (verbose)
-                log<<" none.\n";
+                log << " none.\n";
             smpl = NULL;
         }
         samples.push_back(smpl);
@@ -695,55 +704,56 @@ static XML_Char *h_getAttr(const XML_Char **atts, const char *name)
         cur_p++;
         a_value = *cur_p;
         cur_p++;
-        if ( 0 == strcmp(a_name, name) )
+        if (0 == strcmp(a_name, name))
             return a_value;
     }
     return NULL;
 }
 
-static void h_recordXMLStreamPos(std::ostream& os, XML_Parser xp) {
+static void h_recordXMLStreamPos(std::ostream &os, XML_Parser xp)
+{
     int line = XML_GetCurrentLineNumber(xp);
     int column = XML_GetCurrentColumnNumber(xp);
-    os<<" line "<<line<<", column "<<column<<" ";
+    os << " line " << line << ", column " << column << " ";
 }
 
 /** XML start element parser callback */
 static void h_StartEl(void *userData,
-                        const XML_Char *name,
-                        const XML_Char **atts )
+                      const XML_Char *name,
+                      const XML_Char **atts)
 {
     xmlp_baton_t *b = static_cast <xmlp_baton_t *>(userData);
 
     if (b->errorOccured)
         return;
 
-    if ( 0 == strcmp(name, "soundmap") ) {
+    if (0 == strcmp(name, "soundmap")) {
         b->inSoundMap = true;
         return;
     }
 
-    if ( 0 == strcmp(name, "file") ) {
+    if (0 == strcmp(name, "file")) {
         XML_Char *fname;
         if (b->current != NULL)
-            delete (b->current);
+            delete(b->current);
         b->current = new soundFile();
         if (NULL == (fname = h_getAttr(atts, "name"))) {
             b->errorOccured = true;
-            *b->log<<"No 'name' attribute in file element ";
+            *b->log << "No 'name' attribute in file element ";
             h_recordXMLStreamPos(*b->log, b->parser);
             return;
         }
-        *b->log<<"Loading '"<<fname<<"'"<<std::endl;
+        *b->log << "Loading '" << fname << "'" << std::endl;
         if (b->current->loadFile(F(fname), *b->log, b->verbose) != 0) {
             b->skipThisFile = true;
-            *b->log<<"can not load, skipping."<<std::endl;
+            *b->log << "can not load, skipping." << std::endl;
             return;
         }
         b->inFile = true;
         return;
     }
 
-    if ( 0 == strcmp(name, "sample") ) {
+    if (0 == strcmp(name, "sample")) {
         if (b->skipThisFile)
             return;
 
@@ -754,19 +764,19 @@ static void h_StartEl(void *userData,
 
         if (NULL == (sym = h_getAttr(atts, "sym"))) {
             b->errorOccured = true;
-            *b->log<<"No 'sym' attribute in sample element";
+            *b->log << "No 'sym' attribute in sample element";
             h_recordXMLStreamPos(*b->log, b->parser);
             return;
         }
         soundSym = getSymCode(sym);
         if ((soundSym == SS_UNKNOWN) || (soundSym == SS_UNUSED)) {
             if (b->verbose)
-                *b->log<<"SS_UNKNOWN or SS_UNUSED soundSym\n";
+                *b->log << "SS_UNKNOWN or SS_UNUSED soundSym\n";
             return;
         }
         if (NULL == (sample = b->current->fetchSample(b->curSampleIndex))) {
             b->errorOccured = true;
-            *b->log<<"Extraneous <sample> sym='"<<sym<<"' ";
+            *b->log << "Extraneous <sample> sym='" << sym << "' ";
             h_recordXMLStreamPos(*b->log, b->parser);
             return;
         }
@@ -775,7 +785,7 @@ static void h_StartEl(void *userData,
         return;
     }
 
-    if ( 0 == strcmp(name, "alias") ) {
+    if (0 == strcmp(name, "alias")) {
         if (b->skipThisFile)
             return;
 
@@ -784,14 +794,14 @@ static void h_StartEl(void *userData,
 
         if (!b->inSample) {
             b->errorOccured = true;
-            *b->log<<"alias element outside sample element";
+            *b->log << "alias element outside sample element";
             h_recordXMLStreamPos(*b->log, b->parser);
             return;
         }
 
         if (NULL == (sym = h_getAttr(atts, "sym"))) {
             b->errorOccured = true;
-            *b->log<<"No 'sym' attribute in alias element";
+            *b->log << "No 'sym' attribute in alias element";
             h_recordXMLStreamPos(*b->log, b->parser);
             return;
         }
@@ -803,7 +813,7 @@ static void h_StartEl(void *userData,
     }
 
     b->errorOccured = true;
-    *b->log<<"Unknown element '"<<name<<"'\n";
+    *b->log << "Unknown element '" << name << "'\n";
     h_recordXMLStreamPos(*b->log, b->parser);
 }
 
@@ -815,12 +825,12 @@ static void h_EndEl(void *userData, const XML_Char *name)
     if (b->errorOccured)
         return;
 
-    if ( 0 == strcmp(name, "soundmap") ) {
+    if (0 == strcmp(name, "soundmap")) {
         b->inSoundMap = false;
         return;
     }
 
-    if ( 0 == strcmp(name, "file") ) {
+    if (0 == strcmp(name, "file")) {
         b->inFile = false;
         if (!b->skipThisFile)
             *b->log << "loaded ok.\n";
@@ -830,14 +840,14 @@ static void h_EndEl(void *userData, const XML_Char *name)
         return;
     }
 
-    if ( 0 == strcmp(name, "sample") ) {
+    if (0 == strcmp(name, "sample")) {
         b->inSample = false;
         b->curSample = NULL;
         b->curSampleIndex++;
         return;
     }
 
-    if ( 0 == strcmp(name, "alias") ) {
+    if (0 == strcmp(name, "alias")) {
         /* do the Nothing */
         return;
     }
@@ -845,12 +855,13 @@ static void h_EndEl(void *userData, const XML_Char *name)
 
 /* soundSystem implementation */
 
-soundSystem::soundSystem() {
+soundSystem::soundSystem()
+{
     soundInstalled = false;
 }
 //~soundSystem::soundSystem() { }
 
-int soundSystem::initialize(const std::string& xml, std::ostream *log,
+int soundSystem::initialize(const std::string &xml, std::ostream *log,
                             bool verbose)
 {
     if (soundInstalled)
@@ -870,10 +881,9 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
      * so we try to call install_sound() again without MIDI support if the first call
      * failed. That is done to at least have sound effects.
      */
-    if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0
-        && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0)
-    {
-        *log<<"Error initialising sound system: "<<allegro_error<<std::endl;
+    if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0
+            && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0) {
+        *log << "Error initialising sound system: " << allegro_error << std::endl;
         soundInstalled = false;
         return -1;
     } else {
@@ -910,10 +920,10 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
     XML_Parse(baton.parser, xml.data(), xml.size(), 1);
 
     if (XML_GetErrorCode(baton.parser) != XML_ERROR_NONE) {
-        *log<<"XML parse error: "
-            <<XML_ErrorString(XML_GetErrorCode(baton.parser))
-            <<" at line "<<XML_GetCurrentLineNumber(baton.parser)
-            <<" col "<<XML_GetCurrentColumnNumber(baton.parser)<<std::endl;
+        *log << "XML parse error: "
+             << XML_ErrorString(XML_GetErrorCode(baton.parser))
+             << " at line " << XML_GetCurrentLineNumber(baton.parser)
+             << " col " << XML_GetCurrentColumnNumber(baton.parser) << std::endl;
         return -1;
     }
 
@@ -925,21 +935,24 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
     return 0;
 }
 
-void soundSystem::shutdown() {
+void soundSystem::shutdown()
+{
     if (soundInstalled) {
         remove_sound();
         soundInstalled = false;
     }
 }
 
-void soundSystem::setSample(SoundSym_e_t sndSym, SAMPLE * sample) {
+void soundSystem::setSample(SoundSym_e_t sndSym, SAMPLE *sample)
+{
     if (!soundInstalled)
         return;
     theSamples[sndSym] = sample;
 }
 
-void soundSystem::play(SoundSym_e_t sndSym, int vol, int pan, int freq) {
-    if(g_fast_forward)
+void soundSystem::play(SoundSym_e_t sndSym, int vol, int pan, int freq)
+{
+    if (g_fast_forward)
         return;
 
     if (!soundInstalled)
@@ -955,39 +968,42 @@ void soundSystem::play(SoundSym_e_t sndSym, int vol, int pan, int freq) {
 
 soundSystem *soundSystem::theInstance = 0;
 
-soundSystem *soundSystem::getInstance() {
+soundSystem *soundSystem::getInstance()
+{
     if (theInstance == 0)
         theInstance = new soundSystem();
 
     return theInstance;
 }
 
-void soundSystem::getLoadedSyms(std::ostream *os) {
+void soundSystem::getLoadedSyms(std::ostream *os)
+{
     if (!soundInstalled)
         return;
     for (unsigned i = 0; i != theSamples.size(); i++)
         if (theSamples[i] != NULL)
-            *os<<i<<": '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"'\n";
+            *os << i << ": '" << getSymString(static_cast<SoundSym_e_t>(i)) << "'\n";
 }
 
 /**
  * Test: Play all sounds at start of program,
  * when flag F_SOUNDCHECK in config-file ufo2000.ini is set.
  */
-void soundSystem::playLoadedSamples(std::ostream *os) {
+void soundSystem::playLoadedSamples(std::ostream *os)
+{
     if (!soundInstalled)
         return;
     for (unsigned i = 0; i != theSamples.size(); i++)
         if (theSamples[i] != NULL) {
-            *os<<"Playing '"<<getSymString(static_cast<SoundSym_e_t> (i))
-               <<"' (#"<<i
-               <<", bits "<<(theSamples[i]->bits)
-               <<" stereo "<<(theSamples[i]->stereo)
-               <<" freq "<<(theSamples[i]->freq)
-               <<" pri "<<(theSamples[i]->priority)
-               <<" len "<<(theSamples[i]->len)
-               <<")"<< std::endl;
-            play(static_cast<SoundSym_e_t> (i));
+            *os << "Playing '" << getSymString(static_cast<SoundSym_e_t>(i))
+                << "' (#" << i
+                << ", bits " << (theSamples[i]->bits)
+                << " stereo " << (theSamples[i]->stereo)
+                << " freq " << (theSamples[i]->freq)
+                << " pri " << (theSamples[i]->priority)
+                << " len " << (theSamples[i]->len)
+                << ")" << std::endl;
+            play(static_cast<SoundSym_e_t>(i));
             if (soundInstalled)
                 rest(1500); // sleep 1.5 secs to allow the sample to play.
         }

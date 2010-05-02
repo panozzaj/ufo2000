@@ -60,15 +60,13 @@ static void daemonize()
     int ern;
     int pid = fork();
     /* fork() failed ? */
-    if (pid < 0)
-    {
+    if (pid < 0) {
         ern = errno;
         server_log("Can not fork: %s\n", strerror(ern));
         exit(1);
     }
     /* Exit in parent. */
-    if (pid > 0)
-    {
+    if (pid > 0) {
         server_log("Parent: forked child pid %d, exiting.\n", pid);
         exit(0);
     }
@@ -84,7 +82,7 @@ static void daemonize()
        calling this function.
      */
     int FD_PARANOIA_LEVEL = getdtablesize();
-    for (int d=0; d < FD_PARANOIA_LEVEL; d++)
+    for (int d = 0; d < FD_PARANOIA_LEVEL; d++)
         close(d);
 
     /* Open standard file descriptors just in case something would want
@@ -96,18 +94,15 @@ static void daemonize()
     const int unix_stderr_d = STDERR_FILENO;
 
     stdin_d = open("/dev/null", O_RDONLY);
-    if (stdin_d < 0)
-    {
+    if (stdin_d < 0) {
         ern = errno;
         server_log("Can not read /dev/null: %s\n", strerror(ern));
         exit(1);
     }
     /* Rename opened for reading /dev/null to stdin */
-    if (unix_stdin_d != stdin_d)
-    {
+    if (unix_stdin_d != stdin_d) {
         int rv = dup2(stdin_d, STDIN_FILENO);
-        if (rv < 0)
-        {
+        if (rv < 0) {
             ern = errno;
             server_log("Can not dup2 stdin_d: %s (%d, %d)\n", strerror(ern), stdin_d, STDIN_FILENO);
             exit(1);
@@ -116,18 +111,15 @@ static void daemonize()
     }
 
     stdout_d = open("/dev/null", O_APPEND);
-    if (stdout_d < 0)
-    {
+    if (stdout_d < 0) {
         ern = errno;
         server_log("Can not append to /dev/null: %s\n", strerror(ern));
         exit(1);
     }
     /* Rename opened for appending /dev/null to stdout */
-    if (unix_stdout_d != stdout_d)
-    {
+    if (unix_stdout_d != stdout_d) {
         int rv = dup2(stdout_d, unix_stdout_d);
-        if (rv < 0)
-        {
+        if (rv < 0) {
             ern = errno;
             server_log("Can not dup2 stdout_d: %s\n", strerror(ern));
             exit(1);
@@ -136,18 +128,15 @@ static void daemonize()
     }
 
     stderr_d = open("/dev/null", O_APPEND);
-    if (stderr_d < 0)
-    {
+    if (stderr_d < 0) {
         ern = errno;
         server_log("Can not append to /dev/null: %s\n", strerror(ern));
         exit(1);
     }
     /* Rename opened for appending /dev/null to stdout */
-    if (unix_stderr_d != stderr_d)
-    {
+    if (unix_stderr_d != stderr_d) {
         int rv = dup2(stderr_d, unix_stderr_d);
-        if (rv < 0)
-        {
+        if (rv < 0) {
             ern = errno;
             server_log("Can not dup2 stderr_d: %s\n", strerror(ern));
             exit(1);
@@ -159,8 +148,7 @@ static void daemonize()
 static void write_pid_file()
 {
     FILE *fp = fopen(PID_FILE_PATHNAME, "w");
-    if (fp)
-    {
+    if (fp) {
         fprintf(fp, "%d\n", getpid());
         fclose(fp);
     }
@@ -174,7 +162,7 @@ static void remove_pid_file()
 /** signal handler for SIGHUP */
 static void reload_config(int s)
 {
-	g_server_reload_config_flag = 1;
+    g_server_reload_config_flag = 1;
     server_log("Reloading configuration.\n");
 }
 
@@ -194,7 +182,7 @@ exited cleanly  (not crashed, that is)
 static void clean_shutdown(int s)
 {
     server_log("Got signal %d, shutting down.\n", s);
-	remove_pid_file();
+    remove_pid_file();
     exit(0);
 }
 
@@ -211,15 +199,15 @@ static void set_signal_handlers()
 
 void printErrorExit(void)
 {
-	NLenum err = nlGetError();
+    NLenum err = nlGetError();
 
-	if (err == NL_SYSTEM_ERROR)
-		server_log("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
-	else
-		server_log("HawkNL error: %s\n", nlGetErrorStr(err));
+    if (err == NL_SYSTEM_ERROR)
+        server_log("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
+    else
+        server_log("HawkNL error: %s\n", nlGetErrorStr(err));
 
-	nlShutdown();
-	exit(1);
+    nlShutdown();
+    exit(1);
 }
 
 /** test if we can read and write a file with stdio functions */
@@ -230,8 +218,7 @@ static bool test_file_rw(const std::string *pn, std::string *err)
 
     /* 0. Test if file exists by trying to open for reading. */
     fp = fopen(pn->c_str(), "r");
-    if (fp == NULL)
-    {
+    if (fp == NULL) {
         the_errno = errno;
         err->assign(strerror(the_errno));
         return false;
@@ -240,8 +227,7 @@ static bool test_file_rw(const std::string *pn, std::string *err)
 
     /* 1. Test if file is writable by trying to open for appending. */
     fp = fopen(pn->c_str(), "a");
-    if (fp == NULL)
-    {
+    if (fp == NULL) {
         the_errno = errno;
         err->assign(strerror(the_errno));
         return false;
@@ -257,16 +243,13 @@ static std::string *find_config_file(int argc, char *argv[])
     std::string *pn_e = new std::string;
     /* 0. Check parameters */
 
-    if (argc == 2)
-    {
+    if (argc == 2) {
         pn->assign(argv[1]);
-        if (test_file_rw(pn, pn_e))
-        {  /* FIXME: we don't really need write access here */
+        if (test_file_rw(pn, pn_e)) {
+            /* FIXME: we don't really need write access here */
             pn->assign(argv[1]);
             return pn;
-        }
-        else
-        {
+        } else {
             fprintf(stderr, "No access to '%s': %s.\n",
                     pn->c_str(), pn_e->c_str());
             exit(1);
@@ -288,7 +271,7 @@ static std::string *find_config_file(int argc, char *argv[])
 
     fprintf(stderr, "Can not access neither\n'%s': %s\n"
             " nor\n'%s': %s\n, aborting.\n",
-            hpn->c_str(), hpn_e->c_str(), pn->c_str(), pn_e->c_str() );
+            hpn->c_str(), hpn_e->c_str(), pn->c_str(), pn_e->c_str());
 
     exit(1);
 }
@@ -342,8 +325,7 @@ void prepare_db()
     for (int i = 0; i < (int)(sizeof(update_db) / sizeof(update_db[0])); i++) {
         try {
             db_conn.executenonquery(update_db[i]);
-        }
-        catch(std::exception &ex) {
+        } catch (std::exception &ex) {
             server_log("Error executing '%s'\n", update_db[i]);
             LOG_EXCEPTION(ex.what());
         }
@@ -354,15 +336,15 @@ void prepare_db()
 int main(int argc, char *argv[])
 {
 #ifdef WIN32
-	// Win32-version has all data files in a single directory where it was installed
-	char ufo2000_dir[MAX_PATH];
-	GetModuleFileName(NULL, ufo2000_dir, sizeof(ufo2000_dir));
-	if (strrchr(ufo2000_dir, '\\')) *strrchr(ufo2000_dir, '\\') = '\0';
-	SetCurrentDirectory(ufo2000_dir);
+    // Win32-version has all data files in a single directory where it was installed
+    char ufo2000_dir[MAX_PATH];
+    GetModuleFileName(NULL, ufo2000_dir, sizeof(ufo2000_dir));
+    if (strrchr(ufo2000_dir, '\\')) *strrchr(ufo2000_dir, '\\') = '\0';
+    SetCurrentDirectory(ufo2000_dir);
 #endif
 
-	NLsocket serversock;
-	NLenum   type = NL_IP;/* default network type */
+    NLsocket serversock;
+    NLenum   type = NL_IP;/* default network type */
 
     std::string *cfg_pathname = find_config_file(argc, argv);
 
@@ -382,8 +364,7 @@ int main(int argc, char *argv[])
 
     if (serversock == NL_INVALID) printErrorExit();
 
-    if (!nlListen(serversock))       /* let's listen on this socket */
-    {
+    if (!nlListen(serversock)) {     /* let's listen on this socket */
         nlClose(serversock);
         printErrorExit();
     }
@@ -393,10 +374,10 @@ int main(int argc, char *argv[])
 #endif
     prepare_db();
 
-	ServerDispatch *server = new ServerDispatch();
+    ServerDispatch *server = new ServerDispatch();
     server_log("server started\n");
-	server->Run(serversock);
-	delete server;
+    server->Run(serversock);
+    delete server;
 
     nlShutdown();
 #ifndef WIN32

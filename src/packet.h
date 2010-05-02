@@ -24,19 +24,19 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <list>
 
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
-              CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
-              CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,         
+              CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,
+              CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,
               CMD_UNLOAD_AMMO, CMD_LOAD_AMMO,
               CMD_TAKE_ITEM, CMD_DROP_ITEM,
-              CMD_MOVE, CMD_FACE,                                     
+              CMD_MOVE, CMD_FACE,
               CMD_TARGET_ACTION,
-              CMD_ADD_UNIT, CMD_UNIT_DATA_SIZE, CMD_UNIT_DATA,        
-              CMD_SELECT_UNIT, CMD_DESELECT_UNIT,                     
-              CMD_MAP_DATA,                                           
-              CMD_FINISH_PLANNER,                                     
-              CMD_RESTARTGAME,                                        
-              CMD_TIME_LIMIT,                                         
-              CMD_TERRAIN_CRC32,                                      
+              CMD_ADD_UNIT, CMD_UNIT_DATA_SIZE, CMD_UNIT_DATA,
+              CMD_SELECT_UNIT, CMD_DESELECT_UNIT,
+              CMD_MAP_DATA,
+              CMD_FINISH_PLANNER,
+              CMD_RESTARTGAME,
+              CMD_TIME_LIMIT,
+              CMD_TERRAIN_CRC32,
               CMD_USE_ELEVATOR,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
@@ -50,7 +50,7 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
  * Object for packing/unpacking data to network packets
  *
  * @ingroup network
- */             
+ */
 class Packet
 {
 private:

@@ -27,7 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * @file script_api.h
  * @brief Bindings for calling lua functions from C++ and vice versa
  *
- * This file contains all the "black magic" involved in using lua stack 
+ * This file contains all the "black magic" involved in using lua stack
  * based api and makes other parts of the game simplier
  */
 
@@ -53,7 +53,7 @@ int query_languages(std::vector<std::string> &languages);
 
 /**
  * Get images set by AddImage() lua function
- */ 
+ */
 ALPHA_SPRITE *lua_table_image(const char *name);
 std::vector<ALPHA_SPRITE *> lua_table_image_vector(const char *name);
 

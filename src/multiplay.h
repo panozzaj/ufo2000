@@ -34,10 +34,10 @@ void inithotseatgame();
 void closehotseatgame();
 
 /**
- * High level object providing network support. Uses some kind of RPC 
+ * High level object providing network support. Uses some kind of RPC
  * for sending local changes to the remote player. Network packets are received,
  * arguments unpacked and proper functions called to keep game state in sync.
- * 
+ *
  * @ingroup planner
  * @ingroup battlescape
  * @ingroup network
@@ -99,21 +99,21 @@ private:
     int recv_scenario();
     int recv_rules();
     int recv_options();
-    
+
     int recv_panic();
     int recv_morale_change();
     int recv_equipment_list();
     int recv_equipment_choice();
     int recv_tie();
     int recv_initrand();
-    
+
     int recv_recovery_stop();
     int recv_start_visible_recovery();
-    
+
 public:
     std::istream *m_ireplay_file;
     std::ostream *m_oreplay_file;
-    
+
     ClientServerUfo *m_internet_server;
     GameType gametype;
 
@@ -168,7 +168,7 @@ public:
     void send_scenario();
     void send_rules(int index, int value);
     void send_options(int scenario_type, int index, int value);
-    
+
     void send_panic(int NID, int action);
     void send_morale_change(int delta);
     void send_equipment_list();

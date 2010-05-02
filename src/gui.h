@@ -19,7 +19,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 /*
- * -- Most GUI control locations : April 16 2006 -- 
+ * -- Most GUI control locations : April 16 2006 --
  * Game_init procedure : main.cpp ~line 830
  */
 #ifndef SKIN_GUI_H
@@ -31,12 +31,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * SkinFeature object. Reaches for properties of a screen feature defined in standard-gui.lua
  * Used to get GUI related properties such as window placement, fonts, images, button sizes, etc.
- */ 
+ */
 class SkinFeature
 {
 private:
-    const char *m_feature;  
-    const char *m_fscreen; 
+    const char *m_feature;
+    const char *m_fscreen;
     ALPHA_SPRITE *feat_get_bitmap(const char *bitmap_name);
     int feat_get_color_int(const char *property_name, int index);
     int feat_get_placement_int(const char *property_name, int index);
@@ -76,7 +76,7 @@ public:
     const char *screen() { return m_fscreen; };
     const char *name() { return m_feature; };
 };
- 
+
 /*class SkinInterface;*/
 /**
  * SkinInterface object. Reaches for properties defined in standard-gui.lua
@@ -87,14 +87,14 @@ public:
  * gui = new SkinInterface();
  * gui->function( params );
  * gui->Feature( feature name )->function( params );
- */ 
+ */
 class SkinInterface
 {
 private:
     friend class SkinFeature;
 
     ALPHA_SPRITE *m_background;
-    const char *m_screen;  
+    const char *m_screen;
     /*  Returns values from the screen itself (Screen) */
     ALPHA_SPRITE *get_bitmap(const char *bitmap_name);
 public:
@@ -102,7 +102,7 @@ public:
     SkinInterface(const char *screen_name);
     ~SkinInterface();
     /*  - Feature subclass */
-    SkinFeature *Feature(const char *feature_name);    
+    SkinFeature *Feature(const char *feature_name);
     /*  - Background related properties */
     BITMAP *background();
     /*  - Other properties */

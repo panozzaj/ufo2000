@@ -5,20 +5,20 @@
 enum SoundSym_e_t {
     SS_UNKNOWN,
     SS_UNUSED,
-/* interface */
+    /* interface */
     SS_WINDOW_OPEN_1,
     SS_WINDOW_OPEN_2,
     SS_WINDOW_CLOSE_1,
     SS_WINDOW_CLOSE_2,
     SS_BUTTON_PUSH_1,
     SS_BUTTON_PUSH_2,
-/* inventory */
+    /* inventory */
     SS_CLIP_LOAD,
     SS_CLIP_EJECT,
     SS_ITEM_GET,
     SS_ITEM_PUT,
     SS_ITEM_DROP,
-/* Conventional weapons */
+    /* Conventional weapons */
     SS_CV_PISTOL_SHOT,
     SS_CV_RIFLE_SHOT,
     SS_CV_BULLET_BOUNCE,
@@ -30,14 +30,14 @@ enum SoundSym_e_t {
     SS_CV_CANNON_AP_HIT,
     SS_CV_CANNON_HE_HIT,
     SS_CV_CANNON_IN_HIT,
-/* melee weapons */
+    /* melee weapons */
     SS_KNIFE_PUNCH,
     SS_KNIFE_THROW,
     SS_KNIFE_HIT,
     SS_KASTET_PUNCH,
     SS_STUNROD_HIT,
     SS_BLUNT_HIT,
-/* rocket launchers */
+    /* rocket launchers */
     SS_RL_LAUNCH,
     SS_HWP_LAUNCH,
     SS_HWP_BLASTER_LAUNCH,
@@ -50,14 +50,14 @@ enum SoundSym_e_t {
     SS_HWP_BLASTER_HIT,
     SS_ALIEN_SMALL_HIT,
     SS_ALIEN_BLASTER_HIT,
-/* laser weapons */
+    /* laser weapons */
     SS_LASER_PISTOL_SHOT,
     SS_LASER_RIFLE_SHOT,
     SS_LASER_HEAVY_SHOT,
     SS_LASER_HWP_SHOT,
     SS_LASER_CANNON_SHOT,
     SS_LASER_CRAFT_SHOT,
-/* plasma weapons */
+    /* plasma weapons */
     SS_PLASMA_PISTOL_SHOT,
     SS_PLASMA_RIFLE_SHOT,
     SS_PLASMA_HEAVY_SHOT,
@@ -67,14 +67,14 @@ enum SoundSym_e_t {
     SS_PLASMA_CANNON_SHOT,
     SS_PLASMA_CRAFT_SHOT,
     SS_PLASMA_HIT,
-/* grenades */
+    /* grenades */
     SS_GRENADE_FALL,
     SS_CV_GRENADE_BANG,
     SS_SMOKE_GRENADE_BANG,
     SS_HIGH_EXPLOSIVE_BANG,
     SS_PROXY_GRENADE_BANG,
     SS_ALIEN_GRENADE_BANG,
-/* movement */
+    /* movement */
     SS_STEP_HUMAN,
     SS_STEP_HUMAN_METAL,
     SS_STEP_SECTOID,
@@ -93,7 +93,7 @@ enum SoundSym_e_t {
     SS_DOOR_CLICK,
     SS_ALIEN_EXT_DOOR,
     SS_ALIEN_INT_DOOR,
-/* growls */
+    /* growls */
     SS_MALE_WOUND,
     SS_MALE_DEATH,
     SS_FEMALE_WOUND,
@@ -124,7 +124,8 @@ enum SoundSym_e_t {
 
 SoundSym_e_t getSymCode(const char *const sym);
 
-class soundSystem {
+class soundSystem
+{
     static soundSystem *theInstance;
     std::vector<SAMPLE *> theSamples;
     bool soundInstalled;
@@ -136,11 +137,11 @@ public:
 
     static soundSystem *getInstance();
 
-    int initialize(const std::string& buf, std::ostream *log, bool verbose = false);
+    int initialize(const std::string &buf, std::ostream *log, bool verbose = false);
     void shutdown();
     void play(SoundSym_e_t sndSym, int vol = 255, int pan = 127, int freq = 1000);
 
-    void setSample(SoundSym_e_t sndSym, SAMPLE * sample);
+    void setSample(SoundSym_e_t sndSym, SAMPLE *sample);
 
     void getLoadedSyms(std::ostream *os);
     void playLoadedSamples(std::ostream *os);

@@ -63,20 +63,21 @@ Inventory::~Inventory()
  */
 // See also: Editor::show(), Soldier::draw_inventory()
 void Inventory::draw(int _x, int _y)
-{ // handle killing in MAN mode
-    x = _x; y = _y;        
-    
+{
+    // handle killing in MAN mode
+    x = _x; y = _y;
+
     m_mouse_range = new MouseRange(x, y, x + 320, y + 200);
-    
+
     BITMAP *temp = create_bitmap(321, 199);
-    clear_bitmap(temp);                                           
-    
+    clear_bitmap(temp);
+
     set_trans_blender(0, 0, 0, 160);
     draw_trans_sprite(screen2, temp, x, y);
-    
+
     destroy_bitmap(temp);
     temp = create_sub_bitmap(screen2, x, y, 321, 199);
-    
+
     if (mouse_inside(x + 50, y + 50, x + 110, y + 142))
         rect(temp, 50, 50, 110, 142, makecol(255, 0, 0));
 
@@ -126,17 +127,17 @@ void Inventory::draw(int _x, int _y)
 
         if (!key[KEY_LCONTROL]) {
             PCK::showpck(temp, sel_item->obdata_pInv(),
-                            mouse_x - x - sel_item->obdata_width()  * 16 / 2,
-                            mouse_y - y - sel_item->obdata_height() * 16 / 2 + 8);
+                         mouse_x - x - sel_item->obdata_width()  * 16 / 2,
+                         mouse_y - y - sel_item->obdata_height() * 16 / 2 + 8);
         }
 
     }
-    
+
     destroy_bitmap(temp);
-    
+
     if (sel_item != NULL && key[KEY_LCONTROL])
         sel_item->od_info(mouse_x, mouse_y, COLOR_WHITE);
-        
+
     delete m_mouse_range;
 }
 
@@ -148,9 +149,9 @@ void Inventory::execute()
 
     if (sel_item == NULL) {
         if (mouse_inside(x + 50, y + 50, x + 110, y + 142)) {  // Picture of soldier (in Powerarmor)
-            //g_console->printf(COLOR_SYS_DEBUG, "x,y: %d %d", mouse_x, mouse_y); 
+            //g_console->printf(COLOR_SYS_DEBUG, "x,y: %d %d", mouse_x, mouse_y);
             MODE = UNIT_INFO;   // switch to stats-display
-        } 
+        }
         if (mouse_inside(x + 237, y + 1, x + 271, y + 22)) {  //ok
             MODE = MAP3D;
             //map->place(sel_man->z, sel_man->x, sel_man->y)->viscol=0; //!!reset vis
@@ -171,42 +172,41 @@ void Inventory::execute()
             }
         }
     }
-    
+
     if (mouse_inside(x + 288, y + 137, x + 319, y + 151)) {  // -->
         map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_right();
-    } else
-        if (mouse_inside(x + 255, y + 137, x + 286, y + 151)) {  // <--
-            map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_left();
+    } else if (mouse_inside(x + 255, y + 137, x + 286, y + 151)) { // <--
+        map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_left();
+    } else {
+        if (sel_item == NULL) {
+            sel_item = sel_man->select_item(sel_item_place, x, y);
+            if (sel_item != NULL)
+                net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
         } else {
-            if (sel_item == NULL) {
-                sel_item = sel_man->select_item(sel_item_place, x, y);
-                if (sel_item != NULL)
-                    net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
-            } else {
-                Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
-                if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
-                    soundSystem::getInstance()->play(SS_CLIP_LOAD);
-                    sel_item_place = P_MAP;
-                    if (sel_item) sel_item->m_x = sel_item->m_y = -1;
-                    return ;
-                }
+            Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
+            if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
+                soundSystem::getInstance()->play(SS_CLIP_LOAD);
+                sel_item_place = P_MAP;
+                if (sel_item) sel_item->m_x = sel_item->m_y = -1;
+                return ;
+            }
 
-                it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
-                if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
-                    soundSystem::getInstance()->play(SS_CLIP_LOAD);
-                    sel_item_place = P_MAP;
-                    if (sel_item) sel_item->m_x = sel_item->m_y = -1;
-                    return ;
-                }
+            it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
+            if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
+                soundSystem::getInstance()->play(SS_CLIP_LOAD);
+                sel_item_place = P_MAP;
+                if (sel_item) sel_item->m_x = sel_item->m_y = -1;
+                return ;
+            }
 
-                int req_time;
-                int pn = sel_man->deselect_item(sel_item, sel_item_place, req_time, x, y);
-                if (pn != -1) {
-                    net->send_deselect_item(sel_man->NID, pn, sel_item->m_x, sel_item->m_y, req_time);
-                    sel_item = NULL;
-                }
+            int req_time;
+            int pn = sel_man->deselect_item(sel_item, sel_item_place, req_time, x, y);
+            if (pn != -1) {
+                net->send_deselect_item(sel_man->NID, pn, sel_item->m_x, sel_item->m_y, req_time);
+                sel_item = NULL;
             }
         }
+    }
 
 }
 
@@ -228,7 +228,7 @@ void Inventory::close()
 {
     if (sel_item == NULL) {
         MODE = MAP3D;
-    } else                                             
+    } else
         backput();      //return item to original place
 }
 

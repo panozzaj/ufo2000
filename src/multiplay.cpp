@@ -92,7 +92,7 @@ Net::~Net()
 void Net::log(const char *fmt, ...)
 {
     time_t now = time(NULL);
-    struct tm * t = localtime(&now);
+    struct tm *t = localtime(&now);
     char timebuf[1000];
     strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
 
@@ -113,7 +113,7 @@ int Net::init()
 {
     log("%s\n", "init()");
     SEND = 1;
-    
+
     if (queue != NULL) delete queue;
     queue = new BQ(1000);
 
@@ -144,7 +144,7 @@ int Net::init()
         net->send_debug_message("terrain:%s", terrain_set->get_terrain_name(mapdata.terrain).c_str());
         net->send_debug_message("equipment:%s", get_current_equipment_name());
     }
-    
+
     return 1;
 }
 
@@ -159,9 +159,9 @@ void Net::close()
             break;
     }
     delete queue;
-/* It fixes existing problem with crash when game is loaded after some other 
-game have been played before. I suppose "queue" will be deleted in destructor 
-in any case.*/
+    /* It fixes existing problem with crash when game is loaded after some other
+    game have been played before. I suppose "queue" will be deleted in destructor
+    in any case.*/
     queue = new BQ(1000);
 }
 
@@ -183,15 +183,15 @@ extern int GAMELOOP;
 void Net::send()
 {
     if (GAMELOOP && (net->gametype != GAME_TYPE_REPLAY))
-        *m_oreplay_file<<pkt.str()<<"\n";
+        *m_oreplay_file << pkt.str() << "\n";
     ASSERT(pkt.str_len() > 0);
     send(pkt.str());
 }
 
 void Net::send(const std::string &pkt)
 {
-    if (FLAGS & F_RAWMESSAGES) 
-        g_console->printf( _("send:[%s]"), pkt.c_str());
+    if (FLAGS & F_RAWMESSAGES)
+        g_console->printf(_("send:[%s]"), pkt.c_str());
 
     log("send:[%s]\n", pkt.c_str());
 
@@ -201,11 +201,11 @@ void Net::send(const std::string &pkt)
                 packet_send_hotseat(pkt);
             break;
         case GAME_TYPE_INTERNET_SERVER:
-            if(!g_game_receiving)
+            if (!g_game_receiving)
                 m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
             break;
-       case GAME_TYPE_REPLAY:
-           break;
+        case GAME_TYPE_REPLAY:
+            break;
         default:
             ASSERT(false);
     }
@@ -226,12 +226,12 @@ int Net::recv(std::string &pkt)
                 return 0;
             } else {
                 if ((net->gametype != GAME_TYPE_REPLAY) && GAMELOOP)
-                    *m_oreplay_file<<pkt<<"\n";
+                    *m_oreplay_file << pkt << "\n";
 
                 return pkt.size();
             }
         case GAME_TYPE_REPLAY:
-            // loads packet from replay file up to \n, needs to 
+            // loads packet from replay file up to \n, needs to
             // be rewritten in a proper way
             //Warning, change the buffer size only if you also change it in packet.h
             //Replays depend on the buffersize
@@ -263,7 +263,7 @@ void Net::check()
     if (!packet.empty()) {
         queue->put(packet);
         if (FLAGS & F_RAWMESSAGES) {
-            g_console->printf( _("put:[%d]"), packet.size());
+            g_console->printf(_("put:[%d]"), packet.size());
             g_console->printf("%s", packet.c_str());
         }
     }
@@ -274,7 +274,7 @@ void Net::check()
     if (!queue->get(packet)) return;
 
     if (FLAGS & F_RAWMESSAGES) {
-        g_console->printf( _("get:[%d]"), packet.size());
+        g_console->printf(_("get:[%d]"), packet.size());
         g_console->printf("%s", packet.c_str());
     }
 
@@ -417,9 +417,8 @@ void Net::check()
             ASSERT(false);
             break;
     };
-    if(GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER)
-    {
-        if (g_current_packet_pos==debug_save_state_sender && g_current_packet_num==debug_save_state_id)
+    if (GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER) {
+        if (g_current_packet_pos == debug_save_state_sender && g_current_packet_num == debug_save_state_id)
             savegame(F("$(home)/debug.sav"), 0);
         // send debug info to the server (crc)
         char debug_info[1000];
@@ -437,7 +436,8 @@ void Net::send_notice()
 }
 
 int Net::recv_notice()
-{ // "NOTE"
+{
+    // "NOTE"
     NOTICEremote = 0;
     return 1;
 }
@@ -451,12 +451,13 @@ void Net::send_quit()
 }
 
 int Net::recv_quit()
-{ // "QUIT"
-	//Is this really an error ??
+{
+    // "QUIT"
+    //Is this really an error ??
     error("Remote exit from game");
-    alert( "", _("Your opponent left the game"), "",
-                   _("OK"), NULL, 0, 0);
-	return 1;
+    alert("", _("Your opponent left the game"), "",
+          _("OK"), NULL, 0, 0);
+    return 1;
 }
 
 extern void restartgame();
@@ -477,7 +478,8 @@ void Net::send_restart()
 }
 
 int Net::recv_restart()
-{ //"REST"
+{
+    //"REST"
     int CONFIRMED;
 
     pkt >> CONFIRMED;
@@ -500,7 +502,7 @@ bool zlib_compress_string(std::string &dst, const std::string &src)
     z_stream stream;
     int err;
 
-    stream.next_in = (Bytef*)src.data();
+    stream.next_in = (Bytef *)src.data();
     stream.avail_in = (uInt)src.size();
 
     std::vector<Bytef> tmp(src.size() * 9 / 8 + 12);
@@ -532,7 +534,7 @@ bool zlib_decompress_string(std::string &dst, const std::string &src)
     z_stream stream;
     int err;
 
-    stream.next_in = (Bytef*)src.data();
+    stream.next_in = (Bytef *)src.data();
     stream.avail_in = (uInt)src.size();
     stream.total_out = 0;
 
@@ -549,8 +551,7 @@ bool zlib_decompress_string(std::string &dst, const std::string &src)
     if (err != Z_OK) return false;
 
     dst = "";
-    while ((err = inflate(&stream, Z_SYNC_FLUSH)) == Z_OK)
-    {
+    while ((err = inflate(&stream, Z_SYNC_FLUSH)) == Z_OK) {
         dst += std::string(&tmp[0], &tmp[stream.total_out]);
         stream.next_out = &tmp[0];
         stream.avail_out = tmp.size();
@@ -569,7 +570,7 @@ bool zlib_decompress_string(std::string &dst, const std::string &src)
 void Net::send_endturn(int crc, const std::string &data)
 {
     if (!SEND) return ;
-    
+
     pkt.create(CMD_ENDTURN);
     pkt << crc;
 
@@ -581,7 +582,8 @@ void Net::send_endturn(int crc, const std::string &data)
 }
 
 int Net::recv_endturn()
-{ // "TURN"
+{
+    // "TURN"
     int crc; pkt >> crc;
 
     std::string compressed_data; pkt >> compressed_data;
@@ -603,7 +605,8 @@ void Net::send_open_door(int NID)
 }
 
 int Net::recv_open_door()
-{ //DOOR
+{
+    //DOOR
     int NID;
 
     pkt >> NID;
@@ -632,7 +635,8 @@ void Net::send_change_pose(int NID)
 }
 
 int Net::recv_change_pose()
-{ // "POSE"
+{
+    // "POSE"
     int NID;
 
     pkt >> NID;
@@ -663,7 +667,8 @@ void Net::send_reserve_time(int NID, int res)
 }
 
 int Net::recv_reserve_time()
-{ // "RESTIME"
+{
+    // "RESTIME"
     int NID;
     int res;
 
@@ -696,7 +701,8 @@ void Net::send_prime_grenade(int NID, int iplace, int delay_time, int req_time)
 }
 
 int Net::recv_prime_grenade()
-{ // "PRIM"
+{
+    // "PRIM"
     int NID, iplace, delay_time, req_time;
 
     pkt >> NID;
@@ -729,7 +735,8 @@ void Net::send_unload_ammo(int NID)
 }
 
 int Net::recv_unload_ammo()
-{ // "UNLO"
+{
+    // "UNLO"
     int NID;
 
     pkt >> NID;
@@ -761,7 +768,8 @@ void Net::send_load_ammo(int NID, int iplace, int srcplace)
 }
 
 int Net::recv_load_ammo()
-{ // "LOAD"
+{
+    // "LOAD"
     int NID, iplace, srcplace;
 
     pkt >> NID;
@@ -796,7 +804,8 @@ void Net::send_select_item(int NID, int iplace, int ix, int iy)
 }
 
 int Net::recv_select_item()
-{ //"TAKE"
+{
+    //"TAKE"
     int NID, iplace, ix, iy;
 
     pkt >> NID;
@@ -834,7 +843,8 @@ void Net::send_deselect_item(int NID, int iplace, int ix, int iy, int req_time)
 }
 
 int Net::recv_deselect_item()
-{ //"DROP"
+{
+    //"DROP"
     int NID, iplace, ix, iy, req_time;
 
     pkt >> NID;
@@ -876,7 +886,8 @@ void Net::send_move(int NID, int lev, int col, int row)
 }
 
 int Net::recv_move()
-{ // "MOVE"
+{
+    // "MOVE"
     int NID, lev, col, row;
 
     pkt >> NID;
@@ -910,7 +921,8 @@ void Net::send_face(int NID, int col, int row)
 }
 
 int Net::recv_face()
-{ // "FACE"
+{
+    // "FACE"
     int NID, col, row;
 
     pkt >> NID;
@@ -930,7 +942,8 @@ int Net::recv_face()
 }
 
 void Net::send_use_elevator(int NID, int dz)
-{ // "ELEV"
+{
+    // "ELEV"
     if (!SEND) return;
 
     pkt.create(CMD_USE_ELEVATOR);
@@ -940,7 +953,8 @@ void Net::send_use_elevator(int NID, int dz)
 }
 
 int Net::recv_use_elevator()
-{ // "ELEV"
+{
+    // "ELEV"
     int NID, dz;
 
     pkt >> NID;
@@ -957,7 +971,7 @@ int Net::recv_use_elevator()
         error("NID");
     return 0;
 }
-    
+
 void Net::send_target_action(int NID, int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace)
 {
     if (!SEND) return;
@@ -1001,13 +1015,13 @@ int Net::recv_target_action()
         SEND = 1;
         return 1;
     } else
-    error("NID");
+        error("NID");
     return 0;
 }
 
 extern Units local;
 extern Units remote;
-extern Units* target_uints[2];
+extern Units *target_uints[2];
 
 void Net::send_add_unit(int num, char *name, int cost)
 {
@@ -1205,12 +1219,12 @@ int Net::recv_unit_data()
     pkt >> row;
     pkt >> str_md;
     pkt >> str_id;
-    
+
     if ((int)str_md.size() != (int)sizeof(MANDATA) || (int)str_id.size() != (int)sizeof(ITEMDATA)) {
         error("invalid unit data packet");
         return 0;
     }
-    
+
     if (num > 19) {
         error("PD num > 19");
         return 0;
@@ -1327,11 +1341,11 @@ int Net::recv_terrain_crc32()
     if (map_name.empty()) {
         // special end of terrain list marker received (empty terrain name)
         g_console->printf("\n");
-        g_console->printf( _("Remote player has the following %d maps that can be used for network game:\n"),
-            g_net_allowed_terrains.size());
+        g_console->printf(_("Remote player has the following %d maps that can be used for network game:\n"),
+                          g_net_allowed_terrains.size());
 
         std::string tlist = "";
-        
+
         std::set<std::string>::iterator it = g_net_allowed_terrains.begin();
         while (it != g_net_allowed_terrains.end()) {
             tlist.append(tlist.empty() ? "" : ", ");
@@ -1352,7 +1366,7 @@ int Net::recv_terrain_crc32()
                 }
                 it++;
             }
-            g_console->printf( _("The following maps can not be used, they are modified or just not installed by remote player:\n") );
+            g_console->printf(_("The following maps can not be used, they are modified or just not installed by remote player:\n"));
             g_console->printf(COLOR_RED00, "%s\n", tlist.c_str());
         }
 #define map g_map
@@ -1387,9 +1401,9 @@ void Net::send_equipment_list()
 int Net::recv_equipment_list()
 {
     std::string data;
-    
+
     pkt >> data;
-    
+
     lua_pushstring(L, "SyncEquipmentInfo");
     lua_gettable(L, LUA_GLOBALSINDEX);
     lua_pushstring(L, data.c_str());
@@ -1419,7 +1433,7 @@ int Net::recv_equipment_choice()
     CHANGE = 1;
 
     std::string data;
-    
+
     pkt >> data;
 
     if (!set_current_equipment_name(data.c_str()) && data != "") {
@@ -1449,7 +1463,7 @@ void Net::send_scenario()
     pkt << scenario->y2;
 
     send(pkt.str(), pkt.str_len());
-    
+
     net->send_debug_message("scenario:%s", scenario->name[scenario->type]);
     //local.START = 0;
     //remote.START = 0;
@@ -1458,19 +1472,19 @@ void Net::send_scenario()
 int Net::recv_scenario()
 {
     int type;
-    
+
     pkt >> type;
-    
+
     scenario->new_scenario(type);
-    
+
     pkt >> scenario->x1;
     pkt >> scenario->x2;
     pkt >> scenario->y1;
     pkt >> scenario->y2;
-    
+
     //local.START = 0;
     //remote.START = 0;
-    
+
     mapdata.load_game = 77;
 
     return 1;
@@ -1483,29 +1497,29 @@ void Net::send_rules(int index, int value)
     pkt.create(CMD_RULES);
     pkt << index;
     pkt << value;
-    
+
     send(pkt.str(), pkt.str_len());
-    
+
     local.SEND =
-    local.START = 
-    remote.SEND =
-    remote.START = 0;
+        local.START =
+            remote.SEND =
+                remote.START = 0;
 }
 
 int Net::recv_rules()
 {
     int index;
     int value;
-    
+
     pkt >> index;
     pkt >> value;
-    
+
     scenario->set_rules(index, value);
 
     local.SEND =
-    local.START = 
-    remote.SEND =
-    remote.START = 0;
+        local.START =
+            remote.SEND =
+                remote.START = 0;
 
     return 1;
 }
@@ -1518,39 +1532,38 @@ void Net::send_options(int scenario_type, int index, int value)
     pkt << scenario_type;
     pkt << index;
     pkt << value;
-    
+
     send(pkt.str(), pkt.str_len());
-    
+
     if (scenario->options[scenario_type][index]->type != OPT_HIDDEN)
         local.SEND =
-        remote.SEND =
-        local.START = 
-        remote.START = 0;
+            remote.SEND =
+                local.START =
+                    remote.START = 0;
 }
 
 int Net::recv_options()
 {
     int scenario_type;
     int index;
-    
+
     pkt >> scenario_type;
     pkt >> index;
-    
+
     if (!scenario->check_options_range(scenario_type, index)) {
         ASSERT(false);
         return 0;
     }
-           
+
     pkt >> scenario->options[scenario_type][index]->value;
 
     if (scenario->options[scenario_type][index]->type != OPT_HIDDEN)
         local.SEND =
-        local.START = 
-        remote.SEND =
-        remote.START = 0;
-    
-    if (scenario->options[scenario_type][index]->reset_deploy)
-    {
+            local.START =
+                remote.SEND =
+                    remote.START = 0;
+
+    if (scenario->options[scenario_type][index]->reset_deploy) {
         mapdata.load_game = 77;
         // We need to update the deployment type not only in
         // the option, but also in the scenario.
@@ -1608,7 +1621,7 @@ int Net::recv_morale_change()
     platoon_remote->change_morale(delta, false);
     SEND = 1;
     return 1;
-    
+
     return 0;
 }
 
@@ -1668,7 +1681,7 @@ int Net::recv_recovery_stop()
     g_game_receiving = 0;
     CHANGE = 1;
     g_fast_forward = 0;
-    if ( (turn%2 && HOST) || (!(turn%2) && !HOST))
+    if ((turn % 2 && HOST) || (!(turn % 2) && !HOST))
         MODE = WATCH;
     else
         MODE = MAP3D;

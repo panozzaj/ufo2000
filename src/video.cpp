@@ -48,8 +48,8 @@ int SCREEN2W = 320, SCREEN2H = 200;
 volatile int g_switch_in_counter;
 
 /**
- * This function is called when we switch back to ufo2000 from other 
- * task in win32. All the information drawn on screen is lost, 
+ * This function is called when we switch back to ufo2000 from other
+ * task in win32. All the information drawn on screen is lost,
  * so we need some way to detect this situation.
  */
 void switch_in_callback()
@@ -68,17 +68,17 @@ void initvideo()
 
     screen2 = create_bitmap(SCREEN2W, SCREEN2H);
     clear(screen2);
-    font = (FONT*)datafile[DAT_UNIFONT_8X8].dat;
+    font = (FONT *)datafile[DAT_UNIFONT_8X8].dat;
     create_fonts();
 
     if (FLAGS & F_LARGEFONT) {
         font = large;
     }
-    
+
     if (FLAGS & F_SMALLFONT) {
         font = g_small_font;
     }
-    
+
 }
 
 void closevideo()
@@ -121,24 +121,24 @@ int (*xcom1_darken_color)(int c, int level);
 static int xcom1_color_high_bpp(int c)
 {
     ASSERT(c >= 0 && c < 256);
-    return xcom1_color_table[c]; 
+    return xcom1_color_table[c];
 }
 static int xcom1_menu_color_high_bpp(int c)
-{ 
+{
     ASSERT(c >= 0 && c < 256);
-    return xcom1_menu_color_table[c]; 
+    return xcom1_menu_color_table[c];
 }
 static int xcom1_research_color_high_bpp(int c)
 {
     ASSERT(c >= 0 && c < 256);
-    return xcom1_research_color_table[c]; 
+    return xcom1_research_color_table[c];
 }
 static int xcom1_darken_color_high_bpp(int c, int level)
-{ 
+{
     return makecol(
-        getr(c) * (8 - level) / 8, 
-        getg(c) * (8 - level) / 8, 
-        getb(c) * (8 - level) / 8);
+               getr(c) * (8 - level) / 8,
+               getg(c) * (8 - level) / 8,
+               getb(c) * (8 - level) / 8);
 }
 int tftd_color(int c)
 {
@@ -159,8 +159,8 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
     static int ufo2k_yres = -1;
     static int ufo2k_gfx_driver = -1;
     static bool switch_mode_failed = false;
-    
-    // Check if graphics mode is already set, just switch 
+
+    // Check if graphics mode is already set, just switch
     // fullscreen/windowed mode while keeping the same screen resolution
     // in this case
     if (ufo2k_color_depth > 0) {
@@ -179,22 +179,22 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
         ASSERT(false);
         return;
     }
-    
+
     // Some sanity checks
     int color_depth = cfg_get_min_color_depth();
     if (color_depth == 0) color_depth = desktop_color_depth();
     if (color_depth < 16) color_depth = 16;
     if (color_depth > 32) color_depth = 32;
     if (color_depth % 8 != 0) color_depth = 16;
-    
+
     int xres = cfg_get_screen_x_res();
     int yres = cfg_get_screen_y_res();
     if (xres < MINIMUM_XRES) xres = MINIMUM_XRES;
     if (yres < MINIMUM_YRES) yres = MINIMUM_YRES;
-    
+
     // Special case, setting video mode for Nokia 770 Internet Tablet
     int desktop_width, desktop_height;
-    if ((desktop_color_depth() == 16) && (get_desktop_resolution(&desktop_width, &desktop_height) == 0) 
+    if ((desktop_color_depth() == 16) && (get_desktop_resolution(&desktop_width, &desktop_height) == 0)
             && (desktop_width == 800) && (desktop_height == 480)) {
         gfx_driver = GFX_AUTODETECT_WINDOWED;
         color_depth = 16;
@@ -202,7 +202,7 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
         yres = 420;
         switch_mode_failed = true;
     }
-    
+
     while (true) {
         if (color_depth > 32) {
             // Did not manage to set video mode, as the last resort try to set
@@ -210,8 +210,8 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
             if (gfx_driver == GFX_AUTODETECT_FULLSCREEN) {
                 color_depth = desktop_color_depth();
                 set_color_depth(color_depth);
-                if ((color_depth >= 16) && (get_desktop_resolution(&xres, &yres) == 0) 
-                        && (xres >= MINIMUM_XRES) && (yres >= MINIMUM_YRES) 
+                if ((color_depth >= 16) && (get_desktop_resolution(&xres, &yres) == 0)
+                        && (xres >= MINIMUM_XRES) && (yres >= MINIMUM_YRES)
                         && (set_gfx_mode(gfx_driver, xres, yres, 0, 0) == 0)) {
                     switch_mode_failed = true;
                     break;
@@ -246,29 +246,28 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
     ufo2k_xres = xres;
     ufo2k_yres = yres;
     ufo2k_gfx_driver = gfx_driver;
-    
+
     // Create tables for translation from xcom1 palette colors
     // to colors for currently selected video mode
     xcom1_color_table[0]      = makecol(255, 0, 255);
     xcom1_menu_color_table[0] = makecol(255, 0, 255);
-	xcom1_research_color_table[0] = makecol(255, 0, 255);
+    xcom1_research_color_table[0] = makecol(255, 0, 255);
     tftd_color_table[0]       = makecol(255, 0, 255);
 
-    for (int c = 1; c < 256; c++)
-    {
-        const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL_BMP].dat)[c];
+    for (int c = 1; c < 256; c++) {
+        const RGB &rgb = ((RGB *)datafile[DAT_GAMEPAL_BMP].dat)[c];
         xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
-        const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL_BMP].dat)[c];
+        const RGB &menu_rgb = ((RGB *)datafile[DAT_MENUPAL_BMP].dat)[c];
         xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
-        const RGB & tftd_rgb = ((RGB *)datafile[DAT_TFTDPAL_BMP].dat)[c];
+        const RGB &tftd_rgb = ((RGB *)datafile[DAT_TFTDPAL_BMP].dat)[c];
         tftd_color_table[c] = makecol(tftd_rgb.r << 2, tftd_rgb.g << 2, tftd_rgb.b << 2);
-		const RGB & rsch_rgb = ((RGB *)datafile[DAT_RSRCHPAL_BMP].dat)[c];
+        const RGB &rsch_rgb = ((RGB *)datafile[DAT_RSRCHPAL_BMP].dat)[c];
         xcom1_research_color_table[c] = makecol(rsch_rgb.r << 2, rsch_rgb.g << 2, rsch_rgb.b << 2);
     }
 
     xcom1_color        = xcom1_color_high_bpp;
     xcom1_menu_color   = xcom1_menu_color_high_bpp;
-	xcom1_research_color   = xcom1_research_color_high_bpp;
+    xcom1_research_color   = xcom1_research_color_high_bpp;
     xcom1_darken_color = xcom1_darken_color_high_bpp;
 }
 
@@ -287,7 +286,7 @@ void set_video_mode()
         ufo2k_set_gfx_mode(GFX_AUTODETECT_FULLSCREEN);
     else
         ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED);
-    
+
     normalize_screen2_size();
 
     if (set_display_switch_mode(SWITCH_BACKGROUND) == -1) set_display_switch_mode(SWITCH_BACKAMNESIA);
@@ -317,11 +316,11 @@ void savescreen()
     int num = 1;
     while (true) {
         char filename[128];
-#ifdef HAVE_PNG        
+#ifdef HAVE_PNG
         sprintf(filename, "$(home)/snapshot_%d.png", num);
 #else
         sprintf(filename, "$(home)/snapshot_%d.jpg", num);
-#endif        
+#endif
         if (!exists(F(filename))) {
             save_bitmap(F(filename), scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
             // Todo: test if save was successful
@@ -340,8 +339,8 @@ void savescreen()
 //                                                16    12  5
 // This is the CCITT CRC 16 polynomial X  + X  + X  + 1.
 // This works out to be 0x1021, but the way the algorithm works
-// lets us use 0x8408 (the reverse of the bit pattern).  
-// The high bit is always assumed to be set, thus we 
+// lets us use 0x8408 (the reverse of the bit pattern).
+// The high bit is always assumed to be set, thus we
 // only use 16 bits to represent the 17 bit value.
 uint16 crc16(const char *data_p)
 {
@@ -354,7 +353,7 @@ uint16 crc16(const char *data_p)
         return (~crc);
     do {
         for (i = 0, data = (unsigned int)0xff & *data_p++; i < 8; i++, data >>= 1) {
-            if ((crc & 0x0001) ^ (data & 0x0001))
+            if ((crc & 0x0001) ^(data & 0x0001))
                 crc = (crc >> 1) ^ POLY;
             else
                 crc >>= 1;
@@ -398,7 +397,7 @@ int askmenu(const char *mess)
 }
 
 /**
- * Function for background image loading. 
+ * Function for background image loading.
  * Can load JPG, BMP, LBM, SPK, SCR formats
  *
  * @param filename  name of the file with the image to be loaded
@@ -441,12 +440,12 @@ static const char *gui_select_from_list_proc(int index, int *list_size)
  */
 int gui_select_from_list(
     int width, int height,
-    const std::string &title, 
+    const std::string &title,
     const std::vector<std::string> &data,
     int default_value)
 {
     current_list = &data;
-    
+
     DIALOG list_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, 0, 0, width, height, -1,  -1, 0, 0, 0, 0, NULL, NULL, NULL},
@@ -490,13 +489,13 @@ static int d_custom_list_proc(int msg, DIALOG *d, int c)
  */
 std::string gui_select_from_list_ex(
     int width, int height,
-    const std::string &title, 
+    const std::string &title,
     const std::vector<std::string> &data,
     const std::string &default_value)
 {
     current_list = &data;
     strcpy(buffer, default_value.c_str());
-    
+
     DIALOG list_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, 0, 0, width, height, -1,  -1, 0, 0, 0, 0, NULL, NULL, NULL},
@@ -536,7 +535,7 @@ std::string gui_select_from_list_ex(
  */
 std::string gui_file_select(
     int width, int height,
-    const std::string &title, 
+    const std::string &title,
     const std::string &dir,
     const std::string &ext,
     bool edit_box_enabled)
@@ -548,7 +547,7 @@ std::string gui_file_select(
     if (al_findfirst(pattern.c_str(), &info, FA_RDONLY | FA_ARCH) == 0) {
         do {
             data.push_back(std::string(info.name, info.name + strlen(info.name) - ext.size() - 1));
-        } while(al_findnext(&info) == 0);
+        } while (al_findnext(&info) == 0);
         al_findclose(&info);
     }
     if (data.empty() && !edit_box_enabled) return "";
@@ -569,7 +568,7 @@ void set_mouse_alpha_sprite(ALPHA_SPRITE *spr)
         mouser_bmp = NULL;
     }
     if (spr == NULL) {
-        set_mouse_sprite(NULL); 
+        set_mouse_sprite(NULL);
         return;
     }
     mouser_bmp = create_bitmap(spr->w, spr->h);

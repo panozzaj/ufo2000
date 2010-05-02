@@ -79,7 +79,7 @@ int g_fast_forward = 0;         //!< True means a fast, invisible and silent gam
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
 int last_time_left;             //!< Time of last screen-update for g_time_left
-int g_p2_start_sit=0;           //!< If player 2 starts sitting - 0 by default
+int g_p2_start_sit = 0;         //!< If player 2 starts sitting - 0 by default
 int g_tie;                      //   Flags denoting which players accepted draw
 int g_random_init[2];           //   For initializing Random
 int g_current_packet_num; //!< id of a last received or sended packet to use in the debug info.
@@ -116,10 +116,10 @@ void show_time_left()
         return;
 
     // Possible sounds: SS_WINDOW_OPEN_1, SS_WINDOW_OPEN_2, SS_CLIP_LOAD, SS_ITEM_PUT
-    if ((time_left == 10))  
-        soundSystem::getInstance()->play(SS_WINDOW_OPEN_2); 
+    if ((time_left == 10))
+        soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
     if ((time_left <=  5))
-        soundSystem::getInstance()->play(SS_ITEM_PUT); 
+        soundSystem::getInstance()->play(SS_ITEM_PUT);
 
     last_time_left = time_left;
 }
@@ -240,7 +240,7 @@ int loss;
 int getsomerand()
 {
     time_t now = time(NULL);
-    struct tm * time_now = localtime(&now);
+    struct tm *time_now = localtime(&now);
     return (time_now->tm_sec * 60 + time_now->tm_min); // shuffled on purpose, to make randomness better
 }
 
@@ -270,7 +270,7 @@ void initrand()
 
 /**
  * Initialize game state
- */ 
+ */
 //simple all of new - rem about rand in sol's constructors
 //can diff on remote comps
 void restartgame()
@@ -313,12 +313,10 @@ void restartgame()
     platoon_remote->restore();
 
     //deal with initial sit for p2
-    if(!HOST || (net->gametype == GAME_TYPE_HOTSEAT))
-    {
+    if (!HOST || (net->gametype == GAME_TYPE_HOTSEAT)) {
         if (FLAGS & F_SECONDSIT) p2->sit_on_start();
-    }
-    else {  
-        if(g_p2_start_sit) p2->sit_on_start(); //!HOTSEAT HOST - recieves g_p2_start_sit in planner (connect.cpp)
+    } else {
+        if (g_p2_start_sit) p2->sit_on_start(); //!HOTSEAT HOST - recieves g_p2_start_sit in planner (connect.cpp)
     }
 
     //sel_man = NULL;
@@ -329,12 +327,11 @@ void restartgame()
 
 /**
  * Initialize video, timers etc. before game
- */ 
+ */
 int initgame()
 {
     FS_MusicPlay(F(cfg_get_setup_music_file_name()));
-    if (!net->init())
-    {
+    if (!net->init()) {
         FS_MusicPlay(NULL);
         return 0;
     }
@@ -349,7 +346,7 @@ int initgame()
     if (HOST && !g_game_receiving)
         initrand();
     //clear_to_color(screen, 58); //!!!!!
-    
+
     // Set/Clear some scenario specific variables and effects:
     scenario->start();
 
@@ -358,7 +355,7 @@ int initgame()
 
 /**
  * Cleanup after game
- */ 
+ */
 void closegame()
 {
     delete cur_random;
@@ -376,7 +373,7 @@ void closegame()
 
     uninstall_timers();
     net->close();
-    lua_message( "Done : closegame" );
+    lua_message("Done : closegame");
 }
 
 int print_y = 0;
@@ -399,7 +396,8 @@ std::string indent(const std::string &str)
     return tmp;
 }
 
-class consoleBuf : public std::streambuf {
+class consoleBuf : public std::streambuf
+{
     std::string curline;
     bool doCout;
 
@@ -407,16 +405,16 @@ protected:
     virtual int overflow(int c) {
         if (doCout)
             if (c == 10)
-                std::cout<<std::endl;
+                std::cout << std::endl;
             else
-                std::cout<<(static_cast<char>(c));
+                std::cout << (static_cast<char>(c));
         if (c == 10) {
             if (print_win != NULL) {
                 curline.append("\r\n");
                 print_win->printstr(curline.c_str(), COLOR_WHITE);
             } else {
                 curline.append("\n");
-                text_mode( -1);
+                text_mode(-1);
                 textout(screen, font, curline.c_str(), 0, print_y, COLOR_WHITE);
                 print_y += 10;
             }
@@ -475,13 +473,13 @@ static int lua_UpdateCrc32(lua_State *L)
     }
 
     uint32 result = update_crc32((uint32)lua_tonumber(L, 1), lua_tostring(L, 2), lua_strlen(L, 2));
-    
+
     lua_pushnumber(L, result);
     return 1;
 }
 
 /**
- * Resolve file name and get absolute path (it can have one of the following 
+ * Resolve file name and get absolute path (it can have one of the following
  * prefixes: '$(xcom)', '$(tftd)', '$(ufo2000)', '$(home)')
  */
 const char *F(const char *fileid)
@@ -491,7 +489,7 @@ const char *F(const char *fileid)
     lua_pushstring(L, "GetDataFileName");
     lua_gettable(L, LUA_GLOBALSINDEX);
     if (!lua_isfunction(L, -1))
-        display_error_message( "Fatal: no 'GetDataFileName' function registered"); // don't translate !
+        display_error_message("Fatal: no 'GetDataFileName' function registered");  // don't translate !
     lua_pushstring(L, fileid);
     lua_safe_call(L, 1, 1);
     if (!lua_isstring(L, -1))
@@ -521,9 +519,9 @@ void find_lua_files_callback(const char *filename, int attrib, int param)
 {
     lua_safe_dofile(L, filename, "plugins_sandbox");
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
-    // so allegro for_each_file function stops searching files if we do not 
+    // so allegro for_each_file function stops searching files if we do not
     // reset this back to 0
-    *allegro_errno = 0; 
+    *allegro_errno = 0;
 }
 
 static int find_files_callback(const char *filename, int attrib, void *param)
@@ -531,9 +529,9 @@ static int find_files_callback(const char *filename, int attrib, void *param)
     std::set<std::string> *files = (std::set<std::string> *)param;
     files->insert(filename);
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
-    // so allegro for_each_file function stops searching files if we do not 
+    // so allegro for_each_file function stops searching files if we do not
     // reset this back to 0
-    *allegro_errno = 0; 
+    *allegro_errno = 0;
     return 0;
 }
 
@@ -553,7 +551,7 @@ void find_dir_callback(const char *filename, int attrib, int param)
     if ((attrib & FA_DIREC) && strcmp(filepart, ".") != 0 && strcmp(filepart, "..") != 0) {
         lua_message(std::string("Loading extension '") + filename + std::string("'"));
         clock_t before = clock();
-        
+
         lua_pushstring(L, "extension_dir");
         lua_pushstring(L, filename);
         lua_settable(L, LUA_GLOBALSINDEX);
@@ -570,9 +568,9 @@ void find_dir_callback(const char *filename, int attrib, int param)
         g_extensions_loading_time[filename] = (double)(after - before) / (double)CLOCKS_PER_SEC;
     }
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
-    // so allegro for_each_file function stops searching files if we do not 
+    // so allegro for_each_file function stops searching files if we do not
     // reset this back to 0
-    *allegro_errno = 0; 
+    *allegro_errno = 0;
 }
 
 /**
@@ -637,7 +635,7 @@ static void init_fpu()
     // Set double precision for i386 fpu
 #if defined(__GNUC__) && defined(__i386__)
     int mode = 0x27F; /* use double-precision rounding */
-    asm("fldcw %0" : : "m" (*&mode));
+    asm("fldcw %0" : : "m"(*&mode));
 #endif
     // Do some basic tests for IEEE-754 conformance
 
@@ -684,7 +682,7 @@ void initmain(int argc, char *argv[])
     set_uformat(U_UTF8);
     allegro_init();
     jpgalleg_init();
-#ifdef HAVE_PNG    
+#ifdef HAVE_PNG
     _png_screen_gamma = 0.0;
     loadpng_init();
 #endif
@@ -698,11 +696,11 @@ void initmain(int argc, char *argv[])
     luaopen_math(L);
     luaopen_table(L);
     luaopen_debug(L);
-    
+
     // Lua API for accessing C++ objects
     LUA_REGISTER_CLASS(L, Platoon);
     LUA_REGISTER_CLASS_METHOD(L, Platoon, findnum);
-    
+
     LUA_REGISTER_CLASS(L, Soldier);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, reset_stats);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, set_attribute);
@@ -713,16 +711,16 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_CLASS(L, Place);
     LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
-    
+
     LUA_REGISTER_CLASS(L, ALPHA_SPRITE);
     LUA_REGISTER_CLASS(L, SAMPLE);
-    
+
     LUA_REGISTER_FUNCTION(L, pck_image);
     LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
     LUA_REGISTER_FUNCTION(L, wav_sample);
     LUA_REGISTER_FUNCTION(L, cat_sample);
-    
+
 #ifdef LINUX
     // Do not silently exit on broken network connection
     signal(SIGPIPE, SIG_IGN);
@@ -746,10 +744,10 @@ void initmain(int argc, char *argv[])
     // so this will not cause any problems
     p = ufo2000_dir;
     while (*p != '\0') { if (*p == '\\') *p = '/'; p++; }
-#endif  
-    
+#endif
+
     chdir(ufo2000_dir);
-    
+
     lua_pushstring(L, "ufo2000_dir");
     lua_pushstring(L, ufo2000_dir);
     lua_settable(L, LUA_GLOBALSINDEX);
@@ -763,7 +761,7 @@ void initmain(int argc, char *argv[])
     lua_pushstring(L, "ufo2000_dir");
     lua_pushstring(L, DATA_DIR);
     lua_settable(L, LUA_GLOBALSINDEX);
-    
+
     char *env_home = getenv("HOME");
     if (env_home) {
         std::string home_dir = std::string(env_home) + "/.ufo2000";
@@ -786,14 +784,14 @@ void initmain(int argc, char *argv[])
     FLAGS = 0;
     push_config_state();
     set_config_file(F("$(home)/ufo2000.ini"));
-    
+
     install_keyboard();
 
     // initialize language settings
     set_language(get_config_string("System", "language", "en"));
 
 //! STABLE Cheat inducing flags to comment.
-    
+
     if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
     if (get_config_int("Flags", "F_SHOWROUTE", 0)) FLAGS |= F_SHOWROUTE;      // show pathfinder matrix
     if (get_config_int("Flags", "F_SHOWLOFCELL", 0)) FLAGS |= F_SHOWLOFCELL;  // COMMENT FOR STABLE** show cell's LOF & BOF
@@ -843,7 +841,7 @@ void initmain(int argc, char *argv[])
         g_server_login = get_config_string("Server", "login", "anonymous");
         g_server_password = get_config_string("Server", "password", "");
     }
- 
+
     g_server_proxy_login = get_config_string("Server", "http_proxy_login", "");
 
     loadini();
@@ -864,15 +862,15 @@ void initmain(int argc, char *argv[])
 
     set_video_mode();
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-    
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-gui.lua");   
-    
+
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-gui.lua");
+
     /* Execute some routines of the skin object to control appearance. */
     SkinInterface *screen_init;
     screen_init = new SkinInterface("Game_init");
     BITMAP *loading_back = screen_init->background();
     stretch_blit(loading_back, screen, 0, 0, loading_back->w, loading_back->h, 0, 0, SCREEN_W, SCREEN_H);
-       
+
     int init_win_x1, init_win_y1, init_win_x2, init_win_y2;
     init_win_x1 = screen_init->Feature("InitStream")->get_pd_x1();
     init_win_y1 = screen_init->Feature("InitStream")->get_pd_y1();
@@ -880,18 +878,18 @@ void initmain(int argc, char *argv[])
     init_win_y2 = screen_init->Feature("InitStream")->get_pd_y2();
     /*Draw on sprite : otherwise we get a bad visual effect*/
     print_win = new Wind(loading_back, init_win_x1, init_win_y1, init_win_x2, init_win_y2, COLOR_BLACK2);
-    delete screen_init; 
+    delete screen_init;
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
     std::ostream console(&consbuf);
 
-    /* Load Allegro library */    
-    console<<"allegro_init"<<std::endl;
+    /* Load Allegro library */
+    console << "allegro_init" << std::endl;
 
     {
         bool VERBOSE_SOUNDCHECK = false;
-        
-        console<<"Initializing sound..."<<std::endl;
+
+        console << "Initializing sound..." << std::endl;
         std::string xml;
         soundSystem *ss = soundSystem::getInstance();
         std::ifstream ifs_xml(F("$(ufo2000)/soundmap.xml"));
@@ -900,21 +898,21 @@ void initmain(int argc, char *argv[])
 
             if (FLAGS & F_SOUNDCHECK) {
                 if (0 == ss->initialize(xml, &console, VERBOSE_SOUNDCHECK)) {
-                    console<<"  Soundcheck in progress..."<<std::endl;
+                    console << "  Soundcheck in progress..." << std::endl;
                     ss->playLoadedSamples(&console);
                 } else {
-                    console<<"  soundSystem initialization failed."<<std::endl;
+                    console << "  soundSystem initialization failed." << std::endl;
                 }
             } else {
-                if ( 0 > ss->initialize(xml, &console, VERBOSE_SOUNDCHECK))
-                    console<<"  Failed."<<std::endl;
+                if (0 > ss->initialize(xml, &console, VERBOSE_SOUNDCHECK))
+                    console << "  Failed." << std::endl;
             }
         } else {
-            console<<"  Error reading soundmap.xml"<<std::endl;
+            console << "  Error reading soundmap.xml" << std::endl;
         }
     }
 
-    console<<"agup_init"<<std::endl;
+    console << "agup_init" << std::endl;
     if (gui_theme == NULL) gui_theme = abeos_theme;
     agup_init(gui_theme);
     gui_shadow_box_proc = d_agup_shadow_box_proc;
@@ -927,11 +925,11 @@ void initmain(int argc, char *argv[])
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
 
     // Load standard and custom maps
-	console<<"Loading extensions"<<std::endl;
+    console << "Loading extensions" << std::endl;
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
     for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
     for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
-    
+
     {
         // Report extensions loading times
         std::map<std::string, double>::iterator it = g_extensions_loading_time.begin();
@@ -943,12 +941,12 @@ void initmain(int argc, char *argv[])
         }
     }
 
-    console<<"install_timer"<<std::endl;
+    console << "install_timer" << std::endl;
     install_timer();
-    console<<"install_mouse"<<std::endl;
+    console << "install_mouse" << std::endl;
     install_mouse();
 
-    console<<"initvideo"<<std::endl;
+    console << "initvideo" << std::endl;
     initvideo();
 
     FS_MusicInit();
@@ -963,34 +961,34 @@ void initmain(int argc, char *argv[])
 
     LOCK_FUNCTION(keyboard_proc);
 
-    console<<"initpck units"<<std::endl;
+    console << "initpck units" << std::endl;
     Soldier::initpck();
 
-    console<<"initpck terrain"<<std::endl;
+    console << "initpck terrain" << std::endl;
     Map::initpck();
 
-    console<<"new console window"<<std::endl;
+    console << "new console window" << std::endl;
     g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H);
 
-    console<<"new icon"<<std::endl;
+    console << "new icon" << std::endl;
     icon = new Icon();
 
-    console<<"new inventory"<<std::endl;
+    console << "new inventory" << std::endl;
     inventory = new Inventory();
 
-    console<<"new editor"<<std::endl;
+    console << "new editor" << std::endl;
     editor = new Editor();
 
-    console<<"new net"<<std::endl;
+    console << "new net" << std::endl;
     net = new Net();
-    
-    console<<"new terrain_set"<<std::endl;
+
+    console << "new terrain_set" << std::endl;
     terrain_set = new TerrainSet();
-    
-    console<<"new scenario"<<std::endl;
+
+    console << "new scenario" << std::endl;
     scenario = new Scenario(SC_DEATHMATCH);
 
-    console<<"init_place_names"<<std::endl;
+    console << "init_place_names" << std::endl;
     Init_place_names();
 
     mouse_callback = mouser_proc;
@@ -998,11 +996,11 @@ void initmain(int argc, char *argv[])
 
     clear(screen);
 
-    if (!exists(F("$(home)/cur_map.lua")) || 
-            !Map::load_GEODATA("$(home)/cur_map.lua", &mapdata) || 
+    if (!exists(F("$(home)/cur_map.lua")) ||
+            !Map::load_GEODATA("$(home)/cur_map.lua", &mapdata) ||
             !Map::valid_GEODATA(&mapdata)) {
-            
-        Map::new_GEODATA(&mapdata); 
+
+        Map::new_GEODATA(&mapdata);
     }
 
     // Error codes are negative.
@@ -1014,7 +1012,7 @@ void initmain(int argc, char *argv[])
     GameErrorColour[-ERR_DISTANCE]   = COLOR_YELLOW;
 
     delete print_win;
-    
+
     // Safety check to ensure that the game is compiled with proper alignment
     // and all the #paragma pack and other attributes are accepted
     ASSERT(sizeof(ITEMDATA) == 701);
@@ -1047,20 +1045,20 @@ void closemain()
 
     agup_shutdown();
     allegro_exit();
-    
+
     lua_close(L);
-    
-    std::cout<<"\nUFO2000 "
-             <<g_version_id.c_str()
-             <<"\nCompiled with "
-             <<allegro_id << " on "
-             <<__TIME__<<" "
-             <<__DATE__<<"\n"
-             <<"\nCopyright (C) 2000-2001  Alexander Ivanov aka Sanami"
-             <<"\nCopyright (C) 2002-2004  ufo2000 development team"
-             <<"\n\n"
-             <<"http://ufo2000.sourceforge.net/\n"
-             <<"http://ufo2000.lxnt.info/\n\n";
+
+    std::cout << "\nUFO2000 "
+              << g_version_id.c_str()
+              << "\nCompiled with "
+              << allegro_id << " on "
+              << __TIME__ << " "
+              << __DATE__ << "\n"
+              << "\nCopyright (C) 2000-2001  Alexander Ivanov aka Sanami"
+              << "\nCopyright (C) 2002-2004  ufo2000 development team"
+              << "\n\n"
+              << "http://ufo2000.sourceforge.net/\n"
+              << "http://ufo2000.lxnt.info/\n\n";
 }
 
 
@@ -1077,11 +1075,11 @@ int build_crc()
     char *buf = new char[CRCBUFFSIZE];
     memset(buf, 0, CRCBUFFSIZE);
     int buf_size = 0;
-    
+
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
     g_map->eot_save(buf, buf_size);
-        
+
     int crc = crc16(buf);
     g_eot_save[crc] = std::string(buf, buf_size);
 
@@ -1091,7 +1089,7 @@ int build_crc()
 }
 
 /**
- * Check that no moves are performed on the map, 
+ * Check that no moves are performed on the map,
  * so that it is safe to end turn or do something similar
  */
 bool nomoves()
@@ -1105,7 +1103,7 @@ bool nomoves()
 static void dump_gamestate_on_crc_error(int crc1, int crc2)
 {
     if (g_eot_save.find(crc1) == g_eot_save.end()) return;
-    if (g_eot_save.find(crc2) == g_eot_save.end()) return;    
+    if (g_eot_save.find(crc2) == g_eot_save.end()) return;
     char filename[128];
     sprintf(filename, "$(home)/crc_error_%d.txt", crc1);
     int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
@@ -1121,7 +1119,7 @@ static void dump_gamestate_on_crc_error(int crc1, int crc2)
 static bool g_crc_error_flag = false;
 
 /**
- * Function that calculates current game state crc 
+ * Function that calculates current game state crc
  * and compares it with the value received from the remote computer (crc argument)
  */
 void check_crc(int crc)
@@ -1133,7 +1131,7 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("You can encounter any weird bugs or just crashes if you continue playing."));
         g_console->printf(COLOR_SYS_FAIL, _("Bug report saved in 'crc_error_%d.txt', please send it to developers"), crc);
         net->send_debug_message("crc error");
-        battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+        battle_report("# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc);
 
         dump_gamestate_on_crc_error(crc, bcrc);
     }
@@ -1155,45 +1153,44 @@ void switch_turn()
 //  Still did not test where this code would be better to put
     switch (scenario->check_conditions()) {
         case 1:
-        loss = 1;
-        break;
-        
+            loss = 1;
+            break;
+
         case 2:
-        win = 1;
-        break;
-        
+            win = 1;
+            break;
+
         case 3:
-        win = loss = 1;
-        break;
-    }      
+            win = loss = 1;
+            break;
+    }
     //Increment explosives counter
     elist->step(0);
 }
 
 /**
- * Update visibility for both platoons. 
+ * Update visibility for both platoons.
  * Center on, or break march for newly visible enemies.
  */
 void update_visibility()
 {
     int32 visible_enemies = platoon_local->get_visible_enemies();
     int32 new_visible_enemies = g_map->update_vision_matrix(platoon_local);
-    
-    if( (new_visible_enemies &= (~visible_enemies)) ) {
-        if( MODE == WATCH ){
-            Soldier* ss = platoon_remote->findnum(0);
+
+    if ((new_visible_enemies &= (~visible_enemies))) {
+        if (MODE == WATCH) {
+            Soldier *ss = platoon_remote->findnum(0);
             while (ss != NULL) {
-                if( (ss->get_vision_mask() & new_visible_enemies) && (FLAGS & F_CENTER_ON_ENEMY) ) {
+                if ((ss->get_vision_mask() & new_visible_enemies) && (FLAGS & F_CENTER_ON_ENEMY)) {
                     g_map->center(ss);
                     break;
                 }
                 ss = ss->next();
             }
-        }
-        else{
-            Soldier* ss = platoon_local->findnum(0);
+        } else {
+            Soldier *ss = platoon_local->findnum(0);
             while (ss != NULL) {
-                if( ss->get_visible_enemies() & new_visible_enemies && ss->is_marching() ) {
+                if (ss->get_visible_enemies() & new_visible_enemies && ss->is_marching()) {
                     ss->break_march();
                     break;
                 }
@@ -1215,25 +1212,25 @@ void send_turn()
     platoon_local->restore_moved();
     update_visibility();
     switch_turn();
-    
+
     int crc = build_crc();
     net->send_endturn(crc, g_eot_save[crc]);
-    
-    battle_report("# %s: %d\n", _("Turn end"), turn );
-    g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
-    if(FLAGS & F_ENDTURNSND)
+
+    battle_report("# %s: %d\n", _("Turn end"), turn);
+    g_console->printf(COLOR_VIOLET00, "%s", _("Turn end"));
+    if (FLAGS & F_ENDTURNSND)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
 
     platoon_remote->restore();
-    
+
     if (net->gametype == GAME_TYPE_HOTSEAT) {
         if (win || loss) {
-        //  !!! Hack - to prevent unnecessery replay while in endgame screen
-            closehotseatgame();         
+            //  !!! Hack - to prevent unnecessery replay while in endgame screen
+            closehotseatgame();
             return;
         }
-    
-    //  Load the game state for the start of enemy turn and switch to WATCH mode
+
+        //  Load the game state for the start of enemy turn and switch to WATCH mode
         icon->show_eot();
         loadgame(F("$(home)/ufo2000.tmp"));
 
@@ -1248,15 +1245,15 @@ void send_turn()
         if (sel_man != NULL) g_map->center(sel_man);
 
         MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-        alert(" ", _("  NEXT TURN  "), " ", 
-                   _("    OK    "), NULL, 1, 0);
+        alert(" ", _("  NEXT TURN  "), " ",
+              _("    OK    "), NULL, 1, 0);
     }
 
     g_time_left = 0;
     MODE = WATCH;
     update_visibility();
-	//Initialise the halo around units for this turn
-	g_map->Init_visi_platoon(platoon_local);
+    //Initialise the halo around units for this turn
+    g_map->Init_visi_platoon(platoon_local);
 }
 
 int GAMELOOP = 0;
@@ -1267,28 +1264,28 @@ int GAMELOOP = 0;
 
 void recv_turn(int crc, const std::string &data)
 {
-     
+
     g_eot_save[crc] = data;
-    
+
     if (!GAMELOOP) return;
 
     // In replay mode pass of the turn is simple
     if (net->gametype == GAME_TYPE_REPLAY) {
         switch_turn();
         platoon_local->restore();
-        
+
         Platoon *plattemp = platoon_local;
         platoon_local = platoon_remote;
         platoon_remote = plattemp;
         //Trace initial callup for next-turn
-        battle_report("# REPLAY- %s: %d\n", _("Next turn"), turn );
+        battle_report("# REPLAY- %s: %d\n", _("Next turn"), turn);
         return;
     }
-    
+
     ASSERT(MODE == WATCH || g_game_receiving);
     update_visibility();
     switch_turn();
-    
+
     check_crc(crc);
 
     platoon_local->restore();
@@ -1310,19 +1307,19 @@ void recv_turn(int crc, const std::string &data)
         _("Next turn. local = %d, remote = %d soldiers"),
         platoon_local->num_of_men(),
         platoon_remote->num_of_men());
-    if(FLAGS & F_ENDTURNSND)
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+    if (FLAGS & F_ENDTURNSND)
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
 
-    battle_report("# %s: %d\n", _("Next turn"), turn );
-	update_visibility();
+    battle_report("# %s: %d\n", _("Next turn"), turn);
+    update_visibility();
 }
 
 #define STAT_PANEL_W 200
 
 void draw_stats()
-{ 
+{
     if (screen->w - SCREEN2W < STAT_PANEL_W) return;
-    
+
     BITMAP *stat_panel = create_bitmap(STAT_PANEL_W, 200);
     clear_to_color(stat_panel, BACKCOLOR);
     int i = 0;
@@ -1332,7 +1329,7 @@ void draw_stats()
     for (i = 0; i < SQUAD_LIMIT; i++) {
         man = platoon_local->findnum(i);
         if (man != NULL)
-            man->draw_stats(stat_panel, 10, 10 * (i + 1), (man == sel_man));
+            man->draw_stats(stat_panel, 10, 10 *(i + 1), (man == sel_man));
     }
     blit(stat_panel, screen, 0, 0, screen->w - STAT_PANEL_W, 250, STAT_PANEL_W, 200);
     destroy_bitmap(stat_panel);
@@ -1349,13 +1346,13 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
     ASSERT(size_y <= dst->h / 2);
 
     void (*scale2x_16)(
-        scale2x_uint16* dst0, scale2x_uint16* dst1, 
-        const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, 
+        scale2x_uint16 * dst0, scale2x_uint16 * dst1,
+        const scale2x_uint16 * src0, const scale2x_uint16 * src1, const scale2x_uint16 * src2,
         unsigned count) = scale2x_16_def;
 
-    void (*scale2x_32)(scale2x_uint32* dst0, scale2x_uint32* dst1, 
-        const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, 
-        unsigned count) = scale2x_32_def;
+    void (*scale2x_32)(scale2x_uint32 * dst0, scale2x_uint32 * dst1,
+                       const scale2x_uint32 * src0, const scale2x_uint32 * src1, const scale2x_uint32 * src2,
+                       unsigned count) = scale2x_32_def;
 
 #if defined(__GNUC__) && defined(__i386__)
     if (cpu_capabilities & CPU_MMX) {
@@ -1367,58 +1364,58 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
     switch (bitmap_color_depth(dst)) {
         case 16: {
             scale2x_16(
-                (scale2x_uint16*)dst->line[0], 
-                (scale2x_uint16*)dst->line[1], 
-                (scale2x_uint16*)src->line[0], 
-                (scale2x_uint16*)src->line[0], 
-                (scale2x_uint16*)src->line[1], 
+                (scale2x_uint16 *)dst->line[0],
+                (scale2x_uint16 *)dst->line[1],
+                (scale2x_uint16 *)src->line[0],
+                (scale2x_uint16 *)src->line[0],
+                (scale2x_uint16 *)src->line[1],
                 size_x);
 
             for (int i = 1; i < size_y - 1; i++)
                 scale2x_16(
-                    (scale2x_uint16*)dst->line[i * 2], 
-                    (scale2x_uint16*)dst->line[i * 2 + 1], 
-                    (scale2x_uint16*)src->line[i - 1], 
-                    (scale2x_uint16*)src->line[i], 
-                    (scale2x_uint16*)src->line[i + 1], 
+                    (scale2x_uint16 *)dst->line[i * 2],
+                    (scale2x_uint16 *)dst->line[i * 2 + 1],
+                    (scale2x_uint16 *)src->line[i - 1],
+                    (scale2x_uint16 *)src->line[i],
+                    (scale2x_uint16 *)src->line[i + 1],
                     size_x);
 
             scale2x_16(
-                (scale2x_uint16*)dst->line[size_y * 2 - 2], 
-                (scale2x_uint16*)dst->line[size_y * 2 - 1], 
-                (scale2x_uint16*)src->line[size_y - 2], 
-                (scale2x_uint16*)src->line[size_y - 1], 
-                (scale2x_uint16*)src->line[size_y - 1], 
+                (scale2x_uint16 *)dst->line[size_y * 2 - 2],
+                (scale2x_uint16 *)dst->line[size_y * 2 - 1],
+                (scale2x_uint16 *)src->line[size_y - 2],
+                (scale2x_uint16 *)src->line[size_y - 1],
+                (scale2x_uint16 *)src->line[size_y - 1],
                 size_x);
 
             break;
         }
         case 32: {
             scale2x_32(
-                (scale2x_uint32*)dst->line[0], 
-                (scale2x_uint32*)dst->line[1], 
-                (scale2x_uint32*)src->line[0], 
-                (scale2x_uint32*)src->line[0], 
-                (scale2x_uint32*)src->line[1], 
+                (scale2x_uint32 *)dst->line[0],
+                (scale2x_uint32 *)dst->line[1],
+                (scale2x_uint32 *)src->line[0],
+                (scale2x_uint32 *)src->line[0],
+                (scale2x_uint32 *)src->line[1],
                 size_x);
-            
+
             for (int i = 1; i < size_y - 1; i++)
                 scale2x_32(
-                    (scale2x_uint32*)dst->line[i * 2], 
-                    (scale2x_uint32*)dst->line[i * 2 + 1], 
-                    (scale2x_uint32*)src->line[i - 1], 
-                    (scale2x_uint32*)src->line[i], 
-                    (scale2x_uint32*)src->line[i + 1], 
+                    (scale2x_uint32 *)dst->line[i * 2],
+                    (scale2x_uint32 *)dst->line[i * 2 + 1],
+                    (scale2x_uint32 *)src->line[i - 1],
+                    (scale2x_uint32 *)src->line[i],
+                    (scale2x_uint32 *)src->line[i + 1],
                     size_x);
 
             scale2x_32(
-                (scale2x_uint32*)dst->line[size_y * 2 - 2], 
-                (scale2x_uint32*)dst->line[size_y * 2 - 1], 
-                (scale2x_uint32*)src->line[size_y - 2], 
-                (scale2x_uint32*)src->line[size_y - 1], 
-                (scale2x_uint32*)src->line[size_y - 1], 
+                (scale2x_uint32 *)dst->line[size_y * 2 - 2],
+                (scale2x_uint32 *)dst->line[size_y * 2 - 1],
+                (scale2x_uint32 *)src->line[size_y - 2],
+                (scale2x_uint32 *)src->line[size_y - 1],
+                (scale2x_uint32 *)src->line[size_y - 1],
                 size_x);
-            
+
             break;
         }
         default: {
@@ -1433,7 +1430,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
 }
 
 /**
- * Blit prepared battleview image to screen. Implemented as separate function in 
+ * Blit prepared battleview image to screen. Implemented as separate function in
  * order to make profiling easier (now we can estimate how much time is spent
  * on preparing image and how much time it actually takes to flush it to screen).
  */
@@ -1445,7 +1442,7 @@ void flush_screen()
 /**
  * Redraw battlescape and minimap on the screen
  */
-void build_screen(int & select_y)
+void build_screen(int &select_y)
 {
     int icon_nr = -9;
 
@@ -1467,10 +1464,10 @@ void build_screen(int & select_y)
     g_map->set_sel(mouse_x, mouse_y);
     g_map->draw(show_cursor, battleview_width, battleview_height);
 
-    if(sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
-        if(key[KEY_LCONTROL])
+    if (sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
+        if (key[KEY_LCONTROL])
             g_map->draw_path_from(sel_man);
-        else if(key[KEY_ALT])
+        else if (key[KEY_ALT])
             sel_man->draw_bullet_way();
     }
 
@@ -1481,7 +1478,7 @@ void build_screen(int & select_y)
         // Todo: adjust select_y for elevation of current tile (e.g. stairs)
         sel_man->draw_selector(select_y);
     }
-    
+
     // Draw blue markers over the heads of seen enemies
     platoon_local->draw_enemy_indicators(false, true);
 
@@ -1494,7 +1491,7 @@ void build_screen(int & select_y)
     // Draw indicators in the bottom right corner for fast switching to visible enemies
     platoon_local->draw_enemy_indicators(true, false);
     icon->draw();
-    
+
     if (net->gametype == GAME_TYPE_REPLAY) {
         char buf[10];
         if (replaydelay != -1)
@@ -1506,7 +1503,7 @@ void build_screen(int & select_y)
         textout(screen2, font, buf, 2, 12, COLOR_GRAY01);
     }
 
-    if (g_time_left > 0) 
+    if (g_time_left > 0)
         show_time_left();
 
     draw_stats();
@@ -1517,13 +1514,13 @@ void build_screen(int & select_y)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("FPS: %d"), g_fps);
 
     if (g_pause)
-        textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)") );
+        textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)"));
 
-    if (FLAGS & F_TOOLTIPS && (MODE == MAP3D || MODE == WATCH)) {
+    if (FLAGS &F_TOOLTIPS && (MODE == MAP3D || MODE == WATCH)) {
         // Tooltips for the buttons of the control-panel:
         if (icon->inside(mouse_x, mouse_y)) {
             icon_nr = icon->identify(mouse_x, mouse_y);
-            if (icon_nr >= 0 ) {
+            if (icon_nr >= 0) {
                 int bg_width = text_length(font, icontext(icon_nr)) + 2;
                 int bg_height = text_height(font) + 2;
                 BITMAP *bg = create_bitmap(bg_width, bg_height);
@@ -1531,12 +1528,12 @@ void build_screen(int & select_y)
                 set_trans_blender(0, 0, 0, 176);
                 draw_trans_sprite(screen2, bg, mouse_x + 6, mouse_y - 3);
                 destroy_bitmap(bg);
-                textprintf(screen2, font,  mouse_x+7, mouse_y-2,
-                            COLOR_WHITE, "%s", icontext(icon_nr) );
+                textprintf(screen2, font,  mouse_x + 7, mouse_y - 2,
+                           COLOR_WHITE, "%s", icontext(icon_nr));
             }
         }
     }
-            
+
     if (MODE == MAP2D) {
         g_map->draw2d();
     } else if (MODE == MAN) {
@@ -1544,14 +1541,14 @@ void build_screen(int & select_y)
             inventory->draw(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
         } else {
             MODE = MAP3D;
-        }           
+        }
     } else if (MODE == UNIT_INFO) {
         if (sel_man != NULL)
             sel_man->draw_unibord(0, SCREEN2W, SCREEN2H - icon->height);
         else
             MODE = MAP3D;
     }
-    
+
     if (FLAGS & F_SHOWLOFCELL) g_map->show_lof_cell();
     draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
     g_map->svga2d();      // Minimap
@@ -1564,8 +1561,8 @@ void build_screen(int & select_y)
  */
 void savegame(const char *filename, int compress)
 {
-    std::ostream* f;
-    if(compress)
+    std::ostream *f;
+    if (compress)
         f = new gzofstream(filename, std::ios::binary | std::ios::out);
     else
         f = new std::fstream(filename, std::ios::binary | std::ios::out);
@@ -1577,11 +1574,11 @@ void savegame(const char *filename, int compress)
  * Opens stream for replay file and saves game position to it
  */
 void savereplay(const char *filename)
-{   
+{
     //When engine will read packets from replay file it will expect packets are send
     //from remote platoon to local platoon. So if local player goes first we have to
     //swap platoons in replay.
-    if(HOST) {
+    if (HOST) {
         Platoon *pt = platoon_local;
         platoon_local = platoon_remote;
         platoon_remote = pt;
@@ -1589,9 +1586,9 @@ void savereplay(const char *filename)
 
     net->m_oreplay_file = new gzofstream(filename, std::ios::binary | std::ios::out);
     savegame_stream(*net->m_oreplay_file);
-    
+
     //Restoring platoons for current game
-    if(HOST) {
+    if (HOST) {
         Platoon *pt = platoon_local;
         platoon_local = platoon_remote;
         platoon_remote = pt;
@@ -1630,8 +1627,8 @@ void savegame_stream(std::ostream &stream)
  */
 bool loadgame(const char *filename, int compress)
 {
-    std::istream* f;
-    if(compress)
+    std::istream *f;
+    if (compress)
         f = new gzifstream(filename, std::ios::binary | std::ios::in);
     else
         f = new std::fstream(filename, std::ios::binary | std::ios::in);
@@ -1660,7 +1657,7 @@ bool loadgame_stream(std::istream &stream)
     sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
     stream.read(buff, strlen(sign) + 1);
     if (strcmp(sign, buff) != 0) {
-      // Developers: comment this out, to re-use saved game after new compile
+        // Developers: comment this out, to re-use saved game after new compile
         return false;  // "version of savegame not compatible"
     }
 
@@ -1680,7 +1677,7 @@ bool loadgame_stream(std::istream &stream)
     platoon_remote = NULL;
     delete g_map;
     delete elist;
-                                    
+
     PersistReadObject(archive, p1);
     PersistReadObject(archive, p2);
     PersistReadObject(archive, platoon_local);
@@ -1699,7 +1696,7 @@ bool loadgame_stream(std::istream &stream)
  * Set colors for list of soldier-names,
  * e.g. in endgame-stats.
  */
-int name_color( int player, int nr, int dead )
+int name_color(int player, int nr, int dead)
 // Note: colors are choosen to be readable with and without the background-image
 {
     static int alive = 0;
@@ -1710,7 +1707,7 @@ int name_color( int player, int nr, int dead )
 
     alive ++;
     if (nr == 1)
-       alive = 0;
+        alive = 0;
 
     if (player == 0)
         c1 =  16;  // COLOR_ORANGE00
@@ -1722,7 +1719,7 @@ int name_color( int player, int nr, int dead )
 /**
  * Set colors for displaying number of kills
  */
-int kills_color( int kills )
+int kills_color(int kills)
 {
     if (kills == 0)
         return COLOR_GRAY02;
@@ -1740,10 +1737,10 @@ int kills_color( int kills )
 /**
  * Set colors for displaying amount of damage done
  */
-int damage_color( int damage )
+int damage_color(int damage)
 {
-  //int c1 = 192;  // COLOR_VIOLET00
-  //int c1 = 224;  // COLOR_GRAYBLUE00
+    //int c1 = 192;  // COLOR_VIOLET00
+    //int c1 = 224;  // COLOR_GRAYBLUE00
     int c1 = 208;  // COLOR_SKYBLUE00
 
     if (damage == 0)
@@ -1771,9 +1768,9 @@ int damage_color( int damage )
  */
 void endgame_stats()
 {
-    lua_message( "Enter: endgame_stats" );
+    lua_message("Enter: endgame_stats");
     net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
-    
+
     BITMAP *back;
     BITMAP *scr = create_bitmap(320, 200);
     BITMAP *newscr = create_bitmap(SCREEN_W, SCREEN_H);
@@ -1787,8 +1784,7 @@ void endgame_stats()
     StatEntry *temp;
     Platoon *ptemp;
 
-    if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2)) //turn % 2 != 0 - wrong
-    {
+    if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2)) { //turn % 2 != 0 - wrong
         ptemp = platoon_remote;
         platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         platoon_local = ptemp;
@@ -1806,37 +1802,30 @@ void endgame_stats()
     int mvp_remote = 0, devastating_remote = 0, coward_remote = 0;
     StatEntry *mvp = platoon_local->get_stats()->get_most_kills();
     temp = platoon_remote->get_stats()->get_most_kills();
-    if (temp->get_kills() > mvp->get_kills())
-    {
+    if (temp->get_kills() > mvp->get_kills()) {
         mvp_remote = 1;
         mvp = temp;
     }
 
     StatEntry *devastating = platoon_local->get_stats()->get_most_inflicted();
     temp = platoon_remote->get_stats()->get_most_inflicted();
-    if (temp->get_inflicted() > devastating->get_inflicted()) //why mvp?
-    {
+    if (temp->get_inflicted() > devastating->get_inflicted()) { //why mvp?
         devastating_remote = 1;
         devastating = temp;
     }
 
     StatEntry *coward = platoon_local->get_stats()->get_least_inflicted();
     temp = platoon_remote->get_stats()->get_least_inflicted();
-    if (temp->get_inflicted() < coward->get_inflicted()) //why mvp?
-    {
+    if (temp->get_inflicted() < coward->get_inflicted()) { //why mvp?
         coward_remote = 1; //why 0?
         coward = temp;
+    } else if (temp->get_inflicted() == coward->get_inflicted()) {
+        // (turn%2!=0) means p1 wins and now p1=platon_local. lets make loser most coward
+        coward_remote = (turn % 2) ? 1 : 0;
+        coward = (turn % 2) ? temp : coward;
     }
-    else 
-        if(temp->get_inflicted() == coward->get_inflicted())
-        {
-            // (turn%2!=0) means p1 wins and now p1=platon_local. lets make loser most coward
-            coward_remote = (turn%2)?1:0;
-            coward = (turn%2)?temp:coward;
-        }
 
-    if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2))
-    {
+    if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2)) {
         ptemp = platoon_remote;
         platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         platoon_local = ptemp;
@@ -1851,9 +1840,8 @@ void endgame_stats()
     BITMAP *back_win  = load_back_image(cfg_get_win_image_file_name());
     BITMAP *back_lose = load_back_image(cfg_get_lose_image_file_name());
 
-    if (net->gametype == GAME_TYPE_HOTSEAT)
-    {
-       if (win == loss) {
+    if (net->gametype == GAME_TYPE_HOTSEAT) {
+        if (win == loss) {
             FS_MusicPlay(F(cfg_get_lose_music_file_name()));
             back = back_lose;
             strcpy(winner, _("DRAW!"));
@@ -1861,11 +1849,11 @@ void endgame_stats()
             FS_MusicPlay(F(cfg_get_win_music_file_name()));
             back = back_win;
             if (win) {
-                if (turn % 2 == 0) strcpy(winner, _("PLAYER 2 WINS!") );
-                else               strcpy(winner, _("PLAYER 1 WINS!") );
+                if (turn % 2 == 0) strcpy(winner, _("PLAYER 2 WINS!"));
+                else               strcpy(winner, _("PLAYER 1 WINS!"));
             } else {
-                if (turn % 2 == 0) strcpy(winner, _("PLAYER 1 WINS!") );
-                else               strcpy(winner, _("PLAYER 2 WINS!") );
+                if (turn % 2 == 0) strcpy(winner, _("PLAYER 1 WINS!"));
+                else               strcpy(winner, _("PLAYER 2 WINS!"));
             }
         }
     } else {
@@ -1873,12 +1861,12 @@ void endgame_stats()
         if ((win && (!loss))) {
             FS_MusicPlay(F(cfg_get_win_music_file_name()));
             back = back_win;
-            strcpy(winner, _("YOU WIN!") );
+            strcpy(winner, _("YOU WIN!"));
         } else {
             FS_MusicPlay(F(cfg_get_lose_music_file_name()));
             back = back_lose;
-            if (!win) strcpy(winner, _("YOU LOSE!") );
-            else      strcpy(winner, _("DRAW!") );
+            if (!win) strcpy(winner, _("YOU LOSE!"));
+            else      strcpy(winner, _("DRAW!"));
         }
     }
 
@@ -1886,59 +1874,58 @@ void endgame_stats()
     stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
     // avoid open/closing logfile with many battle_report() - statements:
-    FILE *f_br = fopen( F("$(home)/battlereport.txt"), "at");
-    fprintf(f_br, "\n# %s:\n\n", _("Summary") );
+    FILE *f_br = fopen(F("$(home)/battlereport.txt"), "at");
+    fprintf(f_br, "\n# %s:\n\n", _("Summary"));
     fprintf(f_br, "%s \n\n", winner);
 
-    textprintf_centre(newscr, large, 320, 12-4, COLOR_RED00, "%s", winner);
+    textprintf_centre(newscr, large, 320, 12 - 4, COLOR_RED00, "%s", winner);
 
     int x1 =  16, x2 = 336;
-    int y1 =  38-8, y2 =  56-8, h = 8, w = 8;
-    if (net->gametype == GAME_TYPE_HOTSEAT)
-    {
+    int y1 =  38 - 8, y2 =  56 - 8, h = 8, w = 8;
+    if (net->gametype == GAME_TYPE_HOTSEAT) {
         //textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
         //textprintf(newscr, g_small_font, 328, 60, COLOR_WHITE, "Player 2");
-        strcpy(player1, _("Player 1") );
-        strcpy(player2, _("Player 2") );
-      //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Player 1") );
-      //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Player 2") );
+        strcpy(player1, _("Player 1"));
+        strcpy(player2, _("Player 2"));
+        //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Player 1") );
+        //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Player 2") );
     } else {
         // Todo: Use login-name of other player
-        strcpy(player1, _("Your Platoon") );
-        strcpy(player2, _("Remote Platoon") );
-      //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
-      //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
+        strcpy(player1, _("Your Platoon"));
+        strcpy(player2, _("Remote Platoon"));
+        //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
+        //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
     }
-    textprintf(newscr, large,  x1, y1, COLOR_GREEN, player1 );
-    textprintf(newscr, large,  x2, y1, COLOR_GREEN, player2 );
+    textprintf(newscr, large,  x1, y1, COLOR_GREEN, player1);
+    textprintf(newscr, large,  x2, y1, COLOR_GREEN, player2);
 
-    strcpy(txt, _("Total Kills:") );
-    textprintf(newscr, g_small_font,  x1+ 0, y2+0*h, COLOR_RED03,  "%s",  txt );
-    textprintf(newscr, g_small_font,  x2+ 0, y2+0*h, COLOR_YELLOW, "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+68, y2+0*h, COLOR_RED03,  "%2d", local_kills);
-    textprintf(newscr, g_small_font,  x2+68, y2+0*h, COLOR_YELLOW, "%2d", remote_kills);
+    strcpy(txt, _("Total Kills:"));
+    textprintf(newscr, g_small_font,  x1 + 0, y2 + 0 * h, COLOR_RED03,  "%s",  txt);
+    textprintf(newscr, g_small_font,  x2 + 0, y2 + 0 * h, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font,  x1 + 68, y2 + 0 * h, COLOR_RED03,  "%2d", local_kills);
+    textprintf(newscr, g_small_font,  x2 + 68, y2 + 0 * h, COLOR_YELLOW, "%2d", remote_kills);
     fprintf(f_br, "%-30s: %14s %14s\n", _("Player"), player1, player2);
     fprintf(f_br, "%-30s  %14d %14d\n", txt, local_kills, remote_kills);
 
-    strcpy(txt, _("Death:") );
-    textprintf(newscr, g_small_font,  x1+ 0, y2+1*h, COLOR_YELLOW, "%s",  txt);
-    textprintf(newscr, g_small_font,  x2+ 0, y2+1*h, COLOR_RED03,  "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+68, y2+1*h, COLOR_YELLOW, "%2d", local_dead);
-    textprintf(newscr, g_small_font,  x2+68, y2+1*h, COLOR_RED03,  "%2d", remote_dead);
+    strcpy(txt, _("Death:"));
+    textprintf(newscr, g_small_font,  x1 + 0, y2 + 1 * h, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font,  x2 + 0, y2 + 1 * h, COLOR_RED03,  "%s",  txt);
+    textprintf(newscr, g_small_font,  x1 + 68, y2 + 1 * h, COLOR_YELLOW, "%2d", local_dead);
+    textprintf(newscr, g_small_font,  x2 + 68, y2 + 1 * h, COLOR_RED03,  "%2d", remote_dead);
     fprintf(f_br, "%-30s  %14d %14d\n", txt, local_dead, remote_dead);
 
-    strcpy(txt, _("Total Damage Inflicted:") );
-    textprintf(newscr, g_small_font,  x1+  0, y2+2*h, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x2+  0, y2+2*h, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+104, y2+2*h, COLOR_BLUE,   "%6d", local_inflicted);
-    textprintf(newscr, g_small_font,  x2+104, y2+2*h, COLOR_GRAY,   "%6d", remote_inflicted);
+    strcpy(txt, _("Total Damage Inflicted:"));
+    textprintf(newscr, g_small_font,  x1 +  0, y2 + 2 * h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2 +  0, y2 + 2 * h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1 + 104, y2 + 2 * h, COLOR_BLUE,   "%6d", local_inflicted);
+    textprintf(newscr, g_small_font,  x2 + 104, y2 + 2 * h, COLOR_GRAY,   "%6d", remote_inflicted);
     fprintf(f_br, "%-30s  %14d %14d\n", txt, local_inflicted, remote_inflicted);
 
-    strcpy(txt, _("Total Damage Taken:") );
-    textprintf(newscr, g_small_font,  x1+  0, y2+3*h, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x2+  0, y2+3*h, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+104, y2+3*h, COLOR_GRAY,   "%6d", local_taken);
-    textprintf(newscr, g_small_font,  x2+104, y2+3*h, COLOR_BLUE,   "%6d", remote_taken);
+    strcpy(txt, _("Total Damage Taken:"));
+    textprintf(newscr, g_small_font,  x1 +  0, y2 + 3 * h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2 +  0, y2 + 3 * h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1 + 104, y2 + 3 * h, COLOR_GRAY,   "%6d", local_taken);
+    textprintf(newscr, g_small_font,  x2 + 104, y2 + 3 * h, COLOR_BLUE,   "%6d", remote_taken);
     fprintf(f_br, "%-30s  %14d %14d\n", txt, local_taken, remote_taken);
 
     // Useless ranking - not logged to battlereport...
@@ -1947,64 +1934,64 @@ void endgame_stats()
     //textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
     textprintf_centre(newscr, large,        104, 100, COLOR_GOLD, _("Most Valuable Soldier:"));
     textprintf_centre(newscr, g_small_font, 110, 116, COLOR_GOLD, _("%s (%s, %d kills)"),
-        mvp->get_name(),
-        (mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote") ) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
-        mvp->get_kills());
+                      mvp->get_name(),
+                      (mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local")),
+                          mvp->get_kills());
 
     //textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
     //textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        300, 100-10, COLOR_MAGENTA, _("Most Devastating Soldier:") );
-    textprintf_centre(newscr, g_small_font, 300, 116-10, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
-        devastating->get_name(),
-        (devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
-        devastating->get_inflicted());
+    textprintf_centre(newscr, large,        300, 100 - 10, COLOR_MAGENTA, _("Most Devastating Soldier:"));
+    textprintf_centre(newscr, g_small_font, 300, 116 - 10, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
+                      devastating->get_name(),
+                      (devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local")),
+                          devastating->get_inflicted());
 
     //textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
     //textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        516, 100, COLOR_ROSE, _("Most Cowardly Soldier:") );
+    textprintf_centre(newscr, large,        516, 100, COLOR_ROSE, _("Most Cowardly Soldier:"));
     textprintf_centre(newscr, g_small_font, 504, 116, COLOR_ROSE, _("%s (%s, %d damage inflicted)"),
-        coward->get_name(),
-        (coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote") ) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
-        coward->get_inflicted());
+                      coward->get_name(),
+                      (coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local")),
+                          coward->get_inflicted());
 
     // Table of soldier-names for both players, with kills and damage:
-  //int x1 =  20, x2 = 320, y1 = 138;
-        x1 =  20; x2 = 320; y1 = 134;
-        h  =  12, w  =   8;
+    //int x1 =  20, x2 = 320, y1 = 138;
+    x1 =  20; x2 = 320; y1 = 134;
+    h  =  12, w  =   8;
     int x  =   0, y  =   0;
     int dead = 0, kills = 0, damage = 0;
 
     // "18s 9s 6s" vs. "22s 5d 6d" to give some room for translations:
-    textprintf(newscr, font, x1,    y1, COLOR_WHITE, 
-               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
-    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, 
-               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
+    textprintf(newscr, font, x1,    y1, COLOR_WHITE,
+               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage"));
+    textprintf(newscr, font, x1 + x2, y1, COLOR_WHITE,
+               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage"));
 
-    fprintf(f_br, "\n# %s:\n", _("Details") );
+    fprintf(f_br, "\n# %s:\n", _("Details"));
     fprintf(f_br, "\n%-20s:  %-18s %9s %6s\n", _("Player"),
-            _("Name"), _("Kills"), _("Damage") );
+            _("Name"), _("Kills"), _("Damage"));
 
     for (int pl = 0; pl < 2; pl++) {
         fprintf(f_br, "---\n");
         if (pl == 0) {
             temp = platoon_local ->get_stats()->getfirst();
-            strcpy(txt, player2 ); // ??
+            strcpy(txt, player2);  // ??
         } else {
             temp = platoon_remote->get_stats()->getfirst();
-            strcpy(txt, player1 );  // ??
+            strcpy(txt, player1);   // ??
         }
 
         for (int nr = 1; nr <= 15 ; nr++) { // screen-space for 15 soldiers per side
             x = x1   + pl * x2;
-            y = y1+4 + nr * h;
+            y = y1 + 4 + nr * h;
             if (temp != NULL) {
                 dead   = temp->is_dead();
                 kills  = temp->get_kills();
                 damage = temp->get_inflicted();
 
                 textprintf(newscr, font, x,      y, name_color(pl, nr, dead), "%-22s", temp->get_name());
-                textprintf(newscr, font, x+22*w, y, kills_color(kills  ), "%5d", kills  );
-                textprintf(newscr, font, x+28*w, y, damage_color(damage), "%6d", damage );
+                textprintf(newscr, font, x + 22 * w, y, kills_color(kills), "%5d", kills);
+                textprintf(newscr, font, x + 28 * w, y, damage_color(damage), "%6d", damage);
                 if (dead)
                     fprintf(f_br, "%-20s: -%-22s %5d %6d\n", txt,
                             temp->get_name(), kills, damage);
@@ -2017,7 +2004,7 @@ void endgame_stats()
         }
     }
 
-    fprintf(f_br, "# %s #\n\n", _("End") );
+    fprintf(f_br, "# %s #\n\n", _("End"));
     fclose(f_br);  // Battlereport
 
     g_console->set_full_redraw();
@@ -2026,9 +2013,8 @@ void endgame_stats()
 
     CHANGE = 1;
 
-    g_console->printf(COLOR_SYS_PROMPT, "%s\n\n", _("You can chat here.  Press ESC when finished.") );
-    while (!DONE)
-    {
+    g_console->printf(COLOR_SYS_PROMPT, "%s\n\n", _("You can chat here.  Press ESC when finished."));
+    while (!DONE) {
         net->check();
 
         if (CHANGE) {
@@ -2046,7 +2032,7 @@ void endgame_stats()
 
             switch (scancode) {
                 case KEY_ESC:
-                    if (askmenu( _("EXIT TO MAIN MENU") ))
+                    if (askmenu(_("EXIT TO MAIN MENU")))
                         DONE = 1;
                     break;
                 case KEY_UP:
@@ -2058,10 +2044,10 @@ void endgame_stats()
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
+                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF"));
                     break;
                 case KEY_F1:
-                    help( HELP_ENDGAME );
+                    help(HELP_ENDGAME);
                     break;
                 case KEY_F9:
                     keyswitch(0);
@@ -2102,7 +2088,7 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
     FILE *f = fopen(F("$(home)/ufo2000-crash.html"), "at");
     fprintf(f, "<H1>%s</H1>\n", "Ufo2000-Crashreport");
     fprintf(f, "%s\n", exception_report);
-    fprintf(f, "<HR>\n" );
+    fprintf(f, "<HR>\n");
     fclose(f);
 
     if (prevExceptionFilter)
@@ -2122,7 +2108,7 @@ void report_game_error(int chk)
     //       too annoying, for example, when trying to throw a grenade
     //       as far as the soldier can.
     chk = -chk; // Error codes are negative.
-    if(FLAGS & F_ENDTURNSND)
+    if (FLAGS & F_ENDTURNSND)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
     g_console->printf(GameErrorColour[chk], GameErrorMessage[chk]);
 }
@@ -2134,7 +2120,7 @@ void view_level_up()
 {
     if (g_map->sel_lev < g_map->level - 1) {
         g_map->sel_lev++;
-		g_map->move(0, CELL_SCR_Z / 2); // Move the map and the cursor to minimize unwanted scrolling          
+        g_map->move(0, CELL_SCR_Z / 2); // Move the map and the cursor to minimize unwanted scrolling
         position_mouse(mouse_x, mouse_y - CELL_SCR_Z / 2);
     }
 }
@@ -2146,7 +2132,7 @@ void view_level_down()
 {
     if (g_map->sel_lev > 0) {
         g_map->sel_lev--;
-		g_map->move(0, -CELL_SCR_Z / 2); // Move the map and the cursor to avoid unwanted scrolling           
+        g_map->move(0, -CELL_SCR_Z / 2); // Move the map and the cursor to avoid unwanted scrolling
         position_mouse(mouse_x, mouse_y + CELL_SCR_Z / 2);
     }
 }
@@ -2159,7 +2145,7 @@ void gameloop()
     // If it's not replay mode, this code start to write information into replay file
     if (net->gametype != GAME_TYPE_REPLAY)
         savereplay(F("$(home)/replay.tmp"));
-    
+
     int select_y = 0;
     int mouse_leftr = 1, mouse_rightr = 1;
     int old_mouse_z = mouse_z; // mouse wheel status on the previous cycle
@@ -2170,7 +2156,7 @@ void gameloop()
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     resize_screen2(0, 0);
     MouseRange *temp_mouse_range_ptr;
-    lua_message( "Start: gameloop" );
+    lua_message("Start: gameloop");
     if ((rand() % 2) == 1)
         FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
     else
@@ -2181,16 +2167,16 @@ void gameloop()
 
     g_crc_error_flag = false;
 
-    g_console->printf( COLOR_SYS_HEADER, _("Welcome to the battlescape of UFO2000 !") );
-    g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
+    g_console->printf(COLOR_SYS_HEADER, _("Welcome to the battlescape of UFO2000 !"));
+    g_console->printf(COLOR_SYS_INFO1,  _("Press F1 for help."));    // see KEY_F1
     color1 = 0;
-    battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), datetime() );
-    
+    battle_report("*\n* %s: %s\n*\n\n", _("Battlereport"), datetime());
+
     platoon_local->initialize_vision_matrix();
     platoon_remote->initialize_vision_matrix();
-	//Initialize the halo around units
+    //Initialize the halo around units
     g_map->Init_visi_platoon(platoon_local);
-	
+
     if (MODE != WATCH) {
         g_time_left = g_time_limit;
         last_time_left  = -1;
@@ -2226,7 +2212,7 @@ void gameloop()
             net->check();
         }
 
-        if (g_tie == 3){ // Check if both players accepted the draw.
+        if (g_tie == 3) { // Check if both players accepted the draw.
             win = loss = 1;
             DONE = 1;
         }
@@ -2246,26 +2232,26 @@ void gameloop()
             FLYIT  = 0;
             MOVEIT = 0;
         }
-        
+
         if (g_fast_forward) {
             FLYIT = 1;
             MOVEIT = 1;
         }
 
-        while (FLYIT > 0 && !g_pause ) {
+        while (FLYIT > 0 && !g_pause) {
             platoon_local->bullmove();     //!!!! bull of dead?
             platoon_remote->bullmove();
             FLYIT--;
         }
 
-        while (MOVEIT > 0 && !g_pause ) {
+        while (MOVEIT > 0 && !g_pause) {
             if (FLAGS & F_CLEARSEEN)
                 g_map->clearseen();
 
             g_map->smoker();
             platoon_remote->move(0);
             platoon_local->move(1);      //!!sel_man may die
-           
+
             if (sel_man == NULL)  // Get cursor back to normal mode in case
                 TARGET = 0;       // the current soldier died while targetting.
 
@@ -2297,28 +2283,28 @@ void gameloop()
                 case UNIT_INFO:
                     MODE = MAP3D;
                     break;
-                case WATCH: 
+                case WATCH:
                     if (icon->inside(mouse_x, mouse_y)) {
                         icon->execute(mouse_x, mouse_y);
                         break;
                     }
-                    
+
                     if (net->gametype == GAME_TYPE_REPLAY) {
                         if (mouse_inside(2, 12, 10, 20)) {
-                                if (replaydelay != -1)
-                                    replaydelay++;
-                                if (replaydelay > 8)
-                                    replaydelay = -1;
+                            if (replaydelay != -1)
+                                replaydelay++;
+                            if (replaydelay > 8)
+                                replaydelay = -1;
                         }
                         if (mouse_inside(18, 12, 26, 20))
                             replaydelay = -1;
                         if (mouse_inside(34, 12, 42, 20)) {
-                                if (replaydelay != -1)
-                                    replaydelay--;
-                                else
-                                    replaydelay = 8;
-                                if (replaydelay < 0)
-                                    replaydelay = 0;
+                            if (replaydelay != -1)
+                                replaydelay--;
+                            else
+                                replaydelay = 8;
+                            if (replaydelay < 0)
+                                replaydelay = 0;
                         }
                     }
                     break;
@@ -2327,11 +2313,11 @@ void gameloop()
                         MODE = MAP3D;
                     break;
                 case MAP3D:
-                    // Center to one of seen enemies if appropriate bar with a digit 
+                    // Center to one of seen enemies if appropriate bar with a digit
                     // in the right bottom corner was clicked
                     if (platoon_local->center_enemy_seen()) break;
 
-                    // Wait for opponent to finish reaction fire (avoid dodging 
+                    // Wait for opponent to finish reaction fire (avoid dodging
                     // reaction fire bullets)
                     if (!platoon_remote->nomoves()) break;
 
@@ -2345,8 +2331,8 @@ void gameloop()
                     if (TARGET) {
                         if (sel_man != NULL) sel_man->try_shoot();
                         break;
-                    } 
-                    
+                    }
+
                     if (sel_man != NULL) {
                         Soldier *ssman = g_map->sel_man();
                         if (ssman == NULL) {
@@ -2437,7 +2423,7 @@ void gameloop()
         if (mouse_z != old_mouse_z) {
             // Mouse wheel state has changed
             // Scroll viewport level up and down
-            if(mouse_z > old_mouse_z)
+            if (mouse_z > old_mouse_z)
                 view_level_up();
             else
                 view_level_down();
@@ -2464,7 +2450,7 @@ void gameloop()
             switch (scancode) {
                 case KEY_PGUP:
                     view_level_up();
-					break;
+                    break;
                 case KEY_PGDN:
                     view_level_down();
                     break;
@@ -2484,8 +2470,8 @@ void gameloop()
                         if (sel_man->is_panicking()) {
                             g_console->printf(COLOR_SYS_FAIL, _("%s is panicking and can't access inventory."), sel_man->md.Name);
                             if (MODE == MAN) {
-								inventory->close();
-							}
+                                inventory->close();
+                            }
                         }
                     }
                     break;
@@ -2527,51 +2513,51 @@ void gameloop()
                 case KEY_F1:
                     switch (MODE) {
                         case UNIT_INFO:
-                            help( HELP_STATS );
+                            help(HELP_STATS);
                             break;
                         case MAP2D:
-                            help( HELP_MAPVIEW );
+                            help(HELP_MAPVIEW);
                             break;
                         case MAN:
-                            help( HELP_INVENTORY );
+                            help(HELP_INVENTORY);
                             break;
                         default:
-                            help( HELP_BATTLESCAPE );
+                            help(HELP_BATTLESCAPE);
                     }
                     break;
                 case KEY_F2:
-                    if (askmenu( _("SAVE GAME") )) {
+                    if (askmenu(_("SAVE GAME"))) {
                         savegame(F("$(home)/ufo2000.sav"), 1);
                         // Todo: test if save was successful
-                        g_console->printf(COLOR_SYS_OK, _("Game saved") );
+                        g_console->printf(COLOR_SYS_OK, _("Game saved"));
 
-                        battle_report( "# %s\n", _("Game saved") );
+                        battle_report("# %s\n", _("Game saved"));
                     }
                     break;
                 case KEY_F3:
-                    if (askmenu( _("LOAD GAME") )) {
-                        if (!loadgame(F("$(home)/ufo2000.sav" ), 1)) {
-                            battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
+                    if (askmenu(_("LOAD GAME"))) {
+                        if (!loadgame(F("$(home)/ufo2000.sav"), 1)) {
+                            battle_report("# %s: %s\n", _("LOAD GAME"), _("failed"));
                             temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-                            alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
+                            alert(_("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
                             delete temp_mouse_range_ptr;
                         } else {
-                            battle_report( "# %s: %s\n", _("LOAD GAME"), _("success") );
+                            battle_report("# %s: %s\n", _("LOAD GAME"), _("success"));
                         }
                         inithotseatgame();
                         if (net->gametype == GAME_TYPE_HOTSEAT)
                             savegame(F("$(home)/ufo2000.tmp"));
                     }
                     break;
-                case KEY_F5: 
-                    if (FLAGS & F_TOOLTIPS) { 
+                case KEY_F5:
+                    if (FLAGS & F_TOOLTIPS) {
                         FLAGS &= ~F_TOOLTIPS;
-                        g_console->printf(COLOR_SYS_FAIL, _("Tooltips OFF") );
+                        g_console->printf(COLOR_SYS_FAIL, _("Tooltips OFF"));
                     } else {
                         FLAGS |= F_TOOLTIPS;
-                        g_console->printf(COLOR_SYS_OK,   _("Tooltips ON.") );
-                    } 
-                    soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+                        g_console->printf(COLOR_SYS_OK,   _("Tooltips ON."));
+                    }
+                    soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
                     break;
                 case KEY_F9:
                     keyswitch(0);
@@ -2583,10 +2569,10 @@ void gameloop()
                     break;
                 case KEY_F11:
                     if (NOTICEdemon) {
-                        if (askmenu( _("STOP NOTIFY") ))
+                        if (askmenu(_("STOP NOTIFY")))
                             NOTICEdemon = 0;
                     } else {
-                        if (askmenu( _("START NOTIFY") )) {
+                        if (askmenu(_("START NOTIFY"))) {
                             NOTICEdemon = 1;
                             NOTICEremote = 0;
                         }
@@ -2594,7 +2580,7 @@ void gameloop()
                     break;
                 case KEY_PRTSCR:
                 case KEY_F12:
-                    if (askmenu( _("SCREEN-SNAPSHOT") )) {
+                    if (askmenu(_("SCREEN-SNAPSHOT"))) {
                         savescreen();
                     }
                     break;
@@ -2609,16 +2595,16 @@ void gameloop()
                         k = (1 << who);
                         if (net->gametype != GAME_TYPE_REPLAY) {
                             b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
-                                (g_tie & k) ? _("RECALL DRAW OFFER") : 
-                                (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
-                                _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
+                                        (g_tie & k) ? _("RECALL DRAW OFFER") :
+                                        (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
+                                        _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
                         } else {
                             b1 = askmenu(_("EXIT FROM REPLAY?"));
                         }
                         delete temp_mouse_range_ptr;
                         if (b1 == 1) {
                             DONE = 1;
-                            battle_report( "# %s\n", _("Game aborted") );
+                            battle_report("# %s\n", _("Game aborted"));
                         } else if (b1 == 2) {
                             g_tie ^= k;
                             net->send_tie(who);
@@ -2652,8 +2638,7 @@ void gameloop()
 
     GAMELOOP = 0;
 
-    if (win || loss)
-    {
+    if (win || loss) {
         // Closes replay file
         if (net->gametype != GAME_TYPE_REPLAY) {
             delete net->m_oreplay_file;
@@ -2661,9 +2646,9 @@ void gameloop()
         };
 
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
-            std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-                _("Save replay (*.replay file)"), F("$(home)"), "replay", true);
-                
+            std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2,
+                                                   _("Save replay (*.replay file)"), F("$(home)"), "replay", true);
+
             if (!filename.empty()) {
                 if (exists(filename.c_str()))
                     if (remove(filename.c_str()) != 0) {
@@ -2671,7 +2656,7 @@ void gameloop()
                         g_console->printf("%s (%d)", strerror(errno), errno);
                         filename += "_";
                     }
-                
+
                 if (rename(F("$(home)/replay.tmp"), filename.c_str()) == 0) {
                     g_console->printf(_("Replay saved as %s"), filename.c_str());
                 } else {
@@ -2687,15 +2672,15 @@ void gameloop()
                 g_console->printf("%s (%d)", strerror(errno), errno);
             }
         }
-    
+
         endgame_stats();
     }
 
-        // Closes replay file
-        if (net->gametype == GAME_TYPE_REPLAY) {
-            delete net->m_ireplay_file;
-            net->m_ireplay_file = NULL;
-        };
+    // Closes replay file
+    if (net->gametype == GAME_TYPE_REPLAY) {
+        delete net->m_ireplay_file;
+        net->m_ireplay_file = NULL;
+    };
 
     net->send_quit();
 
@@ -2732,11 +2717,11 @@ void faststart()
     cur_random = new Random;
 
     elist->reset();
-    
+
     platoon_local  = p1;
     platoon_remote = p2;
     MODE = MAP3D;
-    
+
     // synchronize available equipment with ourselves :)
     lua_pushstring(L, "SyncEquipmentInfo");
     lua_gettable(L, LUA_GLOBALSINDEX);
@@ -2744,7 +2729,7 @@ void faststart()
     lua_gettable(L, LUA_GLOBALSINDEX);
     lua_safe_call(L, 0, 1);
     lua_safe_call(L, 1, 0);
-    
+
     lua_safe_dostring(L, "SetEquipment('Standard')");
 
     sel_man = platoon_local->captain();
@@ -2759,9 +2744,9 @@ void faststart()
 
 void start_loadgame()
 {
-/* It fixes existing problem with crash when game is loaded after some other 
-game have been played before. I don't know how to fix it in other way.*/
-    win = 0; loss = 0; 
+    /* It fixes existing problem with crash when game is loaded after some other
+    game have been played before. I don't know how to fix it in other way.*/
+    win = 0; loss = 0;
 
     HOST = sethotseatplay();
 
@@ -2770,12 +2755,11 @@ game have been played before. I don't know how to fix it in other way.*/
     reset_video();
 
     // Todo: message for "version of savegame not compatible"
-    if (!loadgame(F("$(home)/ufo2000.sav"),1))
-    {
-        alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
+    if (!loadgame(F("$(home)/ufo2000.sav"), 1)) {
+        alert("", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
         return;
     }
-    battle_report( "# %s: %d\n", _("LOAD GAME"), turn );
+    battle_report("# %s: %d\n", _("LOAD GAME"), turn);
 
     inithotseatgame();
 
@@ -2792,9 +2776,9 @@ game have been played before. I don't know how to fix it in other way.*/
  */
 void start_loadreplay()
 {
-/* It fixes existing problem with crash when game is loaded after some other 
-game have been played before. I don't know how to fix it in other way.*/
-    win = 0; loss = 0; 
+    /* It fixes existing problem with crash when game is loaded after some other
+    game have been played before. I don't know how to fix it in other way.*/
+    win = 0; loss = 0;
 
     HOST = 0;
     net->gametype = GAME_TYPE_REPLAY;
@@ -2805,21 +2789,21 @@ game have been played before. I don't know how to fix it in other way.*/
     clear_to_color(screen, COLOR_BLACK1);
 
     char path[1000]; *path = 0;
-    
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-        _("Load replay (*.replay files)"), F("$(home)"), "replay");
-        
+
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2,
+                                           _("Load replay (*.replay files)"), F("$(home)"), "replay");
+
     if (filename.empty()) {
-        alert( "", _("No saved replays found!"), "", _("OK"), NULL, 0, 0);
-        return;
-    }        
-    
-    if (!loadreplay(filename.c_str())) {
-        alert( "", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
+        alert("", _("No saved replays found!"), "", _("OK"), NULL, 0, 0);
         return;
     }
-    
-    battle_report( "# %s: %d\n", _("START REPLAY"), turn );
+
+    if (!loadreplay(filename.c_str())) {
+        alert("", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
+        return;
+    }
+
+    battle_report("# %s: %d\n", _("START REPLAY"), turn);
 
     inithotseatgame();
 
@@ -2836,41 +2820,41 @@ game have been played before. I don't know how to fix it in other way.*/
 /**
  * Test / Debug
  */
-//! Test: Draw rectangles in all colors as background, 
-//! labeled with white numbers, 
+//! Test: Draw rectangles in all colors as background,
+//! labeled with white numbers,
 //! output to screen or save as bitmap-file.
 void color_chart1()
 {
     //int h = 32, w = 32;   // 32*16=512
     int h = 22, w = 38;
     int x =  0, y =  0, color = 0;
-    BITMAP *xx = create_bitmap(16*w, 16*h);  // 24*16,38*16 = 384,608
+    BITMAP *xx = create_bitmap(16 * w, 16 * h); // 24*16,38*16 = 384,608
     clear(xx);
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
             color = i * 16 + j;
             x     = j * w;
             y     = i * h;
-            rectfill( xx, x, y, x + w-1, y + h-1, xcom_color(color) );
+            rectfill(xx, x, y, x + w - 1, y + h - 1, xcom_color(color));
             //textprintf_centre_ex(xx, g_small_font,
             //    j * 32 + 16, i * 32 + 16,
-            //    xcom_color(1), -1, "%d", i * 16 + j); 
+            //    xcom_color(1), -1, "%d", i * 16 + j);
             //textprintf_centre(xx, g_small_font, x + w/2, y + h/2,
             //    xcom_color(1), "%d", color );
-        printsmall_x( xx, x + w/2, y + h/2, xcom_color(1), color );
+            printsmall_x(xx, x + w / 2, y + h / 2, xcom_color(1), color);
         }
     }
     //save_bitmap("xcom_palette.bmp", xx, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     //blit(xx, screen, 0, 0, 0, 0, SCREEN_W, SCREEN2H);
-    blit( xx, screen, 0, 0, 0, 0, 16*w, 16*h );
-    destroy_bitmap(xx); 
+    blit(xx, screen, 0, 0, 0, 0, 16 * w, 16 * h);
+    destroy_bitmap(xx);
 }
 
 //! Test: Draw text in all colors on black background
 void color_chart2()
 {
     int color = 0, x = 0, y = 0, h = 22, w = 38;
-    BITMAP *xx = create_bitmap(16*w, 16*h);  // 22*16,38*16=352,608
+    BITMAP *xx = create_bitmap(16 * w, 16 * h); // 22*16,38*16=352,608
     clear(xx);
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
@@ -2878,16 +2862,16 @@ void color_chart2()
             x     = j * w;
             y     = i * h;
             //rectfill(xx, j*w, i*h, j*w + w-1, i*h + h-1, xcom_color(color) );
-            //textprintf_centre(xx, g_small_font, 
+            //textprintf_centre(xx, g_small_font,
             //    j*w + w/2, i*h + h/2,
             //    xcom_color(color), "%d", color );
-        printsmall_x( xx, x + w/2, y + h/2, xcom_color(color), color );
+            printsmall_x(xx, x + w / 2, y + h / 2, xcom_color(color), color);
         }
     }
     //save_bitmap("xcom_pal_text.bmp", xx, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     //save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-    blit( xx, screen, 0, 0, 0, 0, 16*w, 16*h );
-    destroy_bitmap(xx); 
+    blit(xx, screen, 0, 0, 0, 0, 16 * w, 16 * h);
+    destroy_bitmap(xx);
 }
 
 //! Test: Call test-routines
@@ -2895,28 +2879,28 @@ void test1()
 {
     int DONE = 0, test = 0;
 
-    textprintf(screen, font, 1, 31*12, COLOR_SYS_PROMPT, 
-        "%s", "Colortest - press SPACE to switch, ESC to quit"); 
+    textprintf(screen, font, 1, 31 * 12, COLOR_SYS_PROMPT,
+               "%s", "Colortest - press SPACE to switch, ESC to quit");
 
-    while (!DONE) { 
+    while (!DONE) {
         if (keypressed()) {
             int scancode;
             ureadkey(&scancode);
 
             switch (scancode) {
                 case KEY_ESC:
-                        //if (askmenu("Test ok"))
-                        DONE = 1;
+                    //if (askmenu("Test ok"))
+                    DONE = 1;
                     break;
-                //case KEY_UP:
-                //    resize_screen2(0, -10);
-                //    break;
+                    //case KEY_UP:
+                    //    resize_screen2(0, -10);
+                    //    break;
                 default:
-                    if (test == 0 ) {
+                    if (test == 0) {
                         color_chart1(); test++;
                     } else {
-                        color_chart2(); test=0;
-                    } 
+                        color_chart2(); test = 0;
+                    }
             }
         }
     }
@@ -2944,7 +2928,7 @@ int main(int argc, char *argv[])
     prevExceptionFilter = SetUnhandledExceptionFilter(TopLevelExceptionFilter);
 #endif
 
-    lua_message( std::string("UFO2000 Version: ") + version_id );
+    lua_message(std::string("UFO2000 Version: ") + version_id);
     if (FLAGS & F_FASTSTART) {
         faststart();
     } else if (argc >= 3) {
@@ -2968,18 +2952,18 @@ int main(int argc, char *argv[])
             h = -1;
             switch (mm) {
                 case MAINMENU_ABOUT:
-                    // $$$ TODO: show the about-box with the title-picture as background, 
+                    // $$$ TODO: show the about-box with the title-picture as background,
                     // not on black screen
                     set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);  // yellow mouse-cursor
                     char about1[128];
                     sprintf(about1, _("UFO2000 v%s.%s - a free and opensource multiplayer game"),
-                                    UFO_VERSION_STRING, UFO_SVNVERSION);
+                            UFO_VERSION_STRING, UFO_SVNVERSION);
                     b1 = alert(about1,
-                          _("inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."),
-                          "(c) 2000-2001 A.Ivanov, (c) 2002-2005 ufo2000 development team",
-                          _(" &MORE "), _(" OK "), 109, 0);    // 109: 'm'
-                    if ( b1 == 1 ) 
-                        help( HELP_INTRO );
+                               _("inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."),
+                               "(c) 2000-2001 A.Ivanov, (c) 2002-2005 ufo2000 development team",
+                               _(" &MORE "), _(" OK "), 109, 0);    // 109: 'm'
+                    if (b1 == 1)
+                        help(HELP_INTRO);
                     break;
                 case MAINMENU_TIP_OF_DAY:
                     set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);  // yellow mouse-cursor
@@ -2998,8 +2982,8 @@ int main(int argc, char *argv[])
                         h = connect_internet_server();
                     else
                         alert(
-                            _("IEEE-754 compatible 64-bit floating point arithmetics is not supported,"), 
-                            _("so you have high risk of synchronization errors in network games"), 
+                            _("IEEE-754 compatible 64-bit floating point arithmetics is not supported,"),
+                            _("so you have high risk of synchronization errors in network games"),
                             _("and are not allowed to connect the server"), _("OK"), NULL, 0, 0);
                     break;
                 case MAINMENU_LOADGAME:

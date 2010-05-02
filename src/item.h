@@ -58,25 +58,23 @@ private:
     Item *m_ammo;
     //! If it is a stunned body, this contains a pointer to its owner
     Soldier *m_stunned_body_owner;
-    
+
     int m_health;
 
     ALPHA_SPRITE *m_pMap;
     ALPHA_SPRITE *m_pInv;
     ALPHA_SPRITE *m_pHeld[8];
-    
+
     SoundSym_e_t m_sound;
     SAMPLE *m_sound_sample;
 
-    static SoundSym_e_t obdata_get_sound(int type)
-    {
+    static SoundSym_e_t obdata_get_sound(int type) {
         std::string sound = obdata_get_string(type, "sound");
         return getSymCode(sound.c_str());
     }
 
-    SoundSym_e_t get_sound()
-    { 
-        return m_sound; 
+    SoundSym_e_t get_sound() {
+        return m_sound;
     }
 
 public:
@@ -103,7 +101,7 @@ public:
     static int obdata_wayPoints(int index) { return obdata_get_int(index, "wayPoints"); }
     static int obdata_accuracy(int index, int n) { return obdata_get_array_int(index, "accuracy", n); }
     static int obdata_heal(int index, int n) { return obdata_get_array_int(index, "heal", n); }
-	static int obdata_heal_max(int index, int n) { return obdata_get_array_int(index, "max_heal", n); }
+    static int obdata_heal_max(int index, int n) { return obdata_get_array_int(index, "max_heal", n); }
     static int obdata_time(int index, int n) { return obdata_get_array_int(index, "time", n); }
     static int obdata_useTime(int index) { return obdata_get_int(index, "useTime"); }
     static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }	/// Number of shots in an autoshot burst
@@ -122,9 +120,9 @@ public:
     static int obdata_primeTime(int index) { return obdata_get_int(index, "primeTime"); } /// Time to prime a grenade
     static int obdata_throwTime(int index) { return obdata_get_int(index, "throwTime"); } /// Time to throw a grenade
     static int obdata_ownLight(int index) { return obdata_get_int(index, "ownLight"); }	/// Own light for electro flare
-    
-    const char* get_damage_name();
-    const char* get_damage_description();
+
+    const char *get_damage_name();
+    const char *get_damage_description();
     //! Get list of ammo types that can be used with this weapon
     static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
@@ -140,8 +138,8 @@ public:
     int is_stun_weapon() { return (obdata_damageType(m_type) == DT_STUN); }
     //! Check if it is made for healing
     int is_healing_item() { return (obdata_isMed(m_type)); }
-	//! Check if this is a grenade (something explosive that needs to be thrown)
-	int is_grenade() { return obdata_isGrenade(m_type); }
+    //! Check if this is a grenade (something explosive that needs to be thrown)
+    int is_grenade() { return obdata_isGrenade(m_type); }
     //! Check if it is high explosive (explosion triggered by timer)
     int is_high_explosive() { return obdata_isHighExplosive(m_type); }
     //! Check if it is proximity grenade (explosion triggered by movement)
@@ -166,7 +164,7 @@ public:
     int obdata_reloadTime() { return obdata_reloadTime(m_type); }
     int obdata_isGun() { return obdata_isGun(m_type); }
     int obdata_isMed() { return obdata_isMed(m_type); }
-	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
+    int obdata_twoHanded() { return obdata_twoHanded(m_type); }
     int obdata_maxHealth() { return obdata_maxHealth(m_type); }
     int obdata_damage() { return obdata_damage(m_type); }
     int obdata_dDeviation() { return obdata_dDeviation(m_type); }
@@ -175,8 +173,8 @@ public:
     int obdata_smokeTime() { return obdata_smokeRange(m_type); }
     int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
     int obdata_heal(int n) { return obdata_get_array_int(m_type, "heal", n); }
-	int obdata_heal_max(int n) { return obdata_get_array_int(m_type, "max_heal", n); }
-	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
+    int obdata_heal_max(int n) { return obdata_get_array_int(m_type, "max_heal", n); }
+    int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
     int obdata_useTime() { return obdata_useTime(m_type); }
     int obdata_autoShots() { return obdata_autoShots(m_type); }
     int obdata_importance() { return obdata_get_int(m_type, "importance"); }
@@ -188,21 +186,20 @@ public:
     int obdata_damageType() { return obdata_damageType(m_type); }
 
     void od_info(int gx, int gy, int gcol);
-    
+
     static int get_color(int index, int n);
     static bool can_set_color(int index);
-    
+
     int get_cost() { return obdata_cost(m_type); }
 
-    bool can_use_ammo_type(const std::string &ammo_type)
-    {
+    bool can_use_ammo_type(const std::string &ammo_type) {
         std::vector<std::string> ammo_list;
         get_ammo_list(obdata_name(m_type), ammo_list);
         for (int i = 0; i < (int)ammo_list.size(); i++)
             if (ammo_list[i] == ammo_type) return true;
         return false;
     }
-    
+
     /** Return clip from the weapon, if any. */
     Item *clip() { return m_ammo; }
     /** Return type of clip in this weapon. */
@@ -217,8 +214,7 @@ public:
 
     Item *create_duplicate();
 
-    static void obdata_play_sound_sample(int type)
-    {
+    static void obdata_play_sound_sample(int type) {
         SAMPLE *sample = obdata_get_sound_sample(type, "sound");
         if (sample) {
             play_sample(sample, 255, 127, 1000, 0);
@@ -227,8 +223,7 @@ public:
         }
     }
 
-    void play_sound()
-    {
+    void play_sound() {
         if (m_sound_sample) {
             play_sample(m_sound_sample, 255, 127, 1000, 0);
         } else {
@@ -242,8 +237,7 @@ public:
     friend class Map;
     friend class Editor;
 
-    int health()
-    {
+    int health() {
         return m_health;
     }
     void draw_health(BITMAP *dest, int GRAPH, int gx, int gy);
@@ -255,8 +249,7 @@ public:
     virtual bool Read(persist::Engine &archive);
 };
 
-struct Target
-{
+struct Target {
     int    accur, time;
     Action action;
     Item   *item;
