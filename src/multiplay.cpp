@@ -54,12 +54,7 @@ int packet_recv_hotseat(std::string &packet)
     return packet.size();
 }
 
-void inithotseatgame()
-{
-    while (!g_hotseat_cmd_queue.empty()) g_hotseat_cmd_queue.pop_front();
-}
-
-void closehotseatgame()
+void flushhotseatgame()
 {
     while (!g_hotseat_cmd_queue.empty()) g_hotseat_cmd_queue.pop_front();
 }
@@ -135,7 +130,7 @@ int Net::init()
         clear(screen);
         reset_video();
         alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
-        inithotseatgame();
+        flushhotseatgame();
     } else {
         if (!connect->do_version_check() || !connect->do_planner(0)) {
             close();
@@ -153,7 +148,7 @@ void Net::close()
     log("%s\n", "close()");
     switch (gametype) {
         case GAME_TYPE_HOTSEAT:
-            closehotseatgame();
+            flushhotseatgame();
             break;
         default:
             break;

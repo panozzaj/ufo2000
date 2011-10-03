@@ -1,4 +1,3 @@
-
 # /
 /*.d
 /build-stamp
@@ -13,3 +12,8 @@
 /ufo2000-srv
 /ufo2000-srv.log
 /obj
+XCOM
+*.tmp
+*.dat
+cur_map.lua
+battlereport.txt

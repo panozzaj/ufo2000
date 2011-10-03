@@ -1241,7 +1241,7 @@ void send_turn()
     if (net->gametype == GAME_TYPE_HOTSEAT) {
         if (win || loss) {
         //  !!! Hack - to prevent unnecessery replay while in endgame screen
-            closehotseatgame();         
+            flushhotseatgame();
             return;
         }
     
@@ -2574,7 +2574,7 @@ void gameloop()
                         } else {
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("success") );
                         }
-                        inithotseatgame();
+                        flushhotseatgame();
                         if (net->gametype == GAME_TYPE_HOTSEAT)
                             savegame(F("$(home)/ufo2000.tmp"));
                     }
@@ -2793,7 +2793,7 @@ game have been played before. I don't know how to fix it in other way.*/
     }
     battle_report( "# %s: %d\n", _("LOAD GAME"), turn );
 
-    inithotseatgame();
+    flushhotseatgame();
 
     g_map->center(sel_man);
     DONE = 0;
@@ -2837,7 +2837,7 @@ game have been played before. I don't know how to fix it in other way.*/
     
     battle_report( "# %s: %d\n", _("START REPLAY"), turn );
 
-    inithotseatgame();
+    flushhotseatgame();
 
     DONE = 0;
 
@@ -3007,6 +3007,7 @@ int main(int argc, char *argv[])
                     FS_MusicPlay(NULL);
                     continue;
                 case MAINMENU_HOTSEAT:
+                case MAINMENU_COMPUTER:
                     h = sethotseatplay();
                     break;
                 case MAINMENU_INTERNET:

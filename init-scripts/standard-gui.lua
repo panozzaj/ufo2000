@@ -43,7 +43,7 @@
 --  Name = "String",                            -- Name of the screen (predefined)
 --  Background = "bitmap file",                     -- Background image, transparent if not set
 --  Features = {
---      String = {                                                      -- Name of the feature (predefined)                         
+--      String = {                                              -- Name of the feature (predefined)
 --      Placement = {
 --          Top = {1/10000th of screen, pixel correction},      -- Position from the top, 0 if not set
 --          Left = {1/10000th of screen, pixel correction},     -- Position from the left, 0 if not set
@@ -233,6 +233,20 @@ AddPanel {
             Bg_color_active = {0,73,140},
             Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
         },
+        ButtonComputer = {
+            Placement = {
+                Top = {7883, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
         versionNumber = {
             Placement = {
                 Top = {8350, 0},
@@ -244,6 +258,5 @@ AddPanel {
             Color = {19,76,41},
             Bg_color = {0,0,0},
         },
-
     },
 }

@@ -197,6 +197,7 @@ int do_mainmenu()
     button_list[MAINMENU_YIELD] = "";
     button_list[MAINMENU_INTERNET] = "ButtonInternet";
     button_list[MAINMENU_HOTSEAT] = "ButtonHotseat";
+    button_list[MAINMENU_COMPUTER] = "ButtonComputer";
     button_list[MAINMENU_GEOSCAPE] = "ButtonGeoscape";
     button_list[MAINMENU_LOADGAME] = "ButtonLoadGame";
     button_list[MAINMENU_SHOW_REPLAY] = "ButtonLoadReplay";
@@ -242,6 +243,7 @@ int do_mainmenu()
 
     the_dialog[MAINMENU_INTERNET].dp    = (void *) _("connect to server");
     the_dialog[MAINMENU_HOTSEAT].dp     = (void *) _("start hotseat game");
+    the_dialog[MAINMENU_COMPUTER].dp    = (void *) _("start versus computer");
     the_dialog[MAINMENU_GEOSCAPE].dp    = (void *) _("show geoscape demo");
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
     the_dialog[MAINMENU_SHOW_REPLAY].dp = (void *) _("load a replay");

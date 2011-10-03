@@ -25,6 +25,7 @@ void loadini();
 void saveini();
 
 int sethotseatplay();
+int setcomputerplay();
 
 void configure();
 

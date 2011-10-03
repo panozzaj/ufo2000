@@ -41,6 +41,7 @@ enum MAINMENU_ITEMS
     MAINMENU_LOADGAME,
     MAINMENU_GEOSCAPE,
     MAINMENU_HOTSEAT,
+    MAINMENU_COMPUTER,
     MAINMENU_INTERNET,
     MAINMENU_COUNT,
     // Currently disabled menu items come next

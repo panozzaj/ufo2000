@@ -28,10 +28,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #define map g_map
 
-enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER, GAME_TYPE_REPLAY};
+enum GameType {
+    GAME_TYPE_HOTSEAT,
+    GAME_TYPE_INTERNET_SERVER,
+    GAME_TYPE_REPLAY,
+    GAME_TYPE_COMPUTER
+};
 
-void inithotseatgame();
-void closehotseatgame();
+void flushhotseatgame();
 
 /**
  * High level object providing network support. Uses some kind of RPC 

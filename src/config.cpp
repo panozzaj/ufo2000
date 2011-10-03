@@ -200,6 +200,12 @@ int sethotseatplay()
     return 1;
 }
 
+int setcomputerplay()
+{
+    net->gametype = GAME_TYPE_COMPUTER;
+    return 1;
+}
+
 void set_language(const char *lang)
 {
     int stack_top = lua_gettop(L);
