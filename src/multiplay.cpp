@@ -131,6 +131,22 @@ int Net::init()
         reset_video();
         alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
         flushhotseatgame();
+    } else if (gametype == GAME_TYPE_COMPUTER) {
+        HOST = 1;
+        if (!connect->do_planner(1))
+            return 0;
+        clear(screen);
+        reset_video();
+        alert(" ", _("COMPUTER PLACEMENT"), " ", _("    OK    "), NULL, 1, 0);
+        HOST = 0;
+        connect->swap_uds();
+        if (!connect->do_computer_plan())
+            return 0;
+        HOST = 1;
+        clear(screen);
+        reset_video();
+        alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
+        flushhotseatgame();
     } else {
         if (!connect->do_version_check() || !connect->do_planner(0)) {
             close();
@@ -148,6 +164,7 @@ void Net::close()
     log("%s\n", "close()");
     switch (gametype) {
         case GAME_TYPE_HOTSEAT:
+        case GAME_TYPE_COMPUTER:
             flushhotseatgame();
             break;
         default:
@@ -192,6 +209,7 @@ void Net::send(const std::string &pkt)
 
     switch (gametype) {
         case GAME_TYPE_HOTSEAT:
+        case GAME_TYPE_COMPUTER:
             if (MODE != PLANNER)
                 packet_send_hotseat(pkt);
             break;
@@ -211,6 +229,7 @@ int Net::recv(std::string &pkt)
     pkt = "";
     switch (gametype) {
         case GAME_TYPE_HOTSEAT:
+        case GAME_TYPE_COMPUTER:
             if (MODE != WATCH) return 0;
             packet_recv_hotseat(pkt);
             return pkt.size();

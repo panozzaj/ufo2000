@@ -1264,6 +1264,36 @@ void send_turn()
                    _("    OK    "), NULL, 1, 0);
     }
 
+    if (net->gametype == GAME_TYPE_COMPUTER) {
+        if (win || loss) {
+        //  !!! Hack - to prevent unnecessary replay while in endgame screen
+            flushhotseatgame();         
+            return;
+        }
+    
+        icon->show_eot();
+        loadgame(F("$(home)/ufo2000.tmp"));
+
+        g_map->m_minimap_area->set_full_redraw();
+        g_console->set_full_redraw();
+
+        Platoon *pt = platoon_local;
+        platoon_local = platoon_remote;
+        platoon_remote = pt;
+
+        sel_man = platoon_local->captain();
+        if (sel_man != NULL) g_map->center(sel_man);
+
+        MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+        if (turn % 2) {
+            alert(" ", _("  YOUR TURN  "), " ", 
+                _("    OK    "), NULL, 1, 0);
+        } else {
+            alert(" ", _(" COMPUTER TURN "), "",
+                _("    OK    "), NULL, 1, 0);
+        }
+    }
+
     g_time_left = 0;
     MODE = WATCH;
     update_visibility();
@@ -1279,7 +1309,6 @@ int GAMELOOP = 0;
 
 void recv_turn(int crc, const std::string &data)
 {
-     
     g_eot_save[crc] = data;
     
     if (!GAMELOOP) return;
@@ -1306,7 +1335,7 @@ void recv_turn(int crc, const std::string &data)
     platoon_local->restore();
     update_visibility();
 
-    if (net->gametype == GAME_TYPE_HOTSEAT) {
+    if (net->gametype == GAME_TYPE_HOTSEAT || net-> gametype == GAME_TYPE_COMPUTER) {
         savegame(F("$(home)/ufo2000.tmp"));
         g_map->m_minimap_area->set_full_redraw();
     }
@@ -2210,7 +2239,7 @@ void gameloop()
         g_time_left = 0;
     }
 
-    if (net->gametype == GAME_TYPE_HOTSEAT)
+    if (net->gametype == GAME_TYPE_HOTSEAT || net->gametype == GAME_TYPE_COMPUTER)
         savegame(F("$(home)/ufo2000.tmp"));
 
     g_pause = 0;
@@ -2303,6 +2332,15 @@ void gameloop()
             MAPSCROLL = 0;
         }
 
+        // if computer is playing and it is their turn to act (don't act if we
+        // are watching)
+        if (net->gametype == GAME_TYPE_COMPUTER && (turn % 2) && MODE != WATCH) {
+            // computer action
+            send_turn();
+        }
+
+        // don't process any input if it's the computer's turn
+        if (net->gametype != GAME_TYPE_COMPUTER || turn % 2 == 0) {
         if ((mouse_b & 1) && (mouse_leftr)) { //left mouseclick
             mouse_leftr = 0;
             switch (MODE) {
@@ -2662,6 +2700,7 @@ void gameloop()
             CHANGE = 1;
         }
         update_visibility();
+        }
     }
 
     FS_MusicPlay(NULL);
@@ -3007,8 +3046,10 @@ int main(int argc, char *argv[])
                     FS_MusicPlay(NULL);
                     continue;
                 case MAINMENU_HOTSEAT:
-                case MAINMENU_COMPUTER:
                     h = sethotseatplay();
+                    break;
+                case MAINMENU_COMPUTER:
+                    h = setcomputerplay();
                     break;
                 case MAINMENU_INTERNET:
                     if (fpu_is_ok)

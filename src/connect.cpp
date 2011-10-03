@@ -491,3 +491,99 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     g_console->set_full_redraw();
     return net->SEND;
 }
+
+
+
+/**
+ * Set up team of soldiers for computer player.
+ */
+// TODO: This needs to be error-checked and improved
+int Connect::do_computer_plan()
+{
+    lua_message( "Enter: Connect::do_computer_plan" );
+
+    Map *map = new Map(mapdata);
+    BITMAP *map2d = map->create_bitmap_of_map(0);
+    int map2d_x = (640 - map2d->w) / 2;
+
+    target_uints[0] = &remote;
+    target_uints[1] = &local;
+    remote.set_pos(POS_LEFT, map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+    local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+    pd_remote = &pd1;
+    pd_local = &pd2;
+
+    target_uints[0]->Position = 1;
+    target_uints[1]->Position = 2;
+
+    editor->build_Units(local);
+
+    // synchronize available equipment with ourselves :)
+    lua_pushstring(L, "SyncEquipmentInfo");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_pushstring(L, "QueryEquipmentInfo");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_safe_call(L, 0, 1);
+    lua_safe_call(L, 1, 0);
+
+    // Make sure that we have a valid map
+    if (!Map::valid_GEODATA(&mapdata)) {
+        Map::new_GEODATA(&mapdata);
+    }
+
+    // Try to set the last weaponset or use the first one from the list of available
+    // In the worst case we will have just empty armoury
+    if (!set_current_equipment_name(g_default_weaponset.c_str())) {
+        std::vector<std::string> weaponsets;
+        query_equipment_sets(weaponsets);
+        if (weaponsets.size() > 0) set_current_equipment_name(weaponsets[0].c_str());
+    }
+
+    mapdata.load_game = 77;
+
+    // I don't want the computer to sit by default.
+    //net->send_p2_start_sit((FLAGS & F_SECONDSIT)?1:0);
+
+    net->check();
+    if (mapdata.load_game == 77) { //new    mapdata
+        mapdata.load_game = 0;
+        delete map;
+      
+        local.reset_selections();
+        remote.reset_selections();
+      
+        local.Position = 2;
+        remote.Position = 1;
+        remote.set_pos(POS_LEFT,  map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+        local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+    }
+
+    // Place units
+    // should look at size of map, could be more strategic or use randomness
+    for (int i = 0; i < 10; i++) {
+        local.select_unit(i, 0, 41, 4*i);
+        net->send_select_unit(i, 0, 41, 4*i);
+    }
+
+    Soldier *first_ss = NULL;
+    int num_of_men_sel = 0;
+        
+    for (int i = 0; i < editor->platoon()->num_of_men(); i++) {
+        if (local.is_selected(i)) {
+            Soldier *ss = editor->platoon()->findman(local.name[i]);
+            ASSERT(ss != NULL);
+            if (ss->has_forbidden_equipment()) {
+                return 0;
+            }
+            num_of_men_sel++;
+            if (!first_ss) first_ss = ss;
+        }
+    }
+
+    editor->send_Units(local);
+        
+    net->send_finish_planner();
+
+    return net->SEND;
+}
+

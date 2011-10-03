@@ -28,6 +28,7 @@ public:
     void reset_uds();
     void swap_uds();
     int do_planner(int F10ALLOWED, int map_change_allowed = 1);
+    int do_computer_plan();
 };
 
 #endif
