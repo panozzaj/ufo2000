@@ -1,0 +1,15 @@
+
+# /
+/*.d
+/build-stamp
+/configure-stamp
+/init-scripts.log
+/squad.lua
+/ufo2000
+/ufo2000.1
+/ufo2000.db
+/ufo2000.ini
+/ufo2000.log
+/ufo2000-srv
+/ufo2000-srv.log
+/obj
