@@ -270,6 +270,7 @@ class Scenario;
 class Explosive;
 class Random;
 class Cell;
+class Computer;
 
 //! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
@@ -310,6 +311,7 @@ extern int MAP_WIDTH, MAP_HEIGHT;
 
 extern int local_platoon_size;
 extern char last_unit_name[1000];
+extern Computer *computer;
 
 // gettext-translation deactivated / active:
 //#define _(String) (String)

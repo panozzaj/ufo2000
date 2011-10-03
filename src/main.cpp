@@ -53,6 +53,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stats.h"
 #include "zfstream.h"
 #include "gui.h"
+#include "computer.h"
 #ifdef HAVE_PNG
 #include "loadpng/loadpng.h"
 #endif
@@ -136,6 +137,7 @@ Platoon *platoon_local = NULL, *platoon_remote = NULL;
 Soldier *sel_man = NULL;
 Explosive *elist;
 Random *cur_random;
+Computer *computer;
 
 volatile unsigned int ANIMATION = 0;
 volatile int CHANGE = 1;
@@ -282,6 +284,7 @@ void restartgame()
     p1  = new Platoon(1000, &pd1, scenario->deploy_type[0]);
     p2  = new Platoon(2000, &pd2, scenario->deploy_type[1]);
     cur_random = new Random;
+    computer = new Computer;
 
     bool map_saved = Map::save_GEODATA("$(home)/cur_map.lua", &mapdata);
     ASSERT(map_saved);
@@ -2335,8 +2338,10 @@ void gameloop()
         // if computer is playing and it is their turn to act (don't act if we
         // are watching)
         if (net->gametype == GAME_TYPE_COMPUTER && (turn % 2) && MODE != WATCH) {
-            // computer action
-            send_turn();
+            // only evaluate when nothing is happening in game world
+            if (platoon_remote->nomoves() && platoon_local->nomoves()) {
+                computer->evaluate();
+            }
         }
 
         // don't process any input if it's the computer's turn

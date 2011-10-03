@@ -241,6 +241,7 @@ public:
     friend class Inventory;
     friend class Map;
     friend class Editor;
+    friend class Computer;
 
     int health()
     {

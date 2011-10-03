@@ -116,7 +116,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp           \
        pck.cpp persist.cpp place.cpp platoon.cpp position.cpp         \
        random.cpp scenario.cpp server_gui.cpp                         \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
-       fpasprite.cpp gui.cpp                                          \
+       fpasprite.cpp gui.cpp computer.cpp                             \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp geoscape.cpp zfstream.cpp script_api.cpp    \
                                                                       \

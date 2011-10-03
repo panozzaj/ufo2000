@@ -125,6 +125,7 @@ private:
     friend class Item;
     friend class Editor;
     friend class Skin;
+    friend class Computer;
 public:
     MANDATA md;
     ITEMDATA id;
